@@ -1,12 +1,12 @@
 <template>
   <div class="app-container">
     <el-row :gutter="20">
-      <!--部门数据-->
+      <!--单位数据-->
       <el-col :span="4" :xs="24">
         <div class="head-container">
           <el-input
             v-model="deptName"
-            placeholder="请输入部门名称"
+            placeholder="请输入单位名称"
             clearable
             size="small"
             prefix-icon="el-icon-search"
@@ -29,11 +29,11 @@
       </el-col>
       <!--用户数据-->
       <el-col :span="20" :xs="24">
-        <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch" label-width="68px">
-          <el-form-item label="用户名称" prop="userName">
+        <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch" label-width="80px">
+          <el-form-item label="工号/学号" prop="userName">
             <el-input
               v-model="queryParams.userName"
-              placeholder="请输入用户名称"
+              placeholder="请输入工号/学号"
               clearable
               style="width: 240px"
               @keyup.enter.native="handleQuery"
@@ -139,11 +139,27 @@
         <el-table v-loading="loading" :data="userList" @selection-change="handleSelectionChange">
           <el-table-column type="selection" width="50" align="center" />
           <el-table-column label="用户编号" align="center" key="userId" prop="userId" v-if="columns[0].visible" />
-          <el-table-column label="用户名称" align="center" key="userName" prop="userName" v-if="columns[1].visible" :show-overflow-tooltip="true" />
-          <el-table-column label="用户昵称" align="center" key="nickName" prop="nickName" v-if="columns[2].visible" :show-overflow-tooltip="true" />
-          <el-table-column label="部门" align="center" key="deptName" prop="dept.deptName" v-if="columns[3].visible" :show-overflow-tooltip="true" />
-          <el-table-column label="手机号码" align="center" key="phonenumber" prop="phonenumber" v-if="columns[4].visible" width="120" />
-          <el-table-column label="状态" align="center" key="status" v-if="columns[5].visible">
+          <el-table-column label="工号/学号" align="center" key="userName" prop="userName" v-if="columns[1].visible" :show-overflow-tooltip="true" width="100"/>
+          <el-table-column label="真实姓名" align="center" key="nickName" prop="nickName" v-if="columns[2].visible" :show-overflow-tooltip="true" width="100"/>
+          <el-table-column label="性别" align="center" key="sex" prop="sex" >
+            <template slot-scope="scope">
+              <dict-tag :options="dict.type.sys_user_sex" :value="scope.row.sex"/>
+            </template>
+          </el-table-column>
+          <el-table-column label="单位" align="center" key="deptName" prop="dept.deptName" v-if="columns[3].visible" :show-overflow-tooltip="true" width="150"/>
+          <el-table-column label="手机号码" align="center" key="phonenumber" prop="phonenumber" v-if="columns[4].visible" width="110" />
+          <el-table-column label="省份" align="center" key="province" prop="province" v-if="columns[5].visible" :show-overflow-tooltip="true"/>
+          <el-table-column label="学籍状态" align="center" key="schoolRoll" prop="schoolRoll" v-if="columns[6].visible">
+            <template slot-scope="scope">
+              <dict-tag :options="dict.type.fzu_school_roll" :value="scope.row.schoolRoll"/>
+            </template>
+          </el-table-column>
+          <el-table-column label="校区" align="center" key="schoolArea" prop="schoolArea" v-if="columns[7].visible">
+            <template slot-scope="scope">
+              <dict-tag :options="dict.type.fzu_school_area" :value="scope.row.schoolArea"/>
+            </template>
+          </el-table-column>
+          <el-table-column label="状态" align="center" key="status" v-if="columns[8].visible">
             <template slot-scope="scope">
               <el-switch
                 v-model="scope.row.status"
@@ -153,7 +169,7 @@
               ></el-switch>
             </template>
           </el-table-column>
-          <el-table-column label="创建时间" align="center" prop="createTime" v-if="columns[6].visible" width="160">
+          <el-table-column label="创建时间" align="center" prop="createTime" v-if="columns[9].visible" width="160">
             <template slot-scope="scope">
               <span>{{ parseTime(scope.row.createTime) }}</span>
             </template>
@@ -204,16 +220,16 @@
 
     <!-- 添加或修改用户配置对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="600px" append-to-body>
-      <el-form ref="form" :model="form" :rules="rules" label-width="80px">
+      <el-form ref="form" :model="form" :rules="rules" label-width="90px">
         <el-row>
           <el-col :span="12">
-            <el-form-item label="用户昵称" prop="nickName">
-              <el-input v-model="form.nickName" placeholder="请输入用户昵称" maxlength="30" />
+            <el-form-item label="真实姓名" prop="nickName">
+              <el-input v-model="form.nickName" placeholder="请输入真实姓名" maxlength="30" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="归属部门" prop="deptId">
-              <treeselect v-model="form.deptId" :options="deptOptions" :show-count="true" placeholder="请选择归属部门" />
+            <el-form-item label="归属单位" prop="deptId">
+              <treeselect v-model="form.deptId" :options="deptOptions" :show-count="true" placeholder="请选择归属单位" />
             </el-form-item>
           </el-col>
         </el-row>
@@ -231,8 +247,8 @@
         </el-row>
         <el-row>
           <el-col :span="12">
-            <el-form-item v-if="form.userId == undefined" label="用户名称" prop="userName">
-              <el-input v-model="form.userName" placeholder="请输入用户名称" maxlength="30" />
+            <el-form-item v-if="form.userId == undefined" label="工号/学号" prop="userName">
+              <el-input v-model="form.userName" placeholder="请输入工号/学号" maxlength="30" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
@@ -348,7 +364,7 @@ import "@riophae/vue-treeselect/dist/vue-treeselect.css";
 
 export default {
   name: "User",
-  dicts: ['sys_normal_disable', 'sys_user_sex'],
+  dicts: ['sys_normal_disable', 'sys_user_sex', 'fzu_school_area','fzu_school_roll'],
   components: { Treeselect },
   data() {
     return {
@@ -368,11 +384,11 @@ export default {
       userList: null,
       // 弹出层标题
       title: "",
-      // 部门树选项
+      // 单位树选项
       deptOptions: undefined,
       // 是否显示弹出层
       open: false,
-      // 部门名称
+      // 单位名称
       deptName: undefined,
       // 默认密码
       initPassword: undefined,
@@ -414,22 +430,25 @@ export default {
       },
       // 列信息
       columns: [
-        { key: 0, label: `用户编号`, visible: true },
-        { key: 1, label: `用户名称`, visible: true },
-        { key: 2, label: `用户昵称`, visible: true },
-        { key: 3, label: `部门`, visible: true },
+        { key: 0, label: `用户编号`, visible: false },
+        { key: 1, label: `工号/学号`, visible: true },
+        { key: 2, label: `真实姓名`, visible: true },
+        { key: 3, label: `单位`, visible: true },
         { key: 4, label: `手机号码`, visible: true },
-        { key: 5, label: `状态`, visible: true },
-        { key: 6, label: `创建时间`, visible: true }
+        { key: 5, label: `省份`, visible: true },
+        { key: 6, label: `学籍状态`, visible: true },
+        { key: 7, label: `校区`, visible: true },
+        { key: 8, label: `状态`, visible: true },
+        { key: 9, label: `创建时间`, visible: false }
       ],
       // 表单校验
       rules: {
         userName: [
-          { required: true, message: "用户名称不能为空", trigger: "blur" },
-          { min: 2, max: 20, message: '用户名称长度必须介于 2 和 20 之间', trigger: 'blur' }
+          { required: true, message: "工号/学号不能为空", trigger: "blur" },
+          { min: 2, max: 20, message: '工号/学号长度必须介于 2 和 20 之间', trigger: 'blur' }
         ],
         nickName: [
-          { required: true, message: "用户昵称不能为空", trigger: "blur" }
+          { required: true, message: "真实姓名不能为空", trigger: "blur" }
         ],
         password: [
           { required: true, message: "用户密码不能为空", trigger: "blur" },
@@ -453,7 +472,7 @@ export default {
     };
   },
   watch: {
-    // 根据名称筛选部门树
+    // 根据名称筛选单位树
     deptName(val) {
       this.$refs.tree.filter(val);
     }
@@ -476,7 +495,7 @@ export default {
         }
       );
     },
-    /** 查询部门下拉树结构 */
+    /** 查询单位下拉树结构 */
     getDeptTree() {
       deptTreeSelect().then(response => {
         this.deptOptions = response.data;
@@ -519,6 +538,9 @@ export default {
         phonenumber: undefined,
         email: undefined,
         sex: undefined,
+        province: undefined,
+        schoolRoll: undefined,
+        schoolArea: undefined,
         status: "0",
         remark: undefined,
         postIds: [],
