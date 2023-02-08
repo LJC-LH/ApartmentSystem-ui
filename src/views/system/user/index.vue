@@ -219,8 +219,8 @@
     </el-row>
 
     <!-- 添加或修改用户配置对话框 -->
-    <el-dialog :title="title" :visible.sync="open" width="600px" append-to-body>
-      <el-form ref="form" :model="form" :rules="rules" label-width="90px">
+    <el-dialog :title="title" :visible.sync="open" width="750px" append-to-body>
+      <el-form ref="form" :model="form" :rules="rules" label-width="140px">
         <el-row>
           <el-col :span="12">
             <el-form-item label="真实姓名" prop="nickName">
@@ -260,7 +260,7 @@
         <el-row>
           <el-col :span="12">
             <el-form-item label="用户性别">
-              <el-select v-model="form.sex" placeholder="请选择性别">
+              <el-select v-model="form.sex" placeholder="请选择性别" clearable>
                 <el-option
                   v-for="dict in dict.type.sys_user_sex"
                   :key="dict.value"
@@ -282,6 +282,53 @@
             </el-form-item>
           </el-col>
         </el-row>
+
+        <el-row>
+          <el-col :span="12">
+            <el-form-item label="省份" prop="province">
+              <el-input v-model="form.province" placeholder="请输入生源地省份"/>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="校区">
+              <el-select v-model="form.schoolArea" placeholder="请选择校区" clearable>
+                <el-option
+                  v-for="dict in dict.type.fzu_school_area"
+                  :key="dict.value"
+                  :label="dict.label"
+                  :value="dict.value"
+                ></el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="12">
+            <el-form-item label="学籍状态">
+              <el-select v-model="form.schoolRoll" placeholder="请选择学籍状态" clearable>
+                <el-option
+                  v-for="dict in dict.type.fzu_school_roll"
+                  :key="dict.value"
+                  :label="dict.label"
+                  :value="dict.value"
+                ></el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="就读学历层次">
+              <el-select v-model="form.studyLevel" placeholder="请选择就读学历层次" clearable>
+                <el-option
+                  v-for="dict in dict.type.fzu_study_level"
+                  :key="dict.value"
+                  :label="dict.label"
+                  :value="dict.value"
+                ></el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
+        </el-row>  
+
         <el-row>
           <el-col :span="12">
             <el-form-item label="岗位">
@@ -310,6 +357,28 @@
             </el-form-item>
           </el-col>
         </el-row>
+
+        <el-row>
+          <el-col :span="12">
+            <el-form-item label="操作权限起始时间">
+              <el-date-picker
+                v-model="form.startTime"
+                type="datetime"
+                placeholder="选择日期时间">
+              </el-date-picker>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="操作权限终止时间">
+              <el-date-picker
+                v-model="form.endTime"
+                type="datetime"
+                placeholder="选择日期时间">
+              </el-date-picker>
+            </el-form-item>
+          </el-col>
+        </el-row>
+
         <el-row>
           <el-col :span="24">
             <el-form-item label="备注">
@@ -364,7 +433,7 @@ import "@riophae/vue-treeselect/dist/vue-treeselect.css";
 
 export default {
   name: "User",
-  dicts: ['sys_normal_disable', 'sys_user_sex', 'fzu_school_area','fzu_school_roll'],
+  dicts: ['sys_normal_disable', 'sys_user_sex', 'fzu_school_area','fzu_school_roll','fzu_study_level'],
   components: { Treeselect },
   data() {
     return {
@@ -541,10 +610,13 @@ export default {
         province: undefined,
         schoolRoll: undefined,
         schoolArea: undefined,
+        studyLevel: undefined,
         status: "0",
         remark: undefined,
         postIds: [],
-        roleIds: []
+        roleIds: [],
+        startTime: undefined,
+        endTime: undefined
       };
       this.resetForm("form");
     },
