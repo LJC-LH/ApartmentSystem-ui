@@ -152,6 +152,9 @@
           <el-table-column label="学籍状态" align="center" key="schoolRoll" prop="schoolRoll" v-if="columns[6].visible">
             <template slot-scope="scope">
               <dict-tag :options="dict.type.fzu_school_roll" :value="scope.row.schoolRoll"/>
+              <div v-if="!scope.row.schoolRoll">
+                  非学生
+              </div>
             </template>
           </el-table-column>
           <el-table-column label="校区" align="center" key="schoolArea" prop="schoolArea" v-if="columns[7].visible">
@@ -172,6 +175,22 @@
           <el-table-column label="创建时间" align="center" prop="createTime" v-if="columns[9].visible" width="160">
             <template slot-scope="scope">
               <span>{{ parseTime(scope.row.createTime) }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column label="操作权限起始时间" align="center" prop="startTime" v-if="columns[10].visible" width="160">
+            <template slot-scope="scope">
+              <span>{{ parseTime(scope.row.startTime) }}</span>
+              <div v-if="!scope.row.startTime">
+                  未设置时间
+              </div>
+            </template>
+          </el-table-column>
+          <el-table-column label="操作权限终止时间" align="center" prop="endTime" v-if="columns[11].visible" width="160">
+            <template slot-scope="scope">
+              <span>{{ parseTime(scope.row.endTime) }}</span>
+              <div v-if="!scope.row.endTime">
+                  未设置时间
+              </div>
             </template>
           </el-table-column>
           <el-table-column
@@ -508,7 +527,9 @@ export default {
         { key: 6, label: `学籍状态`, visible: true },
         { key: 7, label: `校区`, visible: true },
         { key: 8, label: `状态`, visible: true },
-        { key: 9, label: `创建时间`, visible: false }
+        { key: 9, label: `创建时间`, visible: false },
+        { key: 10, label: `操作权限起始时间`,visible: true },
+        { key: 11, label: `操作权限终止时间`,visible: true }
       ],
       // 表单校验
       rules: {
