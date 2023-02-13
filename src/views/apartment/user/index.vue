@@ -31,7 +31,7 @@
 
     <el-row :gutter="10" class="mb8">
       <el-col :span="1.5">
-        <el-button type="primary" plain icon="el-icon-plus" size="mini" @click="handleAdd"
+        <el-button type="primary" plain icon="el-icon-plus" size="mini" @click="handleAdd" :disabled="addoption"
           v-hasPermi="['apartment:user:add']">新增</el-button>
       </el-col>
       <el-col :span="1.5">
@@ -152,7 +152,7 @@
 </template>
 
 <script>
-import { listUser, getUser, delUser, addUser, updateUser } from "@/api/apartment/user";
+import { listUser, getUser, delUser, addUser, updateUser, getRoot } from "@/api/apartment/user";
 
 export default {
   name: "User",
@@ -162,6 +162,7 @@ export default {
       loading: true,
       // 选中数组
       ids: [],
+      addoption: false,
       // 非单个禁用
       single: true,
       // 非多个禁用
@@ -198,6 +199,7 @@ export default {
       },
       // 表单参数
       form: {},
+      checkCode: 0,
       // 表单校验
       rules: {
         userName: [
@@ -211,6 +213,7 @@ export default {
   },
   created() {
     this.getList();
+    this.rootCheck();
   },
   methods: {
     /** 查询用户信息列表 */
@@ -220,6 +223,17 @@ export default {
         this.userList = response.rows;
         this.total = response.total;
         this.loading = false;
+      });
+    },
+    rootCheck() {
+      this.loading = true;
+      getRoot().then(response => {
+        this.checkCode = response
+        console.log(this.checkCode);
+        if (this.checkCode == 1) {
+          this.addoption = true;
+          console.log(this.addoption);
+        }
       });
     },
     // 取消按钮
