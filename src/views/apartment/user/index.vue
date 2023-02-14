@@ -185,7 +185,7 @@
 </template>
 
 <script>
-import { listUser, getUser, delUser, addUser, updateUser, getRoot } from "@/api/apartment/user";
+import { listUser, getUser, delUser, addUser, updateUser, getRoot, getRolesDeptId } from "@/api/apartment/user";
 
 export default {
   name: "User",
@@ -210,6 +210,7 @@ export default {
       // 总条数
       total: 0,
       // 用户信息表格数据
+      temp: [],
       userList: [],
       // 弹出层标题
       title: "",
@@ -237,7 +238,8 @@ export default {
       },
       // 表单参数
       form: {},
-      checkCode: 0,
+      checkCode: 0, 
+      rolesDeptId: 0,
       // 表单校验
       rules: {
         userName: [
@@ -252,6 +254,7 @@ export default {
   created() {
     this.getList();
     this.rootCheck();
+    // this.getrolesdeptid();
     // this.getDicts("fzu_school_roll").then(response => {
     //   this.schoolrollOpt = response.data;
     // });
@@ -274,9 +277,27 @@ export default {
     getList() {
       this.loading = true;
       listUser(this.queryParams).then(response => {
-        this.userList = response.rows;
+        this.temp = response.rows;
         this.total = response.total;
         this.loading = false;
+        var userName = this.$store.state.user.roles[0];
+        var userdeptid = this.$store.state.user.deptid
+        console.log(this.$store.state.user.deptid);
+        console.log("-----------------");
+        console.log(userdeptid);
+        if (userName == 'admin' || userName == 'xgc') {
+          console.log('success');
+          this.userList = this.temp;
+        } 
+        if (userName == 'fdy') {
+          for (var i = 0; i < this.temp.length; i++) {
+            console.log("++++++++++++++++++++++++++++++++++++++++++++++++");
+            console.log(this.temp[i]);
+            if (this.temp[i].deptId == userdeptid) {
+              this.userList.push(this.temp[i]);
+            }
+          }
+        }
       });
     },
     rootCheck() {
@@ -290,6 +311,13 @@ export default {
         }
       });
     },
+    getrolesdeptid(){
+      getRolesDeptId(this.$store.state.user.roles[0]).then(response => {
+        this.rolesDeptId = response
+        console.log(this.rolesDeptId);
+      })
+    },
+
     // 取消按钮
     cancel() {
       this.open = false;
