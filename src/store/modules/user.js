@@ -7,7 +7,9 @@ const user = {
     name: '',
     avatar: '',
     roles: [],
-    permissions: []
+    permissions: [],
+    deptid: '',
+  
   },
 
   mutations: {
@@ -25,6 +27,9 @@ const user = {
     },
     SET_PERMISSIONS: (state, permissions) => {
       state.permissions = permissions
+    },
+    SET_DEPTID: (state, deptid) => {
+      state.deptid = deptid
     }
   },
 
@@ -52,6 +57,7 @@ const user = {
         getInfo().then(res => {
           const user = res.user
           const avatar = (user.avatar == "" || user.avatar == null) ? require("@/assets/images/profile.jpg") : process.env.VUE_APP_BASE_API + user.avatar;
+          const deptid = res.user.deptId
           if (res.roles && res.roles.length > 0) { // 验证返回的roles是否是一个非空数组
             commit('SET_ROLES', res.roles)
             commit('SET_PERMISSIONS', res.permissions)
@@ -60,6 +66,7 @@ const user = {
           }
           commit('SET_NAME', user.userName)
           commit('SET_AVATAR', avatar)
+          commit('SET_DEPTID', deptid)
           resolve(res)
         }).catch(error => {
           reject(error)
@@ -74,6 +81,7 @@ const user = {
           commit('SET_TOKEN', '')
           commit('SET_ROLES', [])
           commit('SET_PERMISSIONS', [])
+          commit('SET_DEPTID', [])
           removeToken()
           resolve()
         }).catch(error => {
