@@ -31,7 +31,7 @@
 
     <el-row :gutter="10" class="mb8">
       <el-col :span="1.5">
-        <el-button type="primary" plain icon="el-icon-plus" size="mini" @click="handleAdd" :disabled="addoption"
+        <el-button type="primary" plain icon="el-icon-plus" size="mini" @click="handleAdd" 
           v-hasPermi="['apartment:user:add']">新增</el-button>
       </el-col>
       <el-col :span="1.5">
@@ -57,14 +57,32 @@
       <el-table-column label="学生姓名" align="center" prop="niceName" />
       <el-table-column label="性别" align="center" prop="sex" />
       <el-table-column label="床位" align="center" prop="roomNo" />
-      <el-table-column label="学院" align="center" prop="deptId" />
+      <el-table-column label="学院" align="center" prop="deptId">
+      </el-table-column>
       <el-table-column label="省份" align="center" prop="province" />
       <el-table-column label="学生电话" align="center" prop="province" />
-      <el-table-column label="缴费情况" align="center" prop="feesCategory" />
-      <el-table-column label="宿舍使用情况" align="center" prop="dormStatus" />
+      <el-table-column label="缴费情况" align="center" prop="feesCategory" >
+        <template slot-scope="scope">
+          <dict-tag :options="dict.type.fzu_fees_category" :value="scope.row.feesCategory" />
+        </template>
+      </el-table-column>
+      <el-table-column label="缴费类型" align="center" prop="feesStatus" >
+        <template slot-scope="scope">
+          <dict-tag :options="dict.type.fzu_fees_status" :value="scope.row.feesStatus" />
+        </template>
+      </el-table-column>
+      <el-table-column label="宿舍使用情况" align="center" prop="dormStatus">
+        <template slot-scope="scope">
+          <dict-tag :options="dict.type.fzu_dorm_status" :value="scope.row.dormStatus" />
+        </template>
+      </el-table-column>
       <el-table-column label="单位联系人" align="center" prop="contactPerson" />
       <el-table-column label="单位联系人电话" align="center" prop="contactPhone" />
-      <el-table-column label="学籍状态" align="center" prop="schoolRoll" />
+      <el-table-column label="学籍状态" align="center" prop="schoolRoll" :formatter="schoolroolFormat">
+        <template slot-scope="scope">
+          <dict-tag :options="dict.type.fzu_school_roll" :value="scope.row.schoolRoll" />
+        </template>
+      </el-table-column>
       <el-table-column label="校区" align="center" prop="schoolArea" />
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
@@ -109,18 +127,31 @@
         <el-form-item label="学生电话" prop="stuPhone">
           <el-input v-model="form.stuPhone" placeholder="请输入学生电话" />
         </el-form-item>
-
         <el-form-item label="缴费情况">
-          <el-radio-group v-model="form.feesCategory">
-            <el-radio label="未缴费" />
-            <el-radio label="已缴费" />
+          <el-radio-group v-model="form.feesStatus">
+            <el-radio
+              v-for="dict in dict.type.fzu_fees_status"
+              :key="dict.value"
+              :label="dict.value"
+            >{{dict.label}}</el-radio>
           </el-radio-group>
         </el-form-item>
-        <el-form-item label="宿舍使用情况">
+        <el-form-item label="缴费类型">
+          <el-radio-group v-model="form.feesCategory">
+            <el-radio
+              v-for="dict in dict.type.fzu_fees_category"
+              :key="dict.value"
+              :label="dict.value"
+            >{{dict.label}}</el-radio>
+          </el-radio-group>
+        </el-form-item>
+        <el-form-item label="宿舍使用情况" prop="dormStatus">
           <el-radio-group v-model="form.dormStatus">
-            <el-radio label="使用中" />
-            <el-radio label="空闲" />
-            <el-radio label="停用" />
+            <el-radio
+              v-for="dict in dict.type.fzu_dorm_status"
+              :key="dict.value"
+              :label="dict.value"
+            >{{dict.label}}</el-radio>
           </el-radio-group>
         </el-form-item>
         <el-form-item label="单位联系人" prop="contactPerson">
@@ -129,16 +160,18 @@
         <el-form-item label="单位联系人电话" prop="contactPhone">
           <el-input v-model="form.contactPhone" placeholder="请输入单位联系人电话" />
         </el-form-item>
-        <!-- <el-form-item label="学籍状态">
-          <el-radio-group v-model="form.schoolRoll">
-            <el-radio label="a" />
-            <el-radio label="b" />
-            <el-radio label="c" />
-          </el-radio-group>
-        </el-form-item> -->
         <el-form-item label="学籍状态" prop="schoolRoll">
-          <el-input v-model="form.schoolRoll" placeholder="请输入学籍状态" />
+          <el-radio-group v-model="form.schoolRoll">
+            <el-radio
+              v-for="dict in dict.type.fzu_school_roll"
+              :key="dict.value"
+              :label="dict.value"
+            >{{dict.label}}</el-radio>
+          </el-radio-group> 
         </el-form-item>
+        <!-- <el-form-item label="学籍状态" prop="schoolRoll">
+          <el-input v-model="form.schoolRoll" placeholder="请输入学籍状态" />
+        </el-form-item> -->
         <el-form-item label="校区" prop="schoolArea">
           <el-input v-model="form.schoolArea" placeholder="请输入校区" />
         </el-form-item>
@@ -156,8 +189,13 @@ import { listUser, getUser, delUser, addUser, updateUser, getRoot } from "@/api/
 
 export default {
   name: "User",
+  dicts: ['fzu_dorm_status', 'fzu_school_roll', 'fzu_school_area', 'fzu_fees_status', 'fzu_fees_category' ],
   data() {
     return {
+      schoolrollOpt: [],
+      feesstatusOpt: [],
+      feescategoryOpt: [],
+      dormstatusOpt: [],
       // 遮罩层
       loading: true,
       // 选中数组
@@ -214,8 +252,24 @@ export default {
   created() {
     this.getList();
     this.rootCheck();
+    // this.getDicts("fzu_school_roll").then(response => {
+    //   this.schoolrollOpt = response.data;
+    // });
+    // this.getDicts("fzu_fees_status").then(response => {
+    //   this.feesstatusOpt = response.data;
+    // });
+    // this.getDicts("fzu_fees_category").then(response => {
+    //   this.feescategoryOpt = response.data;
+    // });
+    // this.getDicts("fzu_dorm_status").then(response => {
+    //   this.dormstatusOpt = response.data;
+    // });
   },
   methods: {
+    //2023.2.13.字典翻译
+    schoolroolFormat(row) {
+      return this.selectDictLabel(this.schoolrollOpt, row.type)
+    },
     /** 查询用户信息列表 */
     getList() {
       this.loading = true;
