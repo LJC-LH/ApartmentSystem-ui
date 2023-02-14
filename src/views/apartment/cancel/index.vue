@@ -94,7 +94,7 @@
           size="mini"
           @click="handleAdd"
           v-hasPermi="['apartment:cancel:add']"
-        >新增</el-button>
+        >申请</el-button>
       </el-col>
       <el-col :span="1.5">
         <el-button
@@ -133,22 +133,25 @@
 
     <el-table v-loading="loading" :data="cancelList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="退宿ID" align="center" prop="cancelId" />
-      <el-table-column label="学生ID" align="center" prop="studentId" />
+      <el-table-column label="退宿申请编号" align="center" prop="cancelId" />
+<!--      <el-table-column label="学生ID" align="center" prop="studentId" />-->
       <el-table-column label="学生姓名" align="center" prop="studentName" />
-      <el-table-column label="辅导员ID" align="center" prop="fdyId" />
+<!--      <el-table-column label="辅导员ID" align="center" prop="fdyId" />-->
+      <el-table-column label="辅导员" align="center" prop="fdyName" />
       <el-table-column label="辅导员意见" align="center" prop="fdyOpinion">
         <template slot-scope="scope">
           <dict-tag :options="dict.type.opinion" :value="scope.row.fdyOpinion"/>
         </template>
       </el-table-column>
-      <el-table-column label="学工处ID" align="center" prop="xgcId" />
+<!--      <el-table-column label="学工处ID" align="center" prop="xgcId" />-->
+      <el-table-column label="学工处" align="center" prop="xgcName" />
       <el-table-column label="学工处意见" align="center" prop="xgcOpinion">
         <template slot-scope="scope">
           <dict-tag :options="dict.type.opinion" :value="scope.row.xgcOpinion"/>
         </template>
       </el-table-column>
-      <el-table-column label="校区管理办公室ID" align="center" prop="manageId" />
+<!--      <el-table-column label="校区管理办公室ID" align="center" prop="manageId" />-->
+      <el-table-column label="校区管理办公室" align="center" prop="manageName" />
       <el-table-column label="校区管理办公室意见" align="center" prop="manageOpinion">
         <template slot-scope="scope">
           <dict-tag :options="dict.type.fzu_approval_category" :value="scope.row.manageOpinion"/>

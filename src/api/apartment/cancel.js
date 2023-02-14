@@ -42,3 +42,13 @@ export function delCancel(cancelId) {
     method: 'delete'
   })
 }
+
+// 获取指定角色类型的用户列表
+export function selectUserListByRoleId(query) {
+  return request({
+    url: '/apartment/cancel/getRoleList',
+    method: 'post',
+    params: query
+  })
+}
+

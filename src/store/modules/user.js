@@ -9,7 +9,7 @@ const user = {
     roles: [],
     permissions: [],
     deptid: '',
-  
+
   },
 
   mutations: {
@@ -38,6 +38,7 @@ const user = {
     Login({ commit }, userInfo) {
       const username = userInfo.username.trim()
       const password = userInfo.password
+
       const code = userInfo.code
       const uuid = userInfo.uuid
       return new Promise((resolve, reject) => {
