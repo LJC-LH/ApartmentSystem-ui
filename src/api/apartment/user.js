@@ -9,6 +9,14 @@ export function listUser(query) {
   })
 }
 
+export function listFdyUser(query) {
+  return request({
+    url: '/apartment/user/fdylist',
+    method: 'get',
+    params: query
+  })
+}
+
 export function getRoot() {
   return request({
     url: '/apartment/user/root',
