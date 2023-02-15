@@ -43,6 +43,16 @@
           v-hasPermi="['apartment:user:remove']">删除</el-button>
       </el-col>
       <el-col :span="1.5">
+        <el-button
+          type="info"
+          plain
+          icon="el-icon-upload2"
+          size="mini"
+          @click="handleImport"
+          v-hasPermi="['apartment:user:import']"
+        >导入</el-button>
+      </el-col>
+      <el-col :span="1.5">
         <el-button type="warning" plain icon="el-icon-download" size="mini" @click="handleExport"
           v-hasPermi="['apartment:user:export']">导出</el-button>
       </el-col>
@@ -52,15 +62,19 @@
     <el-table v-loading="loading" :data="userList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="楼栋号" align="center" prop="buildingNo" />
-      <el-table-column label="房间号" align="center" prop="deptId" />
-      <el-table-column label="学号" align="center" prop="userName" />
+      <el-table-column label="房间号" align="center" prop="roomNo" />
+      <el-table-column label="学号" align="center" prop="userName" width="100px"/>
       <el-table-column label="学生姓名" align="center" prop="niceName" />
-      <el-table-column label="性别" align="center" prop="sex" />
-      <el-table-column label="床位" align="center" prop="roomNo" />
+      <el-table-column label="性别" align="center" prop="sex" >
+        <template slot-scope="scope">
+          <dict-tag :options="dict.type.sys_user_sex" :value="scope.row.sex" />
+        </template>
+      </el-table-column>
+      <el-table-column label="床位" align="center" prop="bedNo" />
       <el-table-column label="学院" align="center" prop="deptId">
       </el-table-column>
       <el-table-column label="省份" align="center" prop="province" />
-      <el-table-column label="学生电话" align="center" prop="stuPhone" />
+      <el-table-column label="学生电话" align="center" prop="stuPhone"  width="110px"/>
       <el-table-column label="缴费情况" align="center" prop="feesStatus" >
         <template slot-scope="scope">
           <dict-tag :options="dict.type.fzu_fees_status" :value="scope.row.feesStatus" />
@@ -77,14 +91,18 @@
         </template>
       </el-table-column>
       <el-table-column label="单位联系人" align="center" prop="contactPerson" />
-      <el-table-column label="单位联系人电话" align="center" prop="contactPhone" />
+      <el-table-column label="单位联系人电话" align="center" prop="contactPhone"  width="110px"/>
       <el-table-column label="学籍状态" align="center" prop="schoolRoll" :formatter="schoolroolFormat">
         <template slot-scope="scope">
           <dict-tag :options="dict.type.fzu_school_roll" :value="scope.row.schoolRoll" />
         </template>
       </el-table-column>
-      <el-table-column label="校区" align="center" prop="schoolArea" />
-      <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
+      <el-table-column label="校区" align="center" prop="schoolArea" >
+        <template slot-scope="scope">
+          <dict-tag :options="dict.type.fzu_school_area" :value="scope.row.schoolArea" />
+        </template>
+      </el-table-column>
+      <el-table-column label="操作" align="center" class-name="small-padding fixed-width"  width="100px">
         <template slot-scope="scope">
           <el-button size="mini" type="text" icon="el-icon-edit" @click="handleUpdate(scope.row)" :disabled="addoption"
             v-hasPermi="['apartment:user:edit']">修改</el-button>
@@ -109,8 +127,8 @@
         <el-form-item label="学号" prop="userName">
           <el-input v-model="form.userName" placeholder="请输入学号" />
         </el-form-item>
-        <el-form-item label="学生姓名" prop="nicenName">
-          <el-input v-model="form.nicenName" placeholder="请输入学生姓名" />
+        <el-form-item label="学生姓名" prop="nickName">
+          <el-input v-model="form.nickName" placeholder="请输入学生姓名" />
         </el-form-item>
         <el-form-item label="床位" prop="bedNo">
           <el-input v-model="form.bedNo" placeholder="请输入床位" />
@@ -121,9 +139,7 @@
         <el-button @click="cancel">取 消</el-button>
       </div>
     </el-dialog>
-    :showClose="false"
-    <el-dialog :title="title" :visible.sync="changeopen" width="500px" append-to-body  
-    :showClose="false">
+    <el-dialog :title="title" :visible.sync="changeopen" width="500px" append-to-body>
       <el-form ref="changeform" :model="changeform" :rules="rules" label-width="80px">
         <el-form-item label="楼栋号" prop="buildingNo">
           <el-input v-model="changeform.buildingNo" placeholder="请输入楼栋号" />
@@ -201,18 +217,50 @@
       </div>
     </el-dialog>
 
+    <!-- 学生宿舍信息导入对话框 -->
+    <el-dialog :title="upload.title" :visible.sync="upload.open" width="400px" append-to-body>
+      <el-upload
+        ref="upload"
+        :limit="1"
+        accept=".xlsx, .xls"
+        :headers="upload.headers"
+        :action="upload.url + '?updateSupport=' + upload.updateSupport"
+        :disabled="upload.isUploading"
+        :on-progress="handleFileUploadProgress"
+        :on-success="handleFileSuccess"
+        :auto-upload="false"
+        drag
+      >
+        <i class="el-icon-upload"></i>
+        <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
+        <div class="el-upload__tip text-center" slot="tip">
+          <div class="el-upload__tip" slot="tip">
+            <el-checkbox v-model="upload.updateSupport" /> 是否更新已经存在的学生宿舍数据
+          </div>
+          <span>仅允许导入xls、xlsx格式文件。</span>
+          <el-link type="primary" :underline="false" style="font-size:12px;vertical-align: baseline;" @click="importTemplate">下载模板</el-link>
+        </div>
+      </el-upload>
+      <div slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="submitFileForm">确 定</el-button>
+        <el-button @click="upload.open = false">取 消</el-button>
+      </div>
+    </el-dialog>
+
 
   </div>
 </template>
 
 <script>
 import { listUser, getUser, delUser, addUser, updateUser, getRoot, getRolesDeptId } from "@/api/apartment/user";
+import { getToken } from "@/utils/auth";
 
 export default {
   name: "User",
-  dicts: ['fzu_dorm_status', 'fzu_school_roll', 'fzu_school_area', 'fzu_fees_status', 'fzu_fees_category' ],
+  dicts: ['fzu_dorm_status', 'fzu_school_roll', 'fzu_school_area', 'fzu_fees_status', 'fzu_fees_category','sys_user_sex'],
   data() {
     return {
+      changeopen:false,
       schoolrollOpt: [],
       feesstatusOpt: [],
       feescategoryOpt: [],
@@ -237,6 +285,21 @@ export default {
       title: "",
       // 是否显示弹出层
       open: false,
+      // 学生宿舍信息导入参数
+      upload: {
+        // 是否显示弹出层（宿舍导入）
+        open: false,
+        // 弹出层标题（宿舍导入）
+        title: "",
+        // 是否禁用上传
+        isUploading: false,
+        // 是否更新已经存在的宿舍数据
+        updateSupport: 0,
+        // 设置上传的请求头部
+        headers: { Authorization: "Bearer " + getToken() },
+        // 上传的地址
+        url: process.env.VUE_APP_BASE_API + "/apartment/user/importData"
+      },
       // 查询参数
       queryParams: {
         pageNum: 1,
@@ -267,8 +330,17 @@ export default {
         userName: [
           { required: true, message: "用户账号不能为空", trigger: "blur" }
         ],
+        buildingNo: [
+          { required: true, message: "楼栋号不能为空", trigger: "blur" }
+        ],
+        roomNo: [
+          { required: true, message: "房间号不能为空", trigger: "blur" }
+        ],
         nickName: [
-          { required: true, message: "用户昵称不能为空", trigger: "blur" }
+          { required: true, message: "学生姓名不能为空", trigger: "blur" }
+        ],
+        bedNo: [
+          { required: true, message: "床位不能为空", trigger: "blur" }
         ],
       }
     };
@@ -481,6 +553,32 @@ export default {
       this.download('apartment/user/export', {
         ...this.queryParams
       }, `user_${new Date().getTime()}.xlsx`)
+    },
+    /** 导入按钮操作 */
+    handleImport() {
+      this.upload.title = "学生宿舍信息导入";
+      this.upload.open = true;
+    },
+    /** 下载模板操作 */
+    importTemplate() {
+      this.download('apartment/user/importTemplate', {
+      }, `stuDormitory_template_${new Date().getTime()}.xlsx`)
+    },
+    // 文件上传中处理
+    handleFileUploadProgress(event, file, fileList) {
+      this.upload.isUploading = true;
+    },
+    // 文件上传成功处理
+    handleFileSuccess(response, file, fileList) {
+      this.upload.open = false;
+      this.upload.isUploading = false;
+      this.$refs.upload.clearFiles();
+      this.$alert("<div style='overflow: auto;overflow-x: hidden;max-height: 70vh;padding: 10px 20px 0;'>" + response.msg + "</div>", "导入结果", { dangerouslyUseHTMLString: true });
+      this.getList();
+    },
+    // 提交上传文件
+    submitFileForm() {
+      this.$refs.upload.submit();
     }
   }
 };

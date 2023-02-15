@@ -118,7 +118,7 @@
           v-hasPermi="['apartment:cancel:remove']"
         >删除</el-button>
       </el-col>
-      <el-col :span="1.5">
+      <!-- <el-col :span="1.5">
         <el-button
           type="warning"
           plain
@@ -127,7 +127,7 @@
           @click="handleExport"
           v-hasPermi="['apartment:cancel:export']"
         >导出</el-button>
-      </el-col>
+      </el-col> -->
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
@@ -140,7 +140,7 @@
       <el-table-column label="辅导员" align="center" prop="fdyName" />
       <el-table-column label="辅导员意见" align="center" prop="fdyOpinion">
         <template slot-scope="scope">
-          <dict-tag :options="dict.type.opinion" :value="scope.row.fdyOpinion"/>
+          <dict-tag :options="dict.type.fzu_approval_opinion" :value="scope.row.fdyOpinion"/>
         </template>
       </el-table-column>
 <!--      <el-table-column label="学工处ID" align="center" prop="xgcId" />-->
@@ -159,7 +159,7 @@
       </el-table-column>
       <el-table-column label="审批状态" align="center" prop="cancelStatus">
       <template slot-scope="scope">
-        <dict-tag :options="dict.type.fzu_approval_status" :value="scope.row.approvalStatus"/>
+        <dict-tag :options="dict.type.fzu_approval_status" :value="scope.row.cancelStatus"/>
       </template>
       </el-table-column>
       <el-table-column label="宿舍ID" align="center" prop="dormId" />
@@ -286,7 +286,7 @@ import { getUser } from '@/api/system/user'
 
 export default {
   name: "Cancel",
-  dicts: ['opinion', 'fzu_approval_opinion'],
+  dicts: ['opinion', 'fzu_approval_opinion','fzu_approval_status'],
   data() {
     return {
       //学生特殊宿舍申请表填写权限
@@ -563,13 +563,13 @@ export default {
       }
       if(this.form.fdyOpinion == 1 && this.form.xgcOpinion == 1 && this.form.manageOpinion == 1){
         //审批通过
-        this.form.approvalStatus = 1;
+        this.form.cancelStatus = 1;
       }else if(this.form.fdyOpinion == 2 || this.form.xgcOpinion == 2 || this.form.manageOpinion == 2){
         //审批不通过
-        this.form.approvalStatus = 2;
+        this.form.cancelStatus = 2;
       }else {
         //审批中
-        this.form.approvalStatus = 3;
+        this.form.cancelStatus = 3;
       }
       this.$refs["form"].validate(valid => {
         if (valid) {
