@@ -4,23 +4,23 @@
       <el-form-item label="楼栋号" prop="buildingNo">
         <el-input v-model="queryParams.buildingNo" placeholder="请输入楼栋号" clearable @keyup.enter.native="handleQuery" />
       </el-form-item>
-      <el-form-item label="房间号" prop="roomno">
-        <el-input v-model="queryParams.roomno" placeholder="请输入房间号" clearable @keyup.enter.native="handleQuery" />
+      <el-form-item label="房间号" prop="roomNo">
+        <el-input v-model="queryParams.roomNo" placeholder="请输入房间号" clearable @keyup.enter.native="handleQuery" />
       </el-form-item>
-      <el-form-item label="学号" prop="username">
-        <el-input v-model="queryParams.username" placeholder="请输入学号" clearable @keyup.enter.native="handleQuery" />
+      <el-form-item label="学号" prop="userName">
+        <el-input v-model="queryParams.userName" placeholder="请输入学号" clearable @keyup.enter.native="handleQuery" />
       </el-form-item>
-      <el-form-item label="学生姓名" prop="nicename">
-        <el-input v-model="queryParams.nicename" placeholder="请输入学生姓名" clearable @keyup.enter.native="handleQuery" />
+      <el-form-item label="学生姓名" prop="niceName">
+        <el-input v-model="queryParams.niceName" placeholder="请输入学生姓名" clearable @keyup.enter.native="handleQuery" />
       </el-form-item>
-      <el-form-item label="床位" prop="bedno">
-        <el-input v-model="queryParams.bedno" placeholder="请输入床位" clearable @keyup.enter.native="handleQuery" />
+      <el-form-item label="床位" prop="bedNo">
+        <el-input v-model="queryParams.bedNo" placeholder="请输入床位" clearable @keyup.enter.native="handleQuery" />
       </el-form-item>
-      <el-form-item label="学院" prop="deptid">
-        <el-input v-model="queryParams.deptid" placeholder="请输入学院" clearable @keyup.enter.native="handleQuery" />
+      <el-form-item label="学院" prop="deptId">
+        <el-input v-model="queryParams.deptId" placeholder="请输入学院" clearable @keyup.enter.native="handleQuery" />
       </el-form-item>
-      <el-form-item label="缴费情况" prop="feescategory">
-        <el-input v-model="queryParams.feescategory" placeholder="请输入缴费情况" clearable
+      <el-form-item label="缴费情况" prop="feesCategory">
+        <el-input v-model="queryParams.feesCategory" placeholder="请输入缴费情况" clearable
           @keyup.enter.native="handleQuery" />
       </el-form-item>
       <el-form-item>
@@ -31,15 +31,15 @@
 
     <el-row :gutter="10" class="mb8">
       <el-col :span="1.5">
-        <el-button type="primary" plain icon="el-icon-plus" size="mini" @click="handleAdd" 
+        <el-button type="primary" plain icon="el-icon-plus" size="mini" @click="handleAdd" :disabled="addoption"
           v-hasPermi="['apartment:user:add']">新增</el-button>
       </el-col>
       <el-col :span="1.5">
-        <el-button type="success" plain icon="el-icon-edit" size="mini" :disabled="single" @click="handleUpdate"
+        <el-button type="success" plain icon="el-icon-edit" size="mini" :disabled="single || addoption" @click="handleUpdate" 
           v-hasPermi="['apartment:user:edit']">修改</el-button>
       </el-col>
       <el-col :span="1.5">
-        <el-button type="danger" plain icon="el-icon-delete" size="mini" :disabled="multiple" @click="handleDelete"
+        <el-button type="danger" plain icon="el-icon-delete" size="mini" :disabled="multiple || addoption" @click="handleDelete"
           v-hasPermi="['apartment:user:remove']">删除</el-button>
       </el-col>
       <el-col :span="1.5">
@@ -60,15 +60,15 @@
       <el-table-column label="学院" align="center" prop="deptId">
       </el-table-column>
       <el-table-column label="省份" align="center" prop="province" />
-      <el-table-column label="学生电话" align="center" prop="province" />
-      <el-table-column label="缴费情况" align="center" prop="feesCategory" >
-        <template slot-scope="scope">
-          <dict-tag :options="dict.type.fzu_fees_category" :value="scope.row.feesCategory" />
-        </template>
-      </el-table-column>
-      <el-table-column label="缴费类型" align="center" prop="feesStatus" >
+      <el-table-column label="学生电话" align="center" prop="stuPhone" />
+      <el-table-column label="缴费情况" align="center" prop="feesStatus" >
         <template slot-scope="scope">
           <dict-tag :options="dict.type.fzu_fees_status" :value="scope.row.feesStatus" />
+        </template>
+      </el-table-column>
+      <el-table-column label="缴费类型" align="center" prop="feesCategory" >
+        <template slot-scope="scope">
+          <dict-tag :options="dict.type.fzu_fees_category" :value="scope.row.feesCategory" />
         </template>
       </el-table-column>
       <el-table-column label="宿舍使用情况" align="center" prop="dormStatus">
@@ -86,9 +86,9 @@
       <el-table-column label="校区" align="center" prop="schoolArea" />
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
-          <el-button size="mini" type="text" icon="el-icon-edit" @click="handleUpdate(scope.row)"
+          <el-button size="mini" type="text" icon="el-icon-edit" @click="handleUpdate(scope.row)" :disabled="addoption"
             v-hasPermi="['apartment:user:edit']">修改</el-button>
-          <el-button size="mini" type="text" icon="el-icon-delete" @click="handleDelete(scope.row)"
+          <el-button size="mini" type="text" icon="el-icon-delete" @click="handleDelete(scope.row)" :disabled="addoption"
             v-hasPermi="['apartment:user:remove']">删除</el-button>
         </template>
       </el-table-column>
@@ -106,38 +106,50 @@
         <el-form-item label="房间号" prop="roomNo">
           <el-input v-model="form.roomNo" placeholder="请输入房间号" />
         </el-form-item>
-        <el-form-item label="学号" prop="nicenNme">
-          <el-input v-model="form.niceName" placeholder="请输入学号" />
+        <el-form-item label="学号" prop="userName">
+          <el-input v-model="form.userName" placeholder="请输入学号" />
         </el-form-item>
-        <el-form-item label="学生姓名" prop="userName">
-          <el-input v-model="form.userName" placeholder="请输入学生姓名" />
-        </el-form-item>
-        <el-form-item label="性别" prop="sex">
-          <el-input v-model="form.sex" placeholder="请输入性别" />
+        <el-form-item label="学生姓名" prop="nicenName">
+          <el-input v-model="form.nicenName" placeholder="请输入学生姓名" />
         </el-form-item>
         <el-form-item label="床位" prop="bedNo">
           <el-input v-model="form.bedNo" placeholder="请输入床位" />
         </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="submitForm">确 定</el-button>
+        <el-button @click="cancel">取 消</el-button>
+      </div>
+    </el-dialog>
+
+    <el-dialog :title="title" :visible.sync="changeopen" width="500px" append-to-body>
+      <el-form ref="changeform" :model="changeform" :rules="rules" label-width="80px">
+        <el-form-item label="楼栋号" prop="buildingNo">
+          <el-input v-model="changeform.buildingNo" placeholder="请输入楼栋号" />
+        </el-form-item>
+        <el-form-item label="房间号" prop="roomNo">
+          <el-input v-model="changeform.roomNo" placeholder="请输入房间号" />
+        </el-form-item>
+        <el-form-item label="学号" prop="userName">
+          <el-input v-model="changeform.userName" placeholder="请输入学号" />
+        </el-form-item>
+        <el-form-item label="学生姓名" prop="niceName">
+          <el-input v-model="changeform.niceName" placeholder="请输入学生姓名" />
+        </el-form-item>
+        <el-form-item label="床位" prop="bedNo">
+          <el-input v-model="changeform.bedNo" placeholder="请输入床位" />
+        </el-form-item>
         <el-form-item label="学院" prop="deptId">
-          <el-input v-model="form.deptId" placeholder="请输入学院" />
+          <el-input v-model="changeform.deptId" placeholder="请输入校区" />
         </el-form-item>
         <el-form-item label="省份" prop="province">
-          <el-input v-model="form.province" placeholder="请输入省份" />
+          <el-input v-model="changeform.province" placeholder="请输入校区" />
         </el-form-item>
         <el-form-item label="学生电话" prop="stuPhone">
-          <el-input v-model="form.stuPhone" placeholder="请输入学生电话" />
+          <el-input v-model="changeform.stuPhone" placeholder="请输入校区" />
         </el-form-item>
-        <el-form-item label="缴费情况">
-          <el-radio-group v-model="form.feesStatus">
-            <el-radio
-              v-for="dict in dict.type.fzu_fees_status"
-              :key="dict.value"
-              :label="dict.value"
-            >{{dict.label}}</el-radio>
-          </el-radio-group>
-        </el-form-item>
-        <el-form-item label="缴费类型">
-          <el-radio-group v-model="form.feesCategory">
+        <el-form-item label="缴费类别" prop="feesCategory">
+          <el-radio-group v-model="changeform.feesCategory">
             <el-radio
               v-for="dict in dict.type.fzu_fees_category"
               :key="dict.value"
@@ -145,8 +157,17 @@
             >{{dict.label}}</el-radio>
           </el-radio-group>
         </el-form-item>
+        <el-form-item label="缴费情况" prop="feesStatus">
+          <el-radio-group v-model="changeform.feesStatus">
+            <el-radio
+              v-for="dict in dict.type.fzu_fees_status"
+              :key="dict.value"
+              :label="dict.value"
+            >{{dict.label}}</el-radio>
+          </el-radio-group>
+        </el-form-item>
         <el-form-item label="宿舍使用情况" prop="dormStatus">
-          <el-radio-group v-model="form.dormStatus">
+          <el-radio-group v-model="changeform.dormStatus">
             <el-radio
               v-for="dict in dict.type.fzu_dorm_status"
               :key="dict.value"
@@ -155,32 +176,31 @@
           </el-radio-group>
         </el-form-item>
         <el-form-item label="单位联系人" prop="contactPerson">
-          <el-input v-model="form.contactPerson" placeholder="请输入单位联系人" />
+          <el-input v-model="changeform.contactPerson" placeholder="请输入校区" />
         </el-form-item>
         <el-form-item label="单位联系人电话" prop="contactPhone">
-          <el-input v-model="form.contactPhone" placeholder="请输入单位联系人电话" />
+          <el-input v-model="changeform.contactPhone" placeholder="请输入校区" />
         </el-form-item>
         <el-form-item label="学籍状态" prop="schoolRoll">
-          <el-radio-group v-model="form.schoolRoll">
+          <el-radio-group v-model="changeform.schoolRoll">
             <el-radio
               v-for="dict in dict.type.fzu_school_roll"
               :key="dict.value"
               :label="dict.value"
             >{{dict.label}}</el-radio>
-          </el-radio-group> 
+          </el-radio-group>
         </el-form-item>
-        <!-- <el-form-item label="学籍状态" prop="schoolRoll">
-          <el-input v-model="form.schoolRoll" placeholder="请输入学籍状态" />
-        </el-form-item> -->
         <el-form-item label="校区" prop="schoolArea">
-          <el-input v-model="form.schoolArea" placeholder="请输入校区" />
+          <el-input v-model="changeform.schoolArea" placeholder="请输入校区" />
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="submitForm">确 定</el-button>
-        <el-button @click="cancel">取 消</el-button>
+        <el-button type="primary" @click="changesubmitForm">确 定</el-button>
+        <el-button @click="changecancel">取 消</el-button>
       </div>
     </el-dialog>
+
+
   </div>
 </template>
 
@@ -238,6 +258,7 @@ export default {
       },
       // 表单参数
       form: {},
+      changeform: {},
       checkCode: 0, 
       rolesDeptId: 0,
       // 表单校验
@@ -281,35 +302,50 @@ export default {
         this.total = response.total;
         this.loading = false;
         var userName = this.$store.state.user.roles[0];
+        console.log(this.$store.state.user);
         var userdeptid = this.$store.state.user.deptid
-        console.log(this.$store.state.user.deptid);
-        console.log("-----------------");
-        console.log(userdeptid);
-        if (userName == 'admin' || userName == 'xgc') {
-          console.log('success');
-          this.userList = this.temp;
-        } 
+        // if (userName == 'admin' || userName == 'xgc') {
+        //   console.log('success');
+        //   this.userList = this.temp;
+        // } 
         if (userName == 'fdy') {
           for (var i = 0; i < this.temp.length; i++) {
-            console.log("++++++++++++++++++++++++++++++++++++++++++++++++");
-            console.log(this.temp[i]);
             if (this.temp[i].deptId == userdeptid) {
               this.userList.push(this.temp[i]);
             }
           }
         }
+        if (userName == 'student') {
+          for (var i = 0; i < this.temp.length; i++) {
+            var cnt = 0
+            if (this.temp[i].userName == this.$store.state.user.name) {
+              this.userList.push(this.temp[i]);
+              cnt++
+            }
+          }
+          this.total = cnt
+        }
+        if (userName == 'admin' || userName == 'xgc') {
+          this.userList = this.temp
+        }
       });
     },
     rootCheck() {
       this.loading = true;
-      getRoot().then(response => {
+      var userrole = this.$store.state.user.roles[0];
+      if (userrole != 'student') {
+        getRoot().then(response => {
         this.checkCode = response
         console.log(this.checkCode);
-        if (this.checkCode == 1) {
+        if (this.checkCode == 0) {
           this.addoption = true;
           console.log(this.addoption);
-        }
+        } 
       });
+      } else if (userrole == 'student') {
+
+      }
+      
     },
     getrolesdeptid(){
       getRolesDeptId(this.$store.state.user.roles[0]).then(response => {
@@ -373,8 +409,8 @@ export default {
       this.reset();
       const userId = row.userId || this.ids
       getUser(userId).then(response => {
-        this.form = response.data;
-        this.open = true;
+        this.changeform = response.data;
+        this.changeopen = true;
         this.title = "修改宿舍信息管理";
       });
     },
@@ -399,6 +435,32 @@ export default {
         }
       });
     },
+
+    changesubmitForm() {
+      this.$refs["changeform"].validate(valid => {
+        console.log(this.changeform);
+        if (valid) {
+          if (this.changeform.userId != null) {
+            updateUser(this.changeform).then(response => {
+              this.$modal.msgSuccess("修改成功");
+              this.changeopen = false;
+              this.getList();
+            });
+          } else {
+            addUser(this.changeform).then(response => {
+              this.$modal.msgSuccess("新增成功");
+              this.changeopen = false;
+              this.getList();
+            });
+          }
+        }
+      });
+    },
+    changecancel() {
+      this.changeopen = false;
+      this.reset();
+    },
+
     /** 删除按钮操作 */
     handleDelete(row) {
       const userIds = row.userId || this.ids;
