@@ -121,8 +121,9 @@
         <el-button @click="cancel">取 消</el-button>
       </div>
     </el-dialog>
-
-    <el-dialog :title="title" :visible.sync="changeopen" width="500px" append-to-body>
+    :showClose="false"
+    <el-dialog :title="title" :visible.sync="changeopen" width="500px" append-to-body  
+    :showClose="false">
       <el-form ref="changeform" :model="changeform" :rules="rules" label-width="80px">
         <el-form-item label="楼栋号" prop="buildingNo">
           <el-input v-model="changeform.buildingNo" placeholder="请输入楼栋号" />
@@ -294,6 +295,9 @@ export default {
     schoolroolFormat(row) {
       return this.selectDictLabel(this.schoolrollOpt, row.type)
     },
+    handleclose(){
+     this.changeopen = false
+    },
     /** 查询用户信息列表 */
     getList() {
       this.loading = true;
@@ -328,7 +332,7 @@ export default {
           }
           this.total = cnt
         }
-        if (userName == 'admin' || userName == 'xgc') {
+        if (userName == 'admin' || userName == 'xgc' || userName == 'manage') {
           this.userList = this.temp
         }
       });
@@ -336,7 +340,7 @@ export default {
     rootCheck() {
       this.loading = true;
       var userrole = this.$store.state.user.roles[0];
-      if (userrole != 'student') {
+      if (userrole == 'fdy' || userrole == 'xgc') {
         getRoot().then(response => {
         this.checkCode = response
         console.log(this.checkCode);
@@ -345,9 +349,7 @@ export default {
           console.log(this.addoption);
         } 
       });
-      } else if (userrole == 'student') {
-
-      }
+      } 
       
     },
     getrolesdeptid(){
