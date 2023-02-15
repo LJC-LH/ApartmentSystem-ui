@@ -1,14 +1,14 @@
 <template>
   <div class="app-container">
     <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch" label-width="68px">
-      <el-form-item label="学生ID" prop="studentId">
-        <el-input
-          v-model="queryParams.studentId"
-          placeholder="请输入学生ID"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
+<!--      <el-form-item label="学生ID" prop="studentId">-->
+<!--        <el-input-->
+<!--          v-model="queryParams.studentId"-->
+<!--          placeholder="请输入学生ID"-->
+<!--          clearable-->
+<!--          @keyup.enter.native="handleQuery"-->
+<!--        />-->
+<!--      </el-form-item>-->
       <el-form-item label="学生姓名" prop="studentName">
         <el-input
           v-model="queryParams.studentName"
@@ -71,10 +71,10 @@
 <!--          />-->
 <!--        </el-select>-->
 <!--      </el-form-item>-->
-      <el-form-item label="公寓ID" prop="dormId">
+      <el-form-item label="宿舍ID" prop="dormId">
         <el-input
           v-model="queryParams.dormId"
-          placeholder="请输入公寓ID"
+          placeholder="请输入宿舍ID"
           clearable
           @keyup.enter.native="handleQuery"
         />
@@ -147,18 +147,22 @@
       <el-table-column label="学工处" align="center" prop="xgcName" />
       <el-table-column label="学工处意见" align="center" prop="xgcOpinion">
         <template slot-scope="scope">
-          <dict-tag :options="dict.type.opinion" :value="scope.row.xgcOpinion"/>
+          <dict-tag :options="dict.type.fzu_approval_opinion" :value="scope.row.xgcOpinion"/>
         </template>
       </el-table-column>
 <!--      <el-table-column label="校区管理办公室ID" align="center" prop="manageId" />-->
       <el-table-column label="校区管理办公室" align="center" prop="manageName" />
       <el-table-column label="校区管理办公室意见" align="center" prop="manageOpinion">
         <template slot-scope="scope">
-          <dict-tag :options="dict.type.fzu_approval_category" :value="scope.row.manageOpinion"/>
+          <dict-tag :options="dict.type.fzu_approval_opinion" :value="scope.row.manageOpinion"/>
         </template>
       </el-table-column>
-      <el-table-column label="审批状态" align="center" prop="cancelStatus" />
-      <el-table-column label="公寓ID" align="center" prop="dormId" />
+      <el-table-column label="审批状态" align="center" prop="cancelStatus">
+      <template slot-scope="scope">
+        <dict-tag :options="dict.type.fzu_approval_status" :value="scope.row.approvalStatus"/>
+      </template>
+      </el-table-column>
+      <el-table-column label="宿舍ID" align="center" prop="dormId" />
       <el-table-column label="备注" align="center" prop="remark" />
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
@@ -187,57 +191,80 @@
       :limit.sync="queryParams.pageSize"
       @pagination="getList"
     />
-
     <!-- 添加或修改特殊退宿申请对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
         <el-form-item label="学生ID" prop="studentId">
-          <el-input v-model="form.studentId" placeholder="请输入学生ID" />
+          <el-input v-model="form.studentId" placeholder="请输入学生ID" :disabled="true" />
         </el-form-item>
         <el-form-item label="学生姓名" prop="studentName">
-          <el-input v-model="form.studentName" placeholder="请输入学生姓名" />
+          <el-input v-model="form.studentName" placeholder="请输入学生姓名" :disabled="true" />
         </el-form-item>
-        <el-form-item label="辅导员ID" prop="fdyId">
-          <el-input v-model="form.fdyId" placeholder="请输入辅导员ID" />
+        <el-form-item label="辅导员" prop="fdyId">
+<!--          <el-input v-model="form.fdyId" placeholder="请输入辅导员ID" />-->
+          <el-select v-model="form.fdyId" placeholder="请选择辅导员" :disabled=!stuOption>
+            <el-option
+              v-for="item in fdyList"
+              :key="item.userId"
+              :label="item.nickName"
+              :value="item.userId">
+            </el-option>
+          </el-select>
         </el-form-item>
         <el-form-item label="辅导员意见" prop="fdyOpinion">
-          <el-select v-model="form.fdyOpinion" placeholder="请选择辅导员意见">
+          <el-select v-model="form.fdyOpinion" placeholder="请选择辅导员意见" :disabled=!fdyOption>
             <el-option
-              v-for="dict in dict.type.opinion"
+              v-for="dict in dict.type.fzu_approval_opinion"
               :key="dict.value"
               :label="dict.label"
               :value="dict.value"
             ></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="学工处ID" prop="xgcId">
-          <el-input v-model="form.xgcId" placeholder="请输入学工处ID" />
+        <el-form-item label="学工处" prop="xgcId">
+<!--          <el-input v-model="form.xgcId" placeholder="请输入学工处ID" />-->
+          <el-select v-model="form.xgcId" placeholder="请选择学工处" :disabled=!stuOption>
+            <el-option
+              v-for="item in xgcList"
+              :key="item.userId"
+              :label="item.nickName"
+              :value="item.userId">
+            </el-option>
+          </el-select>
         </el-form-item>
         <el-form-item label="学工处意见" prop="xgcOpinion">
-          <el-select v-model="form.xgcOpinion" placeholder="请选择学工处意见">
+          <el-select v-model="form.xgcOpinion" placeholder="请选择学工处意见" :disabled=!xgcOption>
             <el-option
-              v-for="dict in dict.type.opinion"
+              v-for="dict in dict.type.fzu_approval_opinion"
               :key="dict.value"
               :label="dict.label"
               :value="dict.value"
             ></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="校区管理办公室ID" prop="manageId">
-          <el-input v-model="form.manageId" placeholder="请输入校区管理办公室ID" />
+        <el-form-item label="校区管理办公室负责人" prop="manageId">
+<!--          <el-input v-model="form.manageId" placeholder="请输入校区管理办公室ID" />-->
+          <el-select v-model="form.manageId" placeholder="请选择校区" :disabled=!stuOption>
+            <el-option
+              v-for="item in xqglList"
+              :key="item.userId"
+              :label="item.nickName"
+              :value="item.userId">
+            </el-option>
+          </el-select>
         </el-form-item>
         <el-form-item label="校区管理办公室意见" prop="manageOpinion">
-          <el-select v-model="form.manageOpinion" placeholder="请选择校区管理办公室意见">
+          <el-select v-model="form.manageOpinion" placeholder="请选择校区管理办公室意见" :disabled=!manageOption>
             <el-option
-              v-for="dict in dict.type.fzu_approval_category"
+              v-for="dict in dict.type.fzu_approval_opinion"
               :key="dict.value"
               :label="dict.label"
               :value="dict.value"
             ></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="公寓ID" prop="dormId">
-          <el-input v-model="form.dormId" placeholder="请输入公寓ID" />
+        <el-form-item label="宿舍ID" prop="dormId">
+          <el-input v-model="form.dormId" placeholder="请输入宿舍ID" />
         </el-form-item>
         <el-form-item label="备注" prop="remark">
           <el-input v-model="form.remark" placeholder="请输入备注" />
@@ -253,12 +280,25 @@
 
 <script>
 import { listCancel, getCancel, delCancel, addCancel, updateCancel } from "@/api/apartment/cancel";
+import { getInfo } from '@/api/login'
+import { selectUserListByRoleId } from '@/api/apartment/approval'
+import { getUser } from '@/api/system/user'
 
 export default {
   name: "Cancel",
-  dicts: ['opinion', 'fzu_approval_category'],
+  dicts: ['opinion', 'fzu_approval_opinion'],
   data() {
     return {
+      //学生特殊宿舍申请表填写权限
+      stuOption:true,
+      //辅导员特殊宿舍申请表填写权限
+      fdyOption:true,
+      //学工处特殊宿舍申请表填写权限
+      xgcOption:true,
+      //校区管理办公室特殊宿舍申请表填写权限
+      manageOption:true,
+      //物业特殊宿舍申请表填写权限
+      wyglOption:true,
       // 遮罩层
       loading: true,
       // 选中数组
@@ -296,20 +336,133 @@ export default {
       form: {},
       // 表单校验
       rules: {
-      }
+        fdyId: [
+          { required: true, message: "辅导员不能为空", trigger: "blur" }
+        ],
+        xgcId: [
+          { required: true, message: "学工处不能为空", trigger: "blur" }
+        ],
+        manageId: [
+          { required: true, message: "校区管理办公室不能为空", trigger: "blur" }
+        ],
+        dormId: [
+          { required: true, message: "宿舍Id不能为空", trigger: "blur" }
+        ],
+      },
+      user:undefined,
+      roleParams:{
+        fdyRoleId:null,
+        xgcRoleId:null,
+        xqglRoleId:null,
+        deptId:null
+      },
+      fdyList:null,
+      xgcList:null,
+      xqglList:null,
+      wyglList:null
     };
   },
   created() {
-    this.getList();
+    getInfo().then(response => {
+      this.user = response.user;
+      var roleId = this.user.roles[0].roleId;
+      this.getList();
+      if (roleId == '1') {
+        //学生特殊宿舍申请表填写权限
+        this.stuOption = true
+        //辅导员特殊宿舍申请表填写权限
+        this.fdyOption = true
+        //学工处特殊宿舍申请表填写权限
+        this.xgcOption = true
+        //校区管理办公室特殊宿舍申请表填写权限
+        this.manageOption = true
+        //物业特殊宿舍申请表填写权限
+        this.wyglOption = true
+      } else if (roleId == '2') {
+        //学生特殊宿舍申请表填写权限
+        this.stuOption = true
+        //辅导员特殊宿舍申请表填写权限
+        this.fdyOption = false
+        //学工处特殊宿舍申请表填写权限
+        this.xgcOption = false
+        //校区管理办公室特殊宿舍申请表填写权限
+        this.manageOption = false
+        //物业特殊宿舍申请表填写权限
+        this.wyglOption = false
+      } else if (roleId == '100') {
+        //学生特殊宿舍申请表填写权限
+        this.stuOption = false
+        //辅导员特殊宿舍申请表填写权限
+        this.fdyOption = true
+        //学工处特殊宿舍申请表填写权限
+        this.xgcOption = false
+        //校区管理办公室特殊宿舍申请表填写权限
+        this.manageOption = false
+        //物业特殊宿舍申请表填写权限
+        this.wyglOption = false
+      } else if (roleId == '101') {
+        //学生特殊宿舍申请表填写权限
+        this.stuOption = false
+        //辅导员特殊宿舍申请表填写权限
+        this.fdyOption = false
+        //学工处特殊宿舍申请表填写权限
+        this.xgcOption = true
+        //校区管理办公室特殊宿舍申请表填写权限
+        this.manageOption = false
+        //物业特殊宿舍申请表填写权限
+        this.wyglOption = false
+      } else if (roleId == '102') {
+        //学生特殊宿舍申请表填写权限
+        this.stuOption = false
+        //辅导员特殊宿舍申请表填写权限
+        this.fdyOption = false
+        //学工处特殊宿舍申请表填写权限
+        this.xgcOption = false
+        //校区管理办公室特殊宿舍申请表填写权限
+        this.manageOption = true
+        //物业特殊宿舍申请表填写权限
+        this.wyglOption = false
+      } else if (roleId == '103') {
+        //学生特殊宿舍申请表填写权限
+        this.stuOption = false
+        //辅导员特殊宿舍申请表填写权限
+        this.fdyOption = false
+        //学工处特殊宿舍申请表填写权限
+        this.xgcOption = false
+        //校区管理办公室特殊宿舍申请表填写权限
+        this.manageOption = false
+        //物业特殊宿舍申请表填写权限
+        this.wyglOption = true
+      }
+    })
   },
   methods: {
     /** 查询特殊退宿申请列表 */
     getList() {
+      const roleKey = this.$store.getters.roles[0]
+      if(roleKey == 'student'){
+        // console.log(this.$store.getters);
+        this.queryParams.studentId = this.user.userId;
+      }else if(roleKey =='fdy'){
+        this.queryParams.fdyId = this.user.userId;
+      }else if(roleKey =='xgc'){
+        this.queryParams.xgcId = this.user.userId;
+        this.queryParams.fdyOpinion = 1;
+      }else if(roleKey =='manage'){
+        this.queryParams.manageId = this.user.userId;
+        this.queryParams.fdyOpinion = 1;
+        this.queryParams.xgcOpinion = 1;
+      }else if(roleKey =='wygl'){
+        this.queryParams.fdyOpinion = 1;
+        this.queryParams.xgcOpinion = 1;
+        this.queryParams.manageOpinion = 1;
+      }
       this.loading = true;
       listCancel(this.queryParams).then(response => {
         this.cancelList = response.rows;
         this.total = response.total;
         this.loading = false;
+        console.log(response)
       });
     },
     // 取消按钮
@@ -354,6 +507,29 @@ export default {
     /** 新增按钮操作 */
     handleAdd() {
       this.reset();
+      const roleKey = this.$store.getters.roles[0]
+      if(roleKey == 'student'){
+        this.roleParams.fdyRoleId = 100;
+        this.roleParams.xgcRoleId = 101;
+        this.roleParams.xqglRoleId = 102;
+        this.roleParams.deptId = this.user.deptId;
+        selectUserListByRoleId(this.roleParams).then(response => {
+          console.log(response.rows)
+          this.fdyList = response.rows[0]
+          this.xgcList = response.rows[1]
+          this.xqglList = response.rows[2]
+        })
+      }else if(roleKey =='fdy'){
+
+      }else if(roleKey =='xgc'){
+
+      }else if(roleKey =='manage'){
+
+      }else if(roleKey =='wygl'){
+
+      }
+      this.form.studentId = this.user.userId;
+      this.form.studentName = this.user.nickName;
       this.open = true;
       this.title = "添加特殊退宿申请";
     },
@@ -363,12 +539,38 @@ export default {
       const cancelId = row.cancelId || this.ids
       getCancel(cancelId).then(response => {
         this.form = response.data;
+        const roleKey = this.$store.getters.roles[0]
+        this.roleParams.fdyRoleId = 100;
+        this.roleParams.xgcRoleId = 101;
+        this.roleParams.xqglRoleId = 102;
+        getUser(this.form.studentId).then(response =>{
+          this.roleParams.deptId = response.data.deptId
+        })
+        selectUserListByRoleId(this.roleParams).then(response => {
+          this.fdyList = response.rows[0]
+          this.xgcList = response.rows[1]
+          this.xqglList = response.rows[2]
+        })
         this.open = true;
         this.title = "修改特殊退宿申请";
       });
     },
     /** 提交按钮 */
     submitForm() {
+      if (new Date(this.form.endTime).getTime() < new Date(this.form.startTime).getTime()) {
+        this.$message.error("起始日期要早于终止日期");
+        return false;
+      }
+      if(this.form.fdyOpinion == 1 && this.form.xgcOpinion == 1 && this.form.manageOpinion == 1){
+        //审批通过
+        this.form.approvalStatus = 1;
+      }else if(this.form.fdyOpinion == 2 || this.form.xgcOpinion == 2 || this.form.manageOpinion == 2){
+        //审批不通过
+        this.form.approvalStatus = 2;
+      }else {
+        //审批中
+        this.form.approvalStatus = 3;
+      }
       this.$refs["form"].validate(valid => {
         if (valid) {
           if (this.form.cancelId != null) {

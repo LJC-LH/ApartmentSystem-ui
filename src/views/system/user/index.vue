@@ -346,7 +346,7 @@
               </el-select>
             </el-form-item>
           </el-col>
-        </el-row>  
+        </el-row>
 
         <el-row>
           <el-col :span="12">
@@ -720,6 +720,10 @@ export default {
     },
     /** 提交按钮 */
     submitForm: function() {
+      if (new Date(this.form.endTime).getTime() < new Date(this.form.startTime).getTime()) {
+        this.$message.error("起始日期要早于终止日期");
+        return false;
+      }
       this.$refs["form"].validate(valid => {
         if (valid) {
           if (this.form.userId != undefined) {

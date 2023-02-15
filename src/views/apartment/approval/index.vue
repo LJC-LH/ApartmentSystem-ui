@@ -238,18 +238,9 @@
       :limit.sync="queryParams.pageSize"
       @pagination="getList"
     />
-
-
-
-    <!-- 以下未改 -->
-
-
-
-
-
     <!-- 添加或修改特殊宿舍申请对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
-      <el-form ref="form" :model="form" :rules="rules" label-width="80px">
+      <el-form ref="form" :model="form" :rules="rules" label-width="150px">
         <el-form-item label="用户ID" prop="studentId">
           <el-input v-model="form.studentId" placeholder="请输入用户ID" :disabled="true" />
         </el-form-item>
@@ -326,7 +317,7 @@
             ></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="校区管理办公室负责人" prop="manageId">
+        <el-form-item label="校区管理办公室" prop="manageId">
           <el-select v-model="form.manageId" placeholder="请选择校区" :disabled=!stuOption>
             <el-option
               v-for="item in xqglList"
@@ -426,8 +417,29 @@ export default {
       },
       // 表单参数
       form: {},
-      // 表单校验
       rules: {
+        fdyId: [
+          { required: true, message: "辅导员不能为空", trigger: "blur" }
+        ],
+        xgcId: [
+          { required: true, message: "学工处不能为空", trigger: "blur" }
+        ],
+        manageId: [
+          { required: true, message: "校区管理办公室不能为空", trigger: "blur" }
+        ],
+        approvalCategory: [
+          { required: true, message: "申请类型不能为空", trigger: "blur" }
+        ],
+        startTime: [
+          { required: true, message: "起始时间不能为空", trigger: "blur" }
+        ],
+        endTime: [
+          { required: true, message: "终止时间不能为空", trigger: "blur" },
+          // {min:this.form.startTime, message: "终止时间不能小于起始时间", trigger: "blur"}
+        ],
+        approvalReason: [
+          { required: true, message: "申请理由不能为空", trigger: "blur" }
+        ],
       },
       user:undefined,
       roleParams:{
@@ -538,7 +550,6 @@ export default {
           this.queryParams.xgcOpinion = 1;
           this.queryParams.manageOpinion = 1;
       }
-
       this.loading = true;
       listApproval(this.queryParams).then(response => {
         this.approvalList = response.rows;
@@ -642,6 +653,10 @@ export default {
     },
     /** 提交按钮 */
     submitForm() {
+      if (new Date(this.form.endTime).getTime() < new Date(this.form.startTime).getTime()) {
+        this.$message.error("起始日期要早于终止日期");
+        return false;
+      }
       if(this.form.fdyOpinion == 1 && this.form.xgcOpinion == 1 && this.form.manageOpinion == 1){
         //审批通过
         this.form.approvalStatus = 1;
