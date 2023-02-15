@@ -297,6 +297,9 @@ export default {
     /** 查询用户信息列表 */
     getList() {
       this.loading = true;
+      //重置？
+      this.temp = [];
+      this.userList = [];
       listUser(this.queryParams).then(response => {
         this.temp = response.rows;
         this.total = response.total;
