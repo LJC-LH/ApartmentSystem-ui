@@ -337,8 +337,16 @@
             ></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="宿舍ID" prop="dormId">
-          <el-input v-model="form.dormId" placeholder="请输入宿舍ID" :disabled=!wyglOption />
+        <el-form-item label="宿舍" prop="dormId">
+<!--          <el-input v-model="form.dormId" placeholder="请输入宿舍ID" :disabled=!wyglOption />-->
+          <el-select v-model="form.dormId" placeholder="请选择宿舍" :disabled=!wyglOption>
+          <el-option
+            v-for="item in dormList"
+            :key="item.dormId"
+            :label="item.buildingNo + '栋' + item.roomNo"
+            :value="item.dormId">
+          </el-option>
+          </el-select>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -362,6 +370,7 @@ import { getInfo } from '@/api/login'
 import { getDept } from '@/api/system/dept'
 import { getAuthRole, getUser } from '@/api/system/user'
 import { getRole } from '@/api/system/role'
+import { getStudentdorm, listStudentdorm, updateStudentdorm } from '@/api/apartment/dormitory'
 
 export default {
   name: "Approval",
@@ -417,6 +426,7 @@ export default {
       },
       // 表单参数
       form: {},
+      dormform:{},
       rules: {
         fdyId: [
           { required: true, message: "辅导员不能为空", trigger: "blur" }
@@ -448,10 +458,18 @@ export default {
         xqglRoleId:null,
         deptId:null
       },
+      roomParams:{
+        buildingNo: null,
+        roomNo: null,
+        feesStatus: null,
+        feesCategory: null,
+        dormStatus: 3,
+      },
       fdyList:null,
       xgcList:null,
       xqglList:null,
-      wyglList:null
+      wyglList:null,
+      dormList:null,
     };
   },
   created() {
@@ -624,6 +642,9 @@ export default {
       }else if(roleKey =='wygl'){
 
       }
+      listStudentdorm(this.roomParams).then(response => {
+        this.dormList = response.rows;
+      });
       this.form.studentId = this.user.userId;
       this.form.studentName = this.user.nickName;
       this.open = true;
@@ -642,6 +663,9 @@ export default {
         getUser(this.form.studentId).then(response =>{
           this.roleParams.deptId = response.data.deptId
         })
+        listStudentdorm(this.roomParams).then(response => {
+          this.dormList = response.rows;
+        });
         selectUserListByRoleId(this.roleParams).then(response => {
           this.fdyList = response.rows[0]
           this.xgcList = response.rows[1]
@@ -656,6 +680,17 @@ export default {
       if (new Date(this.form.endTime).getTime() < new Date(this.form.startTime).getTime()) {
         this.$message.error("起始日期要早于终止日期");
         return false;
+      }
+      if(this.form.dormId){
+        getStudentdorm(this.form.dormId).then(response => {
+          this.dormform = response.data;
+          console.log(response);
+          if(this.dormform.dormStatus == 3){this.dormform.dormStatus = 4;}
+          console.log(this.dormform)
+          updateStudentdorm(this.dormform).then(response => {
+            this.$modal.msgSuccess("分配成功");
+          });
+        });
       }
       if(this.form.fdyOpinion == 1 && this.form.xgcOpinion == 1 && this.form.manageOpinion == 1){
         //审批通过

@@ -263,8 +263,16 @@
             ></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="宿舍ID" prop="dormId">
-          <el-input v-model="form.dormId" placeholder="请输入宿舍ID" />
+        <el-form-item label="宿舍" prop="dormId">
+<!--          <el-input v-model="form.dormId" placeholder="请选择宿舍" :disabled="true"/>-->
+          <el-select v-model="form.dormId" placeholder="请选择宿舍" :disabled=!wyglOption>
+            <el-option
+              v-for="item in dormList"
+              :key="item.dormId"
+              :label="item.buildingNo + '栋' + item.roomNo"
+              :value="item.dormId">
+            </el-option>
+          </el-select>
         </el-form-item>
         <el-form-item label="备注" prop="remark">
           <el-input v-model="form.remark" placeholder="请输入备注" />
@@ -283,6 +291,7 @@ import { listCancel, getCancel, delCancel, addCancel, updateCancel } from "@/api
 import { getInfo } from '@/api/login'
 import { selectUserListByRoleId } from '@/api/apartment/approval'
 import { getUser } from '@/api/system/user'
+import { getStudentdorm, updateStudentdorm } from '@/api/apartment/dormitory'
 
 export default {
   name: "Cancel",
@@ -332,8 +341,17 @@ export default {
         cancelStatus: null,
         dormId: null,
       },
+      roomParams:{
+        dormId:null,
+        buildingNo: null,
+        roomNo: null,
+        feesStatus: null,
+        feesCategory: null,
+        dormStatus: 3,
+      },
       // 表单参数
       form: {},
+      dormform:{},
       // 表单校验
       rules: {
         fdyId: [
@@ -519,6 +537,7 @@ export default {
           this.xgcList = response.rows[1]
           this.xqglList = response.rows[2]
         })
+
       }else if(roleKey =='fdy'){
 
       }else if(roleKey =='xgc'){
@@ -564,6 +583,16 @@ export default {
       if(this.form.fdyOpinion == 1 && this.form.xgcOpinion == 1 && this.form.manageOpinion == 1){
         //审批通过
         this.form.cancelStatus = 1;
+        if(this.form.dormId){
+          getStudentdorm(this.form.dormId).then(response => {
+            this.dormform = response.data;
+            if(this.dormform.dormStatus == 4){this.dormform.dormStatus = 3;}
+            console.log(this.dormform)
+            updateStudentdorm(this.dormform).then(response => {
+              this.$modal.msgSuccess("取消分配成功");
+            });
+          });
+        }
       }else if(this.form.fdyOpinion == 2 || this.form.xgcOpinion == 2 || this.form.manageOpinion == 2){
         //审批不通过
         this.form.cancelStatus = 2;
