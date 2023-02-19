@@ -51,3 +51,14 @@ export function selectUserListByRoleId(query) {
       params: query
     })
 }
+
+//添加学生宿舍信息
+export function addStudentDorm(query){
+  return request({
+    url: '/apartment/approval/addStudentDorm',
+    method: 'post',
+    data: query
+  })
+}
+
+

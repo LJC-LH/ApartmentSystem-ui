@@ -193,7 +193,7 @@
     />
     <!-- 添加或修改特殊退宿申请对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
-      <el-form ref="form" :model="form" :rules="rules" label-width="80px">
+      <el-form ref="form" :model="form" :rules="rules" label-width="150px">
         <el-form-item label="学生ID" prop="studentId">
           <el-input v-model="form.studentId" placeholder="请输入学生ID" :disabled="true" />
         </el-form-item>
@@ -265,7 +265,7 @@
         </el-form-item>
         <el-form-item label="宿舍" prop="dormId">
 <!--          <el-input v-model="form.dormId" placeholder="请选择宿舍" :disabled="true"/>-->
-          <el-select v-model="form.dormId" placeholder="请选择宿舍" :disabled=!wyglOption>
+          <el-select v-model="form.dormId" placeholder="请选择宿舍">
             <el-option
               v-for="item in dormList"
               :key="item.dormId"
@@ -287,7 +287,14 @@
 </template>
 
 <script>
-import { listCancel, getCancel, delCancel, addCancel, updateCancel } from "@/api/apartment/cancel";
+import {
+  listCancel,
+  getCancel,
+  delCancel,
+  addCancel,
+  updateCancel,
+  selectDormIdByStudentId
+} from '@/api/apartment/cancel'
 import { getInfo } from '@/api/login'
 import { selectUserListByRoleId } from '@/api/apartment/approval'
 import { getUser } from '@/api/system/user'
@@ -374,10 +381,15 @@ export default {
         xqglRoleId:null,
         deptId:null
       },
+      dormParams:{
+        userId:null,
+        dormStatus: null
+      },
       fdyList:null,
       xgcList:null,
       xqglList:null,
-      wyglList:null
+      wyglList:null,
+      dormList:null
     };
   },
   created() {
@@ -537,6 +549,11 @@ export default {
           this.xgcList = response.rows[1]
           this.xqglList = response.rows[2]
         })
+        this.dormParams.userId = this.form.userId;
+        this.dormParams.dormStatus = '4';
+        selectDormIdByStudentId(this.dormParams).then(response =>{
+          console.log(response)
+        })
 
       }else if(roleKey =='fdy'){
 
@@ -545,7 +562,6 @@ export default {
       }else if(roleKey =='manage'){
 
       }else if(roleKey =='wygl'){
-
       }
       this.form.studentId = this.user.userId;
       this.form.studentName = this.user.nickName;
@@ -564,6 +580,7 @@ export default {
         this.roleParams.xqglRoleId = 102;
         getUser(this.form.studentId).then(response =>{
           this.roleParams.deptId = response.data.deptId
+          console.log(response.data)
         })
         selectUserListByRoleId(this.roleParams).then(response => {
           this.fdyList = response.rows[0]

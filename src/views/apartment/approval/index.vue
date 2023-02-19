@@ -210,7 +210,7 @@
           <dict-tag :options="dict.type.fzu_approval_status" :value="scope.row.approvalStatus"/>
         </template>
       </el-table-column>
-      <el-table-column label="宿舍ID" align="center" prop="dormId" />
+<!--      <el-table-column label="宿舍ID" align="center" prop="dormId" >-->
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
@@ -364,7 +364,8 @@ import {
   getApproval,
   listApproval,
   selectUserListByRoleId,
-  updateApproval
+  updateApproval,
+  addStudentDorm
 } from '@/api/apartment/approval'
 import { getInfo } from '@/api/login'
 import { getDept } from '@/api/system/dept'
@@ -387,6 +388,7 @@ export default {
       manageOption:true,
       //物业特殊宿舍申请表填写权限
       wyglOption:true,
+      dormNameList:[],
       // 遮罩层
       loading: true,
       // 选中数组
@@ -463,7 +465,12 @@ export default {
         roomNo: null,
         feesStatus: null,
         feesCategory: null,
-        dormStatus: 3,
+        dormStatus: null,
+      },
+      addStudentdormParams:{
+        dormId:null,
+        userId:null,
+        bedNo:null
       },
       fdyList:null,
       xgcList:null,
@@ -477,6 +484,9 @@ export default {
       this.user = response.user;
       var roleId =this.user.roles[0].roleId;
       this.getList();
+      listStudentdorm(this.roomParams).then(response => {
+        this.dormNameList = response.data;
+      })
       if(roleId == '1'){
         //学生特殊宿舍申请表填写权限
         this.stuOption=true
@@ -642,6 +652,7 @@ export default {
       }else if(roleKey =='wygl'){
 
       }
+      this.roomParams.dormStatus = 3
       listStudentdorm(this.roomParams).then(response => {
         this.dormList = response.rows;
       });
@@ -663,6 +674,7 @@ export default {
         getUser(this.form.studentId).then(response =>{
           this.roleParams.deptId = response.data.deptId
         })
+        this.roomParams.dormStatus = 3
         listStudentdorm(this.roomParams).then(response => {
           this.dormList = response.rows;
         });
@@ -687,6 +699,12 @@ export default {
           console.log(response);
           if(this.dormform.dormStatus == 3){this.dormform.dormStatus = 4;}
           console.log(this.dormform)
+          this.addStudentdormParams.userId = this.form.studentId;
+          this.addStudentdormParams.dormId = this.form.dormId;
+          this.addStudentdormParams.bedNo = 'A'
+          addStudentDorm(this.addStudentdormParams).then(response =>{
+            this.$modal.msgSuccess("宿舍绑定成功");
+          })
           updateStudentdorm(this.dormform).then(response => {
             this.$modal.msgSuccess("分配成功");
           });
