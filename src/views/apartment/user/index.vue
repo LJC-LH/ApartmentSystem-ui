@@ -34,10 +34,10 @@
         <el-button type="primary" plain icon="el-icon-plus" size="mini" @click="handleAdd" :disabled="addoption"
           v-hasPermi="['apartment:user:add']">新增</el-button>
       </el-col>
-      <el-col :span="1.5">
+      <!-- <el-col :span="1.5">
         <el-button type="success" plain icon="el-icon-edit" size="mini" :disabled="single || addoption" @click="handleUpdate" 
           v-hasPermi="['apartment:user:edit']">修改</el-button>
-      </el-col>
+      </el-col> -->
       <el-col :span="1.5">
         <el-button type="danger" plain icon="el-icon-delete" size="mini" :disabled="multiple || addoption" @click="handleDelete"
           v-hasPermi="['apartment:user:remove']">删除</el-button>
@@ -234,9 +234,9 @@
         <i class="el-icon-upload"></i>
         <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
         <div class="el-upload__tip text-center" slot="tip">
-          <div class="el-upload__tip" slot="tip">
+          <!-- <div class="el-upload__tip" slot="tip">
             <el-checkbox v-model="upload.updateSupport" /> 是否更新已经存在的学生宿舍数据
-          </div>
+          </div> -->
           <span>仅允许导入xls、xlsx格式文件。</span>
           <el-link type="primary" :underline="false" style="font-size:12px;vertical-align: baseline;" @click="importTemplate">下载模板</el-link>
         </div>
@@ -254,6 +254,7 @@
 <script>
 import { listUser, getUser, delUser, addUser, updateUser, getRoot, getRolesDeptId } from "@/api/apartment/user";
 import { getToken } from "@/utils/auth";
+import { number } from 'echarts';
 
 export default {
   name: "User",
@@ -269,6 +270,7 @@ export default {
       loading: true,
       // 选中数组
       ids: [],
+      dormIds:[],
       addoption: false,
       // 非单个禁用
       single: true,
@@ -319,6 +321,10 @@ export default {
         contactPhone: null,
         schoolRoll: null,
         schoolArea: null,
+      },
+      changeParams: {
+        userId: null,
+        dormId: null,
       },
       // 表单参数
       form: {},
@@ -471,7 +477,9 @@ export default {
     },
     // 多选框选中数据
     handleSelectionChange(selection) {
+      // console.log(selection)
       this.ids = selection.map(item => item.userId)
+      this.dormIds = selection.map(item => item.dormId)
       this.single = selection.length !== 1
       this.multiple = !selection.length
     },
@@ -484,8 +492,10 @@ export default {
     /** 修改按钮操作 */
     handleUpdate(row) {
       this.reset();
-      const userId = row.userId || this.ids
-      getUser(userId).then(response => {
+      // console.log(row);
+      this.changeParams.userId = row.userId
+      this.changeParams.dormId = row.dormId
+      getUser(this.changeParams).then(response => {
         this.changeform = response.data;
         this.changeopen = true;
         this.title = "修改宿舍信息管理";
@@ -540,9 +550,30 @@ export default {
 
     /** 删除按钮操作 */
     handleDelete(row) {
+      var dormAndUserList =[];
+      const dormIds = row.dormId || this.dormIds;
       const userIds = row.userId || this.ids;
+      if(typeof dormIds == 'number'){
+        var dormAndUserItem = {
+        dormId:dormIds,
+        userId:userIds,
+        }
+        dormAndUserList.push(dormAndUserItem)
+      }
+      else{
+        for (var i = 0; i < userIds.length; i++) {
+                var dormAndUserItem = {
+                dormId:null,
+                userId:null,
+                }
+                dormAndUserItem.dormId = dormIds[i];
+                dormAndUserItem.userId = userIds[i];
+                dormAndUserList.push(dormAndUserItem)
+              }
+      }
+      console.log(dormAndUserList)
       this.$modal.confirm('是否确认删除用户信息编号为"' + userIds + '"的数据项？').then(function () {
-        return delUser(userIds);
+        return delUser(dormAndUserList);
       }).then(() => {
         this.getList();
         this.$modal.msgSuccess("删除成功");

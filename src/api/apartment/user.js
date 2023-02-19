@@ -25,10 +25,11 @@ export function getRoot() {
 }
 
 // 查询用户信息详细
-export function getUser(userId) {
+export function getUser(data) {
   return request({
-    url: '/apartment/user/' + userId,
-    method: 'get',
+    url: '/apartment/user/getUser',
+    method: 'post',
+    data: data
   })
 }
 
@@ -51,10 +52,11 @@ export function updateUser(data) {
 }
 
 // 删除用户信息
-export function delUser(userId) {
+export function delUser(data) {
   return request({
-    url: '/apartment/user/' + userId,
-    method: 'delete'
+    url: '/apartment/user/delUser',
+    method: 'post',
+    data: data
   })
 }
 
