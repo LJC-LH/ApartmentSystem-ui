@@ -162,7 +162,7 @@
         <dict-tag :options="dict.type.fzu_approval_status" :value="scope.row.cancelStatus"/>
       </template>
       </el-table-column>
-      <el-table-column label="宿舍ID" align="center" prop="dormId" />
+<!--      <el-table-column label="宿舍ID" align="center" prop="dormId" />-->
       <el-table-column label="备注" align="center" prop="remark" />
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
@@ -293,10 +293,10 @@ import {
   delCancel,
   addCancel,
   updateCancel,
-  selectDormIdByStudentId
+  selectDormIdByStudentId, removeStuDorm
 } from '@/api/apartment/cancel'
 import { getInfo } from '@/api/login'
-import { selectUserListByRoleId } from '@/api/apartment/approval'
+import { addStudentDorm, selectUserListByRoleId } from '@/api/apartment/approval'
 import { getUser } from '@/api/system/user'
 import { getStudentdorm, updateStudentdorm } from '@/api/apartment/dormitory'
 
@@ -382,7 +382,7 @@ export default {
         deptId:null
       },
       dormParams:{
-        userId:null,
+        studentId:null,
         dormStatus: null
       },
       fdyList:null,
@@ -492,7 +492,6 @@ export default {
         this.cancelList = response.rows;
         this.total = response.total;
         this.loading = false;
-        console.log(response)
       });
     },
     // 取消按钮
@@ -549,10 +548,10 @@ export default {
           this.xgcList = response.rows[1]
           this.xqglList = response.rows[2]
         })
-        this.dormParams.userId = this.form.userId;
+        this.dormParams.userId = this.user.userId;
         this.dormParams.dormStatus = '4';
         selectDormIdByStudentId(this.dormParams).then(response =>{
-          console.log(response)
+          this.dormList = response.rows
         })
 
       }else if(roleKey =='fdy'){
@@ -604,7 +603,9 @@ export default {
           getStudentdorm(this.form.dormId).then(response => {
             this.dormform = response.data;
             if(this.dormform.dormStatus == 4){this.dormform.dormStatus = 3;}
-            console.log(this.dormform)
+            removeStuDorm(this.form.dormId).then(response =>{
+              this.$modal.msgSuccess("宿舍解除绑定成功");
+            })
             updateStudentdorm(this.dormform).then(response => {
               this.$modal.msgSuccess("取消分配成功");
             });

@@ -53,11 +53,19 @@ export function selectUserListByRoleId(query) {
 }
 
 // 获取指定studentId的dormId
-export function selectDormIdByStudentId(query){
+export function selectDormIdByStudentId(query) {
   return request({
     url: '/apartment/cancel/getDormId',
     method: 'post',
-    data:query
+    params: query
+  })
+}
+// 获取指定studentId的dormId
+export function removeStuDorm(dormId) {
+  return request({
+    url: '/apartment/cancel/removeStuDorm',
+    method: 'post',
+    params: dormId
   })
 }
 
