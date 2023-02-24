@@ -17,7 +17,14 @@
         <el-input v-model="queryParams.bedNo" placeholder="请输入床位" clearable @keyup.enter.native="handleQuery" />
       </el-form-item>
       <el-form-item label="学院" prop="deptId">
-        <el-input v-model="queryParams.deptId" placeholder="请输入学院" clearable @keyup.enter.native="handleQuery" />
+        <el-select v-model="queryParams.deptId" placeholder="请选择学院" clearable >
+          <el-option
+            v-for="dict in dict.type.fzu_dept_id_name"
+            :key="dict.value"
+            :label="dict.label"
+            :value="dict.value"
+          />
+        </el-select>
       </el-form-item>
       <el-form-item label="缴费情况" prop="feesCategory">
         <el-input v-model="queryParams.feesCategory" placeholder="请输入缴费情况" clearable
@@ -71,7 +78,10 @@
         </template>
       </el-table-column>
       <el-table-column label="床位" align="center" prop="bedNo" />
-      <el-table-column label="学院" align="center" prop="deptId">
+      <el-table-column label="学院" align="center" prop="deptId" width="180px">
+          <template slot-scope="scope">
+            <dict-tag :options="dict.type.fzu_dept_id_name" :value="scope.row.deptId" />
+          </template>
       </el-table-column>
       <el-table-column label="省份" align="center" prop="province" />
       <el-table-column label="学生电话" align="center" prop="stuPhone"  width="110px"/>
@@ -157,13 +167,20 @@
           <el-input v-model="changeform.bedNo" placeholder="请输入床位" />
         </el-form-item>
         <el-form-item label="学院" prop="deptId">
-          <el-input v-model="changeform.deptId" placeholder="请输入校区" />
+          <el-select v-model="changeform.deptId" placeholder="请选择学院">
+            <el-option
+              v-for="dict in dict.type.fzu_dept_id_name"
+              :key="dict.value"
+              :label="dict.label"
+              :value="Number(dict.value)"
+            />
+        </el-select>
         </el-form-item>
         <el-form-item label="省份" prop="province">
-          <el-input v-model="changeform.province" placeholder="请输入校区" />
+          <el-input v-model="changeform.province" placeholder="请输入省份" />
         </el-form-item>
         <el-form-item label="学生电话" prop="stuPhone">
-          <el-input v-model="changeform.stuPhone" placeholder="请输入校区" />
+          <el-input v-model="changeform.stuPhone" placeholder="请输入电话" />
         </el-form-item>
         <el-form-item label="缴费类别" prop="feesCategory">
           <el-radio-group v-model="changeform.feesCategory">
@@ -258,7 +275,7 @@ import { number } from 'echarts';
 
 export default {
   name: "User",
-  dicts: ['fzu_dorm_status', 'fzu_school_roll', 'fzu_school_area', 'fzu_fees_status', 'fzu_fees_category','sys_user_sex'],
+  dicts: ['fzu_dorm_status', 'fzu_school_roll', 'fzu_school_area', 'fzu_fees_status', 'fzu_fees_category','sys_user_sex','fzu_dept_id_name'],
   data() {
     return {
       changeopen:false,
@@ -353,7 +370,8 @@ export default {
   },
   created() {
     this.getList();
-    this.rootCheck();
+    // this.rootCheck(); //先注释掉
+
     // this.getrolesdeptid();
     // this.getDicts("fzu_school_roll").then(response => {
     //   this.schoolrollOpt = response.data;
@@ -382,40 +400,19 @@ export default {
       //重置？
       this.temp = [];
       this.userList = [];
+      if(this.$store.state.user.roles[0] == 'fdy'){
+        this.queryParams.deptId = this.$store.state.user.deptid;
+      }
+      if(this.$store.state.user.roles[0] == 'student'){
+        this.queryParams.userName = this.$store.state.user.name;
+      }
       listUser(this.queryParams).then(response => {
-        this.temp = response.rows;
+        this.userList = response.rows;
         this.total = response.total;
         this.loading = false;
-        var userName = this.$store.state.user.roles[0];
-        console.log(this.$store.state.user);
-        var userdeptid = this.$store.state.user.deptid
-        // if (userName == 'admin' || userName == 'xgc') {
-        //   console.log('success');
-        //   this.userList = this.temp;
-        // } 
-        if (userName == 'fdy') {
-          for (var i = 0; i < this.temp.length; i++) {
-            if (this.temp[i].deptId == userdeptid) {
-              this.userList.push(this.temp[i]);
-            }
-          }
-        }
-        if (userName == 'student') {
-          for (var i = 0; i < this.temp.length; i++) {
-            var cnt = 0
-            if (this.temp[i].userName == this.$store.state.user.name) {
-              this.userList.push(this.temp[i]);
-              cnt++
-            }
-          }
-          this.total = cnt
-        }
-        if (userName == 'admin' || userName == 'xgc' || userName == 'manage') {
-          this.userList = this.temp
-        }
       });
     },
-    rootCheck() {
+    rootCheck() { //这个函数前端或者后端有问题
       this.loading = true;
       var userrole = this.$store.state.user.roles[0];
       if (userrole == 'fdy' || userrole == 'xgc') {
