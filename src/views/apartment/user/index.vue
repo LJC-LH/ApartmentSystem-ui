@@ -22,7 +22,7 @@
             v-for="dict in dict.type.fzu_dept_id_name"
             :key="dict.value"
             :label="dict.label"
-            :value="dict.value"
+            :value="Number(dict.value)"
           />
         </el-select>
       </el-form-item>
