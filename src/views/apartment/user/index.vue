@@ -17,18 +17,13 @@
         <el-input v-model="queryParams.bedNo" placeholder="请输入床位" clearable @keyup.enter.native="handleQuery" />
       </el-form-item>
       <el-form-item label="学院" prop="deptId">
-        <el-select v-model="queryParams.deptId" placeholder="请选择学院" clearable >
-          <el-option
-            v-for="dict in dict.type.fzu_dept_id_name"
-            :key="dict.value"
-            :label="dict.label"
-            :value="Number(dict.value)"
-          />
+        <el-select v-model="queryParams.deptId" placeholder="请选择学院" clearable>
+          <el-option v-for="dict in dict.type.fzu_dept_id_name" :key="dict.value" :label="dict.label"
+            :value="Number(dict.value)" />
         </el-select>
       </el-form-item>
       <el-form-item label="缴费情况" prop="feesCategory">
-        <el-input v-model="queryParams.feesCategory" placeholder="请输入缴费情况" clearable
-          @keyup.enter.native="handleQuery" />
+        <el-input v-model="queryParams.feesCategory" placeholder="请输入缴费情况" clearable @keyup.enter.native="handleQuery" />
       </el-form-item>
       <el-form-item>
         <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
@@ -46,18 +41,12 @@
           v-hasPermi="['apartment:user:edit']">修改</el-button>
       </el-col> -->
       <el-col :span="1.5">
-        <el-button type="danger" plain icon="el-icon-delete" size="mini" :disabled="multiple || addoption" @click="handleDelete"
-          v-hasPermi="['apartment:user:remove']">删除</el-button>
+        <el-button type="danger" plain icon="el-icon-delete" size="mini" :disabled="multiple || addoption"
+          @click="handleDelete" v-hasPermi="['apartment:user:remove']">删除</el-button>
       </el-col>
       <el-col :span="1.5">
-        <el-button
-          type="info"
-          plain
-          icon="el-icon-upload2"
-          size="mini"
-          @click="handleImport"
-          v-hasPermi="['apartment:user:import']"
-        >导入</el-button>
+        <el-button type="info" plain icon="el-icon-upload2" size="mini" @click="handleImport"
+          v-hasPermi="['apartment:user:import']">导入</el-button>
       </el-col>
       <el-col :span="1.5">
         <el-button type="warning" plain icon="el-icon-download" size="mini" @click="handleExport"
@@ -70,27 +59,29 @@
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="楼栋号" align="center" prop="buildingNo" />
       <el-table-column label="房间号" align="center" prop="roomNo" />
-      <el-table-column label="学号" align="center" prop="userName" width="100px"/>
+      <el-table-column label="学号" align="center" prop="userName" width="100px" />
       <el-table-column label="学生姓名" align="center" prop="niceName" />
-      <el-table-column label="性别" align="center" prop="sex" >
+      <el-table-column label="性别" align="center" prop="sex">
         <template slot-scope="scope">
           <dict-tag :options="dict.type.sys_user_sex" :value="scope.row.sex" />
         </template>
       </el-table-column>
       <el-table-column label="床位" align="center" prop="bedNo" />
       <el-table-column label="学院" align="center" prop="deptId" width="180px">
-          <template slot-scope="scope">
-            <dict-tag :options="dict.type.fzu_dept_id_name" :value="scope.row.deptId" />
-          </template>
+        <template slot-scope="scope">
+          <dict-tag :options="dict.type.fzu_dept_id_name" :value="scope.row.deptId" />
+        </template>
       </el-table-column>
+      <el-table-column label="辅导员" align="center" prop="fdyName" />
+      <el-table-column label="辅导员电话" align="center" prop="fdyPhone" />
       <el-table-column label="省份" align="center" prop="province" />
-      <el-table-column label="学生电话" align="center" prop="stuPhone"  width="110px"/>
-      <el-table-column label="缴费情况" align="center" prop="feesStatus" >
+      <el-table-column label="学生电话" align="center" prop="stuPhone" width="110px" />
+      <el-table-column label="缴费情况" align="center" prop="feesStatus">
         <template slot-scope="scope">
           <dict-tag :options="dict.type.fzu_fees_status" :value="scope.row.feesStatus" />
         </template>
       </el-table-column>
-      <el-table-column label="缴费类型" align="center" prop="feesCategory" >
+      <el-table-column label="缴费类型" align="center" prop="feesCategory">
         <template slot-scope="scope">
           <dict-tag :options="dict.type.fzu_fees_category" :value="scope.row.feesCategory" />
         </template>
@@ -100,19 +91,17 @@
           <dict-tag :options="dict.type.fzu_dorm_status" :value="scope.row.dormStatus" />
         </template>
       </el-table-column>
-      <el-table-column label="单位联系人" align="center" prop="contactPerson" />
-      <el-table-column label="单位联系人电话" align="center" prop="contactPhone"  width="110px"/>
       <el-table-column label="学籍状态" align="center" prop="schoolRoll" :formatter="schoolroolFormat">
         <template slot-scope="scope">
           <dict-tag :options="dict.type.fzu_school_roll" :value="scope.row.schoolRoll" />
         </template>
       </el-table-column>
-      <el-table-column label="校区" align="center" prop="schoolArea" >
+      <el-table-column label="校区" align="center" prop="schoolArea">
         <template slot-scope="scope">
           <dict-tag :options="dict.type.fzu_school_area" :value="scope.row.schoolArea" />
         </template>
       </el-table-column>
-      <el-table-column label="操作" align="center" class-name="small-padding fixed-width"  width="100px">
+      <el-table-column label="操作" align="center" class-name="small-padding fixed-width" width="100px">
         <template slot-scope="scope">
           <el-button size="mini" type="text" icon="el-icon-edit" @click="handleUpdate(scope.row)" :disabled="addoption"
             v-hasPermi="['apartment:user:edit']">修改</el-button>
@@ -125,7 +114,7 @@
     <pagination v-show="total > 0" :total="total" :page.sync="queryParams.pageNum" :limit.sync="queryParams.pageSize"
       @pagination="getList" />
 
-    <!-- 添加或修改用户信息对话框 -->
+    <!-- 添加用户信息对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
         <el-form-item label="楼栋号" prop="buildingNo">
@@ -149,6 +138,7 @@
         <el-button @click="cancel">取 消</el-button>
       </div>
     </el-dialog>
+    <!-- 修改用户信息对话框 -->
     <el-dialog :title="title" :visible.sync="changeopen" width="500px" append-to-body>
       <el-form ref="changeform" :model="changeform" :rules="rules" label-width="80px">
         <el-form-item label="楼栋号" prop="buildingNo">
@@ -167,15 +157,16 @@
           <el-input v-model="changeform.bedNo" placeholder="请输入床位" />
         </el-form-item>
         <el-form-item label="学院" prop="deptId">
-          <el-select v-model="changeform.deptId" placeholder="请
-          选择学院">
-            <el-option
-              v-for="dict in dict.type.fzu_dept_id_name"
-              :key="dict.value"
-              :label="dict.label"
-              :value="Number(dict.value)"
-            />
-        </el-select>
+          <el-select v-model="changeform.deptId" placeholder="请选择学院">
+            <el-option v-for="dict in dict.type.fzu_dept_id_name" :key="dict.value" :label="dict.label"
+              :value="Number(dict.value)" />
+          </el-select>
+        </el-form-item>
+        <!-- 修改辅导员 -->
+        <el-form-item label="辅导员" prop="fdyName">
+          <el-select v-model="changeform.fdyName" class="m-2" placeholder="Select" size="large">
+            <el-option v-for="item in fdyList" :key="item.value" :label="item.label" :value="item.value" />
+          </el-select>
         </el-form-item>
         <el-form-item label="省份" prop="province">
           <el-input v-model="changeform.province" placeholder="请输入省份" />
@@ -185,52 +176,32 @@
         </el-form-item>
         <el-form-item label="缴费类别" prop="feesCategory">
           <el-radio-group v-model="changeform.feesCategory">
-            <el-radio
-              v-for="dict in dict.type.fzu_fees_category"
-              :key="dict.value"
-              :label="dict.value"
-            >{{dict.label}}</el-radio>
+            <el-radio v-for="dict in dict.type.fzu_fees_category" :key="dict.value" :label="dict.value">{{ dict.label
+            }}</el-radio>
           </el-radio-group>
         </el-form-item>
         <el-form-item label="缴费情况" prop="feesStatus">
           <el-radio-group v-model="changeform.feesStatus">
-            <el-radio
-              v-for="dict in dict.type.fzu_fees_status"
-              :key="dict.value"
-              :label="dict.value"
-            >{{dict.label}}</el-radio>
+            <el-radio v-for="dict in dict.type.fzu_fees_status" :key="dict.value" :label="dict.value">{{ dict.label
+            }}</el-radio>
           </el-radio-group>
         </el-form-item>
         <el-form-item label="宿舍使用情况" prop="dormStatus">
-          <!-- <el-radio-group v-model="changeform.dormStatus">
-            <el-radio
-              v-for="dict in dict.type.fzu_dorm_status"
-              :key="dict.value"
-              :label="dict.value"
-            >{{dict.label}}</el-radio>
-          </el-radio-group> -->
-          <el-select v-model="changeform.dormStatus" placeholder="请选择宿舍使用情况">
-                <el-option
-                  v-for="dict in dict.type.fzu_dorm_status"
-                  :key="dict.value"
-                  :label="dict.label"
-                  :value="dict.value"
-                ></el-option>
-              </el-select>
+          <el-radio-group v-model="changeform.dormStatus">
+            <el-radio v-for="dict in dict.type.fzu_dorm_status" :key="dict.value" :label="dict.value">{{ dict.label
+            }}</el-radio>
+          </el-radio-group>
         </el-form-item>
-        <el-form-item label="单位联系人" prop="contactPerson">
-          <el-input v-model="changeform.contactPerson" placeholder="请输入单位联系人" />
+        <!-- <el-form-item label="单位联系人" prop="contactPerson">
+          <el-input v-model="changeform.contactPerson" placeholder="请输入校区" />
         </el-form-item>
         <el-form-item label="单位联系人电话" prop="contactPhone">
-          <el-input v-model="changeform.contactPhone" placeholder="请输入单位联系人电话" />
-        </el-form-item>
+          <el-input v-model="changeform.contactPhone" placeholder="请输入校区" />
+        </el-form-item> -->
         <el-form-item label="学籍状态" prop="schoolRoll">
           <el-radio-group v-model="changeform.schoolRoll">
-            <el-radio
-              v-for="dict in dict.type.fzu_school_roll"
-              :key="dict.value"
-              :label="dict.value"
-            >{{dict.label}}</el-radio>
+            <el-radio v-for="dict in dict.type.fzu_school_roll" :key="dict.value" :label="dict.value">{{ dict.label
+            }}</el-radio>
           </el-radio-group>
         </el-form-item>
         <el-form-item label="校区" prop="schoolArea">
@@ -245,18 +216,9 @@
 
     <!-- 学生宿舍信息导入对话框 -->
     <el-dialog :title="upload.title" :visible.sync="upload.open" width="400px" append-to-body>
-      <el-upload
-        ref="upload"
-        :limit="1"
-        accept=".xlsx, .xls"
-        :headers="upload.headers"
-        :action="upload.url + '?updateSupport=' + upload.updateSupport"
-        :disabled="upload.isUploading"
-        :on-progress="handleFileUploadProgress"
-        :on-success="handleFileSuccess"
-        :auto-upload="false"
-        drag
-      >
+      <el-upload ref="upload" :limit="1" accept=".xlsx, .xls" :headers="upload.headers"
+        :action="upload.url + '?updateSupport=' + upload.updateSupport" :disabled="upload.isUploading"
+        :on-progress="handleFileUploadProgress" :on-success="handleFileSuccess" :auto-upload="false" drag>
         <i class="el-icon-upload"></i>
         <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
         <div class="el-upload__tip text-center" slot="tip">
@@ -264,7 +226,8 @@
             <el-checkbox v-model="upload.updateSupport" /> 是否更新已经存在的学生宿舍数据
           </div> -->
           <span>仅允许导入xls、xlsx格式文件。</span>
-          <el-link type="primary" :underline="false" style="font-size:12px;vertical-align: baseline;" @click="importTemplate">下载模板</el-link>
+          <el-link type="primary" :underline="false" style="font-size:12px;vertical-align: baseline;"
+            @click="importTemplate">下载模板</el-link>
         </div>
       </el-upload>
       <div slot="footer" class="dialog-footer">
@@ -284,10 +247,10 @@ import { number } from 'echarts';
 
 export default {
   name: "User",
-  dicts: ['fzu_dorm_status', 'fzu_school_roll', 'fzu_school_area', 'fzu_fees_status', 'fzu_fees_category','sys_user_sex','fzu_dept_id_name'],
+  dicts: ['fzu_dorm_status', 'fzu_school_roll', 'fzu_school_area', 'fzu_fees_status', 'fzu_fees_category', 'sys_user_sex', 'fzu_dept_id_name'],
   data() {
     return {
-      changeopen:false,
+      changeopen: false,
       schoolrollOpt: [],
       feesstatusOpt: [],
       feescategoryOpt: [],
@@ -296,7 +259,7 @@ export default {
       loading: true,
       // 选中数组
       ids: [],
-      dormIds:[],
+      dormIds: [],
       addoption: false,
       // 非单个禁用
       single: true,
@@ -347,6 +310,9 @@ export default {
         contactPhone: null,
         schoolRoll: null,
         schoolArea: null,
+        fdyName: null,
+        fdyId: null,
+        fdyNumber: null,
       },
       changeParams: {
         userId: null,
@@ -355,7 +321,7 @@ export default {
       // 表单参数
       form: {},
       changeform: {},
-      checkCode: 0, 
+      checkCode: 0,
       rolesDeptId: 0,
       // 表单校验
       rules: {
@@ -400,8 +366,8 @@ export default {
     schoolroolFormat(row) {
       return this.selectDictLabel(this.schoolrollOpt, row.type)
     },
-    handleclose(){
-     this.changeopen = false
+    handleclose() {
+      this.changeopen = false
     },
     /** 查询用户信息列表 */
     getList() {
@@ -409,10 +375,10 @@ export default {
       //重置？
       this.temp = [];
       this.userList = [];
-      if(this.$store.state.user.roles[0] == 'fdy'){
+      if (this.$store.state.user.roles[0] == 'fdy') {
         this.queryParams.deptId = this.$store.state.user.deptid;
       }
-      if(this.$store.state.user.roles[0] == 'student'){
+      if (this.$store.state.user.roles[0] == 'student') {
         this.queryParams.userName = this.$store.state.user.name;
       }
       listUser(this.queryParams).then(response => {
@@ -426,17 +392,17 @@ export default {
       var userrole = this.$store.state.user.roles[0];
       if (userrole == 'fdy' || userrole == 'xgc') {
         getRoot().then(response => {
-        this.checkCode = response
-        console.log(this.checkCode);
-        if (this.checkCode == 0) {
-          this.addoption = true;
-          console.log(this.addoption);
-        } 
-      });
-      } 
-      
+          this.checkCode = response
+          console.log(this.checkCode);
+          if (this.checkCode == 0) {
+            this.addoption = true;
+            console.log(this.addoption);
+          }
+        });
+      }
+
     },
-    getrolesdeptid(){
+    getrolesdeptid() {
       getRolesDeptId(this.$store.state.user.roles[0]).then(response => {
         this.rolesDeptId = response
         console.log(this.rolesDeptId);
@@ -556,26 +522,26 @@ export default {
 
     /** 删除按钮操作 */
     handleDelete(row) {
-      var dormAndUserList =[];
+      var dormAndUserList = [];
       const dormIds = row.dormId || this.dormIds;
       const userIds = row.userId || this.ids;
-      if(typeof dormIds == 'number'){
+      if (typeof dormIds == 'number') {
         var dormAndUserItem = {
-        dormId:dormIds,
-        userId:userIds,
+          dormId: dormIds,
+          userId: userIds,
         }
         dormAndUserList.push(dormAndUserItem)
       }
-      else{
+      else {
         for (var i = 0; i < userIds.length; i++) {
-                var dormAndUserItem = {
-                dormId:null,
-                userId:null,
-                }
-                dormAndUserItem.dormId = dormIds[i];
-                dormAndUserItem.userId = userIds[i];
-                dormAndUserList.push(dormAndUserItem)
-              }
+          var dormAndUserItem = {
+            dormId: null,
+            userId: null,
+          }
+          dormAndUserItem.dormId = dormIds[i];
+          dormAndUserItem.userId = userIds[i];
+          dormAndUserList.push(dormAndUserItem)
+        }
       }
       console.log(dormAndUserList)
       this.$modal.confirm('是否确认删除用户信息编号为"' + userIds + '"的数据项？').then(function () {
