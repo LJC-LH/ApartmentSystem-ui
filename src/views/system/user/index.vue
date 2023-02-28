@@ -157,6 +157,8 @@
               </div>
             </template>
           </el-table-column>
+          <el-table-column label="单位联系人" align="center" key="fdyName" prop="fdyName" v-if="columns[12].visible" width="80" />
+          <el-table-column label="单位联系人电话" align="center" key="fdyPhonenumber" prop="fdyPhonenumber" v-if="columns[13].visible" width="110" />
           <el-table-column label="校区" align="center" key="schoolArea" prop="schoolArea" v-if="columns[7].visible">
             <template slot-scope="scope">
               <dict-tag :options="dict.type.fzu_school_area" :value="scope.row.schoolArea"/>
@@ -238,8 +240,8 @@
     </el-row>
 
     <!-- 添加或修改用户配置对话框 -->
-    <el-dialog :title="title" :visible.sync="open" width="750px" append-to-body>
-      <el-form ref="form" :model="form" :rules="rules" label-width="140px">
+    <el-dialog :title="title" :visible.sync="open" width="800px" append-to-body>
+      <el-form ref="form" :model="form" :rules="rules" label-width="155px">
         <el-row>
           <el-col :span="12">
             <el-form-item label="真实姓名" prop="nickName">
@@ -323,7 +325,7 @@
         </el-row>
         <el-row>
           <el-col :span="12">
-            <el-form-item label="学籍状态">
+            <el-form-item label="学籍状态(仅学生)">
               <el-select v-model="form.schoolRoll" placeholder="请选择学籍状态" clearable>
                 <el-option
                   v-for="dict in dict.type.fzu_school_roll"
@@ -335,7 +337,7 @@
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="就读学历层次">
+            <el-form-item label="就读学历层次(仅学生)">
               <el-select v-model="form.studyLevel" placeholder="请选择就读学历层次" clearable>
                 <el-option
                   v-for="dict in dict.type.fzu_study_level"
@@ -347,9 +349,20 @@
             </el-form-item>
           </el-col>
         </el-row>
-
         <el-row>
           <el-col :span="12">
+            <el-form-item label="单位负责人(仅学生)" prop="fdyNumber">
+              <el-select v-model="form.fdyNumber" placeholder="请选择单位负责人" clearable>
+                <el-option
+                  v-for="item in fdyList"
+                  :key="item.userName"
+                  :label="item.nickName+'（'+item.userName+'）'"
+                  :value="item.userName"
+                ></el-option>
+              </el-select>
+          </el-form-item>
+          </el-col>
+          <!-- <el-col :span="12">
             <el-form-item label="岗位">
               <el-select v-model="form.postIds" multiple placeholder="请选择岗位">
                 <el-option
@@ -361,7 +374,7 @@
                 ></el-option>
               </el-select>
             </el-form-item>
-          </el-col>
+          </el-col> -->
           <el-col :span="12">
             <el-form-item label="角色">
               <el-select v-model="form.roleIds" multiple placeholder="请选择角色">
@@ -376,7 +389,6 @@
             </el-form-item>
           </el-col>
         </el-row>
-
         <el-row>
           <el-col :span="12">
             <el-form-item label="操作权限起始时间">
@@ -445,7 +457,7 @@
 </template>
 
 <script>
-import { listUser, getUser, delUser, addUser, updateUser, resetUserPwd, changeUserStatus, deptTreeSelect } from "@/api/system/user";
+import { listUser, getUser, delUser, addUser, updateUser, resetUserPwd, changeUserStatus, deptTreeSelect,listFdy } from "@/api/system/user";
 import { getToken } from "@/utils/auth";
 import Treeselect from "@riophae/vue-treeselect";
 import "@riophae/vue-treeselect/dist/vue-treeselect.css";
@@ -456,6 +468,10 @@ export default {
   components: { Treeselect },
   data() {
     return {
+      fdyParams: {
+        roleId:100,
+        deptId:undefined,
+      },
       // 遮罩层
       loading: true,
       // 选中数组
@@ -470,6 +486,8 @@ export default {
       total: 0,
       // 用户表格数据
       userList: null,
+      //辅导员列表
+      fdyList:null,
       // 弹出层标题
       title: "",
       // 单位树选项
@@ -529,7 +547,9 @@ export default {
         { key: 8, label: `状态`, visible: true },
         { key: 9, label: `创建时间`, visible: false },
         { key: 10, label: `操作权限起始时间`,visible: true },
-        { key: 11, label: `操作权限终止时间`,visible: true }
+        { key: 11, label: `操作权限终止时间`,visible: true },
+        { key: 12, label: `单位联系人`,visible: true },
+        { key: 13, label: `单位联系人电话`,visible: true }
       ],
       // 表单校验
       rules: {
@@ -573,8 +593,16 @@ export default {
     this.getConfigKey("sys.user.initPassword").then(response => {
       this.initPassword = response.msg;
     });
+    this.getfdyList();
   },
   methods: {
+    getfdyList(){
+      listFdy(this.fdyParams).then(response => {
+          console.log(response.rows)
+          this.fdyList = response.rows;
+        }
+      )
+    },
     /** 查询用户列表 */
     getList() {
       this.loading = true;

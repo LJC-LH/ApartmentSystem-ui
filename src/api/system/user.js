@@ -1,6 +1,15 @@
 import request from '@/utils/request'
 import { parseStrEmpty } from "@/utils/ruoyi";
 
+// 查询辅导员列表
+export function listFdy(query) {
+  return request({
+    url: '/system/user/listFdy',
+    method: 'get',
+    params: query
+  })
+}
+
 // 查询用户列表
 export function listUser(query) {
   return request({

@@ -167,7 +167,8 @@
           <el-input v-model="changeform.bedNo" placeholder="请输入床位" />
         </el-form-item>
         <el-form-item label="学院" prop="deptId">
-          <el-select v-model="changeform.deptId" placeholder="请选择学院">
+          <el-select v-model="changeform.deptId" placeholder="请
+          选择学院">
             <el-option
               v-for="dict in dict.type.fzu_dept_id_name"
               :key="dict.value"
@@ -201,19 +202,27 @@
           </el-radio-group>
         </el-form-item>
         <el-form-item label="宿舍使用情况" prop="dormStatus">
-          <el-radio-group v-model="changeform.dormStatus">
+          <!-- <el-radio-group v-model="changeform.dormStatus">
             <el-radio
               v-for="dict in dict.type.fzu_dorm_status"
               :key="dict.value"
               :label="dict.value"
             >{{dict.label}}</el-radio>
-          </el-radio-group>
+          </el-radio-group> -->
+          <el-select v-model="changeform.dormStatus" placeholder="请选择宿舍使用情况">
+                <el-option
+                  v-for="dict in dict.type.fzu_dorm_status"
+                  :key="dict.value"
+                  :label="dict.label"
+                  :value="dict.value"
+                ></el-option>
+              </el-select>
         </el-form-item>
         <el-form-item label="单位联系人" prop="contactPerson">
-          <el-input v-model="changeform.contactPerson" placeholder="请输入校区" />
+          <el-input v-model="changeform.contactPerson" placeholder="请输入单位联系人" />
         </el-form-item>
         <el-form-item label="单位联系人电话" prop="contactPhone">
-          <el-input v-model="changeform.contactPhone" placeholder="请输入校区" />
+          <el-input v-model="changeform.contactPhone" placeholder="请输入单位联系人电话" />
         </el-form-item>
         <el-form-item label="学籍状态" prop="schoolRoll">
           <el-radio-group v-model="changeform.schoolRoll">
