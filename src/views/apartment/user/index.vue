@@ -72,8 +72,6 @@
           <dict-tag :options="dict.type.fzu_dept_id_name" :value="scope.row.deptId" />
         </template>
       </el-table-column>
-      <el-table-column label="辅导员" align="center" prop="fdyName" />
-      <el-table-column label="辅导员电话" align="center" prop="fdyPhone" />
       <el-table-column label="省份" align="center" prop="province" />
       <el-table-column label="学生电话" align="center" prop="stuPhone" width="110px" />
       <el-table-column label="缴费情况" align="center" prop="feesStatus">
@@ -101,6 +99,8 @@
           <dict-tag :options="dict.type.fzu_school_area" :value="scope.row.schoolArea" />
         </template>
       </el-table-column>
+      <el-table-column label="单位联系人" align="center" prop="fdyName" />
+      <el-table-column label="单位联系人电话" align="center" prop="fdyPhone" />
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width" width="100px">
         <template slot-scope="scope">
           <el-button size="mini" type="text" icon="el-icon-edit" @click="handleUpdate(scope.row)" :disabled="addoption"
@@ -163,10 +163,15 @@
           </el-select>
         </el-form-item>
         <!-- 修改辅导员 -->
-        <el-form-item label="辅导员" prop="fdyName">
-          <el-select v-model="changeform.fdyName" class="m-2" placeholder="Select" size="large">
-            <el-option v-for="item in fdyList" :key="item.value" :label="item.label" :value="item.value" />
-          </el-select>
+        <el-form-item label="单位联系人" prop="fdyNumber">
+          <el-select v-model="changeform.fdyNumber" filterable  placeholder="请选择单位负责人" clearable>
+                <el-option
+                  v-for="item in fdyList"
+                  :key="item.userName"
+                  :label="item.nickName+'（'+item.userName+'）'"
+                  :value="item.userName"
+                ></el-option>
+              </el-select>
         </el-form-item>
         <el-form-item label="省份" prop="province">
           <el-input v-model="changeform.province" placeholder="请输入省份" />
@@ -187,10 +192,14 @@
           </el-radio-group>
         </el-form-item>
         <el-form-item label="宿舍使用情况" prop="dormStatus">
-          <el-radio-group v-model="changeform.dormStatus">
-            <el-radio v-for="dict in dict.type.fzu_dorm_status" :key="dict.value" :label="dict.value">{{ dict.label
-            }}</el-radio>
-          </el-radio-group>
+          <el-select v-model="changeform.dormStatus" placeholder="请选择宿舍使用情况">
+            <el-option
+              v-for="dict in dict.type.fzu_dorm_status"
+              :key="dict.value"
+              :label="dict.label"
+              :value="dict.value"
+            ></el-option>
+          </el-select>
         </el-form-item>
         <!-- <el-form-item label="单位联系人" prop="contactPerson">
           <el-input v-model="changeform.contactPerson" placeholder="请输入校区" />
@@ -205,7 +214,14 @@
           </el-radio-group>
         </el-form-item>
         <el-form-item label="校区" prop="schoolArea">
-          <el-input v-model="changeform.schoolArea" placeholder="请输入校区" />
+          <el-select v-model="changeform.schoolArea" placeholder="请选择校区">
+            <el-option
+              v-for="dict in dict.type.fzu_school_area"
+              :key="dict.value"
+              :label="dict.label"
+              :value="dict.value"
+            ></el-option>
+          </el-select>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -242,6 +258,7 @@
 
 <script>
 import { listUser, getUser, delUser, addUser, updateUser, getRoot, getRolesDeptId } from "@/api/apartment/user";
+import {listFdy} from "@/api/system/user";
 import { getToken } from "@/utils/auth";
 import { number } from 'echarts';
 
@@ -250,6 +267,11 @@ export default {
   dicts: ['fzu_dorm_status', 'fzu_school_roll', 'fzu_school_area', 'fzu_fees_status', 'fzu_fees_category', 'sys_user_sex', 'fzu_dept_id_name'],
   data() {
     return {
+      fdyList:null,
+      fdyParams: {
+        roleId:100,
+        deptId:undefined,
+      },
       changeopen: false,
       schoolrollOpt: [],
       feesstatusOpt: [],
@@ -345,6 +367,7 @@ export default {
   },
   created() {
     this.getList();
+    this.getfdyList();
     // this.rootCheck(); //先注释掉
 
     // this.getrolesdeptid();
@@ -362,6 +385,13 @@ export default {
     // });
   },
   methods: {
+    getfdyList(){
+      listFdy(this.fdyParams).then(response => {
+          console.log(response.rows)
+          this.fdyList = response.rows;
+        }
+      )
+    },
     //2023.2.13.字典翻译
     schoolroolFormat(row) {
       return this.selectDictLabel(this.schoolrollOpt, row.type)

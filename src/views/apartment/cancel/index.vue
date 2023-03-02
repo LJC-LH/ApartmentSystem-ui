@@ -96,7 +96,7 @@
           v-hasPermi="['apartment:cancel:add']"
         >申请</el-button>
       </el-col>
-      <el-col :span="1.5">
+      <!-- <el-col :span="1.5">
         <el-button
           type="success"
           plain
@@ -106,7 +106,7 @@
           @click="handleUpdate"
           v-hasPermi="['apartment:cancel:edit']"
         >修改</el-button>
-      </el-col>
+      </el-col> -->
       <el-col :span="1.5">
         <el-button
           type="danger"

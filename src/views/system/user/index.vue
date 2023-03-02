@@ -352,7 +352,7 @@
         <el-row>
           <el-col :span="12">
             <el-form-item label="单位负责人(仅学生)" prop="fdyNumber">
-              <el-select v-model="form.fdyNumber" placeholder="请选择单位负责人" clearable>
+              <el-select v-model="form.fdyNumber" filterable  placeholder="请选择单位负责人" clearable>
                 <el-option
                   v-for="item in fdyList"
                   :key="item.userName"

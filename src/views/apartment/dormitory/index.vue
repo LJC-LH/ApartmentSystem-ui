@@ -64,7 +64,7 @@
           v-hasPermi="['apartment:studentdorm:add']"
         >新增</el-button>
       </el-col>
-      <el-col :span="1.5">
+      <!-- <el-col :span="1.5">
         <el-button
           type="success"
           plain
@@ -74,7 +74,7 @@
           @click="handleUpdate"
           v-hasPermi="['apartment:studentdorm:edit']"
         >修改</el-button>
-      </el-col>
+      </el-col> -->
       <el-col :span="1.5">
         <el-button
           type="danger"
@@ -130,8 +130,8 @@
           <dict-tag :options="dict.type.fzu_dorm_status" :value="scope.row.dormStatus"/>
         </template>
       </el-table-column>
-      <el-table-column label="单位负责人" align="center" prop="contactPerson" />
-      <el-table-column label="单位负责人联系方式" align="center" prop="contactPhone" />
+      <!-- <el-table-column label="单位负责人" align="center" prop="contactPerson" />
+      <el-table-column label="单位负责人联系方式" align="center" prop="contactPhone" /> -->
       <el-table-column label="备注" align="center" prop="remark" />
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
@@ -203,12 +203,12 @@
             ></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="单位负责人" prop="contactPerson">
+        <!-- <el-form-item label="单位负责人" prop="contactPerson">
           <el-input v-model="form.contactPerson" placeholder="请输入单位负责人" />
         </el-form-item>
         <el-form-item label="单位负责人联系方式" prop="contactPhone">
           <el-input v-model="form.contactPhone" placeholder="请输入单位负责人联系方式" />
-        </el-form-item>
+        </el-form-item> -->
         <el-form-item label="备注" prop="remark">
           <el-input v-model="form.remark" type="textarea" placeholder="请输入内容" />
         </el-form-item>
