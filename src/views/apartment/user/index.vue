@@ -142,10 +142,10 @@
     <el-dialog :title="title" :visible.sync="changeopen" width="500px" append-to-body>
       <el-form ref="changeform" :model="changeform" :rules="rules" label-width="80px">
         <el-form-item label="楼栋号" prop="buildingNo">
-          <el-input v-model="changeform.buildingNo" placeholder="请输入楼栋号" />
+          <el-input v-model="changeform.buildingNo" placeholder="请输入楼栋号"  :disabled="true"/>
         </el-form-item>
         <el-form-item label="房间号" prop="roomNo">
-          <el-input v-model="changeform.roomNo" placeholder="请输入房间号" />
+          <el-input v-model="changeform.roomNo" placeholder="请输入房间号"  :disabled="true"/>
         </el-form-item>
         <el-form-item label="学号" prop="userName">
           <el-input v-model="changeform.userName" placeholder="请输入学号" />
@@ -154,7 +154,7 @@
           <el-input v-model="changeform.niceName" placeholder="请输入学生姓名" />
         </el-form-item>
         <el-form-item label="床位" prop="bedNo">
-          <el-input v-model="changeform.bedNo" placeholder="请输入床位" />
+          <el-input v-model="changeform.bedNo" placeholder="请输入床位"  :disabled="true"/>
         </el-form-item>
         <el-form-item label="学院" prop="deptId">
           <el-select v-model="changeform.deptId" placeholder="请选择学院">

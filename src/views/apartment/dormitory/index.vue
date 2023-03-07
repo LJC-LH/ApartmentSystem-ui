@@ -18,12 +18,14 @@
         />
         </el-form-item>
         <el-form-item label="床位号" prop="roomNo">
-        <el-input
-          v-model="queryParams.bedNo"
-          placeholder="请输入床位号"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
+        <el-select v-model="queryParams.bedNo" placeholder="请选择床位号">
+            <el-option
+              v-for="dict in dict.type.fzu_bed_no"
+              :key="dict.value"
+              :label="dict.label"
+              :value="dict.value"
+            ></el-option>
+          </el-select>
       </el-form-item>
       <el-form-item label="是否欠费" prop="feesStatus">
         <el-select v-model="queryParams.feesStatus" placeholder="请选择是否欠费" clearable>
@@ -195,30 +197,29 @@
           <el-input v-model="form.roomNo" placeholder="请输入房间号" :disabled="updateFlag"/>
         </el-form-item>
         <el-form-item label="床位号" prop="roomNo">
-          <el-input v-model="form.bedNo" placeholder="请输入床位号"  :disabled="updateFlag"/>
+          <el-select v-model="form.bedNo" placeholder="请选择床位号"  :disabled="updateFlag">
+            <el-option
+              v-for="dict in dict.type.fzu_bed_no"
+              :key="dict.value"
+              :label="dict.label"
+              :value="dict.value"
+            ></el-option>
+          </el-select>
         </el-form-item>
         <el-form-item label="欠费金额" prop="fees">
           <el-input v-model="form.fees" placeholder="请输入欠费金额" />
         </el-form-item>
-        <el-form-item label="是否欠费" prop="feesStatus">
-          <el-select v-model="form.feesStatus" placeholder="请选择是否欠费">
-            <el-option
-              v-for="dict in dict.type.fzu_fees_status"
-              :key="dict.value"
-              :label="dict.label"
-              :value="dict.value"
-            ></el-option>
-          </el-select>
-        </el-form-item>
         <el-form-item label="缴费类别" prop="feesCategory">
-          <el-select v-model="form.feesCategory" placeholder="请选择缴费类别">
-            <el-option
-              v-for="dict in dict.type.fzu_fees_category"
-              :key="dict.value"
-              :label="dict.label"
-              :value="dict.value"
-            ></el-option>
-          </el-select>
+          <el-radio-group v-model="form.feesCategory">
+            <el-radio v-for="dict in dict.type.fzu_fees_category" :key="dict.value" :label="dict.value">{{ dict.label
+            }}</el-radio>
+          </el-radio-group>
+        </el-form-item>
+        <el-form-item label="是否欠费" prop="feesStatus">
+          <el-radio-group v-model="form.feesStatus">
+            <el-radio v-for="dict in dict.type.fzu_fees_status" :key="dict.value" :label="dict.value">{{ dict.label
+            }}</el-radio>
+          </el-radio-group>
         </el-form-item>
         <el-form-item label="宿舍使用状态" prop="dormStatus">
           <el-select v-model="form.dormStatus" placeholder="请选择宿舍使用状态">
@@ -296,7 +297,7 @@ import { getToken } from "@/utils/auth";
 
 export default {
   name: "Studentdorm",
-  dicts: ['fzu_fees_status', 'fzu_fees_category', 'fzu_dorm_status', 'fzu_bed_status'],
+  dicts: ['fzu_fees_status', 'fzu_fees_category', 'fzu_dorm_status', 'fzu_bed_status','fzu_bed_no'],
   data() {
     return {
       updateFlag: false,
