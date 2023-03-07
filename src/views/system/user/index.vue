@@ -810,12 +810,10 @@ export default {
       this.upload.isUploading = false;
       this.$refs.upload.clearFiles();
       this.$alert("<div style='overflow: auto;overflow-x: hidden;max-height: 70vh;padding: 10px 20px 0;'>" + response.msg + "</div>", "导入结果", { dangerouslyUseHTMLString: true });
-      this.fullscreenLoading = false;
       this.getList();
     },
     // 提交上传文件
     submitFileForm() {
-      this.fullscreenLoading = true;
       this.$refs.upload.submit();
     }
   }
