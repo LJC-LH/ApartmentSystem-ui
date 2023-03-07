@@ -16,6 +16,14 @@
           clearable
           @keyup.enter.native="handleQuery"
         />
+        </el-form-item>
+        <el-form-item label="床位号" prop="roomNo">
+        <el-input
+          v-model="queryParams.bedNo"
+          placeholder="请输入床位号"
+          clearable
+          @keyup.enter.native="handleQuery"
+        />
       </el-form-item>
       <el-form-item label="是否欠费" prop="feesStatus">
         <el-select v-model="queryParams.feesStatus" placeholder="请选择是否欠费" clearable>
@@ -41,6 +49,16 @@
         <el-select v-model="queryParams.dormStatus" placeholder="请选择宿舍使用状态" clearable>
           <el-option
             v-for="dict in dict.type.fzu_dorm_status"
+            :key="dict.value"
+            :label="dict.label"
+            :value="dict.value"
+          />
+        </el-select>
+      </el-form-item>
+      <el-form-item label="床位使用状态" prop="dormStatus">
+        <el-select v-model="queryParams.bedStatus" placeholder="请选择床位使用状态" clearable>
+          <el-option
+            v-for="dict in dict.type.fzu_bed_status"
             :key="dict.value"
             :label="dict.label"
             :value="dict.value"
@@ -114,6 +132,7 @@
       <el-table-column label="宿舍ID" align="center" prop="dormId" />
       <el-table-column label="楼栋号" align="center" prop="buildingNo" />
       <el-table-column label="房间号" align="center" prop="roomNo" />
+      <el-table-column label="床位号" align="center" prop="bedNo" />
       <el-table-column label="欠费金额" align="center" prop="fees" />
       <el-table-column label="是否欠费" align="center" prop="feesStatus">
         <template slot-scope="scope">
@@ -128,6 +147,11 @@
       <el-table-column label="宿舍使用状态" align="center" prop="dormStatus">
         <template slot-scope="scope">
           <dict-tag :options="dict.type.fzu_dorm_status" :value="scope.row.dormStatus"/>
+        </template>
+      </el-table-column>
+      <el-table-column label="床位使用状态" align="center" prop="bedStatus">
+        <template slot-scope="scope">
+          <dict-tag :options="dict.type.fzu_bed_status" :value="scope.row.bedStatus"/>
         </template>
       </el-table-column>
       <!-- <el-table-column label="单位负责人" align="center" prop="contactPerson" />
@@ -165,10 +189,13 @@
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
         <el-form-item label="楼栋号" prop="buildingNo">
-          <el-input v-model="form.buildingNo" placeholder="请输入楼栋号" />
+          <el-input v-model="form.buildingNo" placeholder="请输入楼栋号" :disabled="updateFlag"/>
         </el-form-item>
         <el-form-item label="房间号" prop="roomNo">
-          <el-input v-model="form.roomNo" placeholder="请输入房间号" />
+          <el-input v-model="form.roomNo" placeholder="请输入房间号" :disabled="updateFlag"/>
+        </el-form-item>
+        <el-form-item label="床位号" prop="roomNo">
+          <el-input v-model="form.bedNo" placeholder="请输入床位号"  :disabled="updateFlag"/>
         </el-form-item>
         <el-form-item label="欠费金额" prop="fees">
           <el-input v-model="form.fees" placeholder="请输入欠费金额" />
@@ -203,6 +230,16 @@
             ></el-option>
           </el-select>
         </el-form-item>
+        <el-form-item label="床位使用状态" prop="bedStatus">
+          <el-select v-model="form.bedStatus" placeholder="请选择床位使用状态">
+            <el-option
+              v-for="dict in dict.type.fzu_bed_status"
+              :key="dict.value"
+              :label="dict.label"
+              :value="dict.value"
+            ></el-option>
+          </el-select>
+        </el-form-item>
         <!-- <el-form-item label="单位负责人" prop="contactPerson">
           <el-input v-model="form.contactPerson" placeholder="请输入单位负责人" />
         </el-form-item>
@@ -231,13 +268,16 @@
         :on-success="handleFileSuccess"
         :auto-upload="false"
         drag
+        v-loading.fullscreen.lock="fullscreenLoading"  element-loading-text="数据正在拼命导入中，请稍等..."
+          element-loading-spinner="el-icon-loading"
+          element-loading-background="rgba(0, 0, 0, 0.8)"
       >
         <i class="el-icon-upload"></i>
         <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
         <div class="el-upload__tip text-center" slot="tip">
-          <div class="el-upload__tip" slot="tip">
+          <!-- <div class="el-upload__tip" slot="tip">
             <el-checkbox v-model="upload.updateSupport" /> 是否更新已经存在的宿舍数据
-          </div>
+          </div> -->
           <span>仅允许导入xls、xlsx格式文件。</span>
           <el-link type="primary" :underline="false" style="font-size:12px;vertical-align: baseline;" @click="importTemplate">下载模板</el-link>
         </div>
@@ -256,9 +296,11 @@ import { getToken } from "@/utils/auth";
 
 export default {
   name: "Studentdorm",
-  dicts: ['fzu_fees_status', 'fzu_fees_category', 'fzu_dorm_status'],
+  dicts: ['fzu_fees_status', 'fzu_fees_category', 'fzu_dorm_status', 'fzu_bed_status'],
   data() {
     return {
+      updateFlag: false,
+      fullscreenLoading:false,
       // 遮罩层
       loading: true,
       // 选中数组
@@ -301,6 +343,8 @@ export default {
         feesStatus: null,
         feesCategory: null,
         dormStatus: null,
+        bedNo:null,
+        bedStatus: null
       },
       // 表单参数
       form: {},
@@ -311,6 +355,9 @@ export default {
         ],
         roomNo: [
           { required: true, message: "房间号不能为空", trigger: "blur" }
+        ],
+        bedNo: [
+          { required: true, message: "床位号不能为空", trigger: "blur" }
         ],
       }
     };
@@ -345,7 +392,9 @@ export default {
         dormStatus: null,
         contactPerson: null,
         contactPhone: null,
-        remark: null
+        remark: null,
+        bedNo:null,
+        bedStatus: null
       };
       this.resetForm("form");
     },
@@ -368,12 +417,16 @@ export default {
     /** 新增按钮操作 */
     handleAdd() {
       this.reset();
+      this.updateFlag = false;
       this.open = true;
       this.title = "添加宿舍";
     },
     /** 修改按钮操作 */
     handleUpdate(row) {
       this.reset();
+      if(this.$store.state.user.roles[0] == 'student'){
+        this.updateFlag = true;
+      }
       const dormId = row.dormId || this.ids
       getStudentdorm(dormId).then(response => {
         this.form = response.data;
@@ -404,7 +457,7 @@ export default {
     /** 删除按钮操作 */
     handleDelete(row) {
       const dormIds = row.dormId || this.ids;
-      this.$modal.confirm('是否确认删除宿舍编号为"' + dormIds + '"的数据项？').then(function() {
+      this.$modal.confirm('是否确认删除编号为"' + dormIds + '"的数据项？').then(function() {
         return delStudentdorm(dormIds);
       }).then(() => {
         this.getList();
@@ -437,10 +490,12 @@ export default {
       this.upload.isUploading = false;
       this.$refs.upload.clearFiles();
       this.$alert("<div style='overflow: auto;overflow-x: hidden;max-height: 70vh;padding: 10px 20px 0;'>" + response.msg + "</div>", "导入结果", { dangerouslyUseHTMLString: true });
+      this.fullscreenLoading = false;
       this.getList();
     },
     // 提交上传文件
     submitFileForm() {
+      this.fullscreenLoading = true;
       this.$refs.upload.submit();
     }
   }

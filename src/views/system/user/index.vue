@@ -437,13 +437,16 @@
         :on-success="handleFileSuccess"
         :auto-upload="false"
         drag
+        v-loading.fullscreen.lock="fullscreenLoading"  element-loading-text="数据正在拼命导入中，请稍等..."
+          element-loading-spinner="el-icon-loading"
+          element-loading-background="rgba(0, 0, 0, 0.8)"
       >
         <i class="el-icon-upload"></i>
         <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
         <div class="el-upload__tip text-center" slot="tip">
-          <div class="el-upload__tip" slot="tip">
+          <!-- <div class="el-upload__tip" slot="tip">
             <el-checkbox v-model="upload.updateSupport" /> 是否更新已经存在的用户数据
-          </div>
+          </div> -->
           <span>仅允许导入xls、xlsx格式文件。</span>
           <el-link type="primary" :underline="false" style="font-size:12px;vertical-align: baseline;" @click="importTemplate">下载模板</el-link>
         </div>
@@ -468,6 +471,7 @@ export default {
   components: { Treeselect },
   data() {
     return {
+      fullscreenLoading:false,
       fdyParams: {
         roleId:100,
         deptId:undefined,
@@ -806,10 +810,12 @@ export default {
       this.upload.isUploading = false;
       this.$refs.upload.clearFiles();
       this.$alert("<div style='overflow: auto;overflow-x: hidden;max-height: 70vh;padding: 10px 20px 0;'>" + response.msg + "</div>", "导入结果", { dangerouslyUseHTMLString: true });
+      this.fullscreenLoading = false;
       this.getList();
     },
     // 提交上传文件
     submitFileForm() {
+      this.fullscreenLoading = true;
       this.$refs.upload.submit();
     }
   }

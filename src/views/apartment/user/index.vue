@@ -234,7 +234,10 @@
     <el-dialog :title="upload.title" :visible.sync="upload.open" width="400px" append-to-body>
       <el-upload ref="upload" :limit="1" accept=".xlsx, .xls" :headers="upload.headers"
         :action="upload.url + '?updateSupport=' + upload.updateSupport" :disabled="upload.isUploading"
-        :on-progress="handleFileUploadProgress" :on-success="handleFileSuccess" :auto-upload="false" drag>
+        :on-progress="handleFileUploadProgress" :on-success="handleFileSuccess" :auto-upload="false" drag
+         v-loading.fullscreen.lock="fullscreenLoading"  element-loading-text="数据正在拼命导入中，请稍等..."
+          element-loading-spinner="el-icon-loading"
+          element-loading-background="rgba(0, 0, 0, 0.8)">
         <i class="el-icon-upload"></i>
         <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
         <div class="el-upload__tip text-center" slot="tip">
@@ -267,6 +270,7 @@ export default {
   dicts: ['fzu_dorm_status', 'fzu_school_roll', 'fzu_school_area', 'fzu_fees_status', 'fzu_fees_category', 'sys_user_sex', 'fzu_dept_id_name'],
   data() {
     return {
+      fullscreenLoading:false,
       fdyList:null,
       fdyParams: {
         roleId:100,
@@ -607,10 +611,12 @@ export default {
       this.upload.isUploading = false;
       this.$refs.upload.clearFiles();
       this.$alert("<div style='overflow: auto;overflow-x: hidden;max-height: 70vh;padding: 10px 20px 0;'>" + response.msg + "</div>", "导入结果", { dangerouslyUseHTMLString: true });
+      this.fullscreenLoading = false;
       this.getList();
     },
     // 提交上传文件
     submitFileForm() {
+      this.fullscreenLoading = true;
       this.$refs.upload.submit();
     }
   }
