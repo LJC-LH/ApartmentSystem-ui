@@ -311,7 +311,7 @@
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="校区">
+            <el-form-item label="校区" prop="schoolArea">
               <el-select v-model="form.schoolArea" placeholder="请选择校区" clearable>
                 <el-option
                   v-for="dict in dict.type.fzu_school_area"
@@ -376,7 +376,7 @@
             </el-form-item>
           </el-col> -->
           <el-col :span="12">
-            <el-form-item label="角色">
+            <el-form-item label="角色" prop="roleIds">
               <el-select v-model="form.roleIds" multiple placeholder="请选择角色">
                 <el-option
                   v-for="item in roleOptions"
@@ -575,13 +575,23 @@ export default {
             trigger: ["blur", "change"]
           }
         ],
-        phonenumber: [
-          {
-            pattern: /^1[3|4|5|6|7|8|9][0-9]\d{8}$/,
-            message: "请输入正确的手机号码",
-            trigger: "blur"
-          }
-        ]
+        // phonenumber: [
+        //   {
+        //     pattern: /^1[3|4|5|6|7|8|9][0-9]\d{8}$/,
+        //     message: "请输入正确的手机号码",
+        //     trigger: "blur"
+        //   },
+        //   { required: true, message: "用户密码不能为空", trigger: "blur" },
+        // ],
+        schoolArea: [
+          { required: true, message: "校区不能为空", trigger: "blur" }
+        ],
+        roleIds: [
+          { required: true, message: "角色不能为空", trigger: "blur" }
+        ],
+        deptId: [
+          { required: true, message: "归属单位不能为空", trigger: "blur" }
+        ],
       }
     };
   },

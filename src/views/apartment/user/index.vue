@@ -11,8 +11,8 @@
       <el-form-item label="学号" prop="userName">
         <el-input v-model="queryParams.userName" placeholder="请输入学号" clearable @keyup.enter.native="handleQuery" />
       </el-form-item>
-      <el-form-item label="学生姓名" prop="niceName">
-        <el-input v-model="queryParams.niceName" placeholder="请输入学生姓名" clearable @keyup.enter.native="handleQuery" />
+      <el-form-item label="学生姓名" prop="nickName">
+        <el-input v-model="queryParams.nickName" placeholder="请输入学生姓名" clearable @keyup.enter.native="handleQuery" />
       </el-form-item>
       <el-form-item label="床位" prop="bedNo">
         <el-input v-model="queryParams.bedNo" placeholder="请输入床位" clearable @keyup.enter.native="handleQuery" />
@@ -61,7 +61,7 @@
       <el-table-column label="楼栋号" align="center" prop="buildingNo" />
       <el-table-column label="房间号" align="center" prop="roomNo" />
       <el-table-column label="学号" align="center" prop="userName" width="100px" />
-      <el-table-column label="学生姓名" align="center" prop="niceName" />
+      <el-table-column label="学生姓名" align="center" prop="nickName" />
       <el-table-column label="性别" align="center" prop="sex">
         <template slot-scope="scope">
           <dict-tag :options="dict.type.sys_user_sex" :value="scope.row.sex" />
@@ -151,8 +151,8 @@
         <el-form-item label="学号" prop="userName">
           <el-input v-model="changeform.userName" placeholder="请输入学号" />
         </el-form-item>
-        <el-form-item label="学生姓名" prop="niceName">
-          <el-input v-model="changeform.niceName" placeholder="请输入学生姓名" />
+        <el-form-item label="学生姓名" prop="nickName">
+          <el-input v-model="changeform.nickName" placeholder="请输入学生姓名" />
         </el-form-item>
         <el-form-item label="床位" prop="bedNo">
           <el-input v-model="changeform.bedNo" placeholder="请输入床位" :disabled="true" />
@@ -312,7 +312,7 @@ export default {
         buildingNo: null,
         roomNo: null,
         userName: null,
-        niceName: null,
+        nickName: null,
         sex: null,
         bedNo: null,
         deptId: null,
@@ -443,7 +443,7 @@ export default {
         buildingNo: null,
         roomNo: null,
         userName: null,
-        niceName: null,
+        nickName: null,
         sex: null,
         bedNo: null,
         deptId: null,

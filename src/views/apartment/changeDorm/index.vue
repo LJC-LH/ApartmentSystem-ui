@@ -1,14 +1,14 @@
 <template>
   <div class="app-container">
-    <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch" label-width="68px">
-      <el-form-item label="交换学生id" prop="oneStudentId">
+    <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch" label-width="150px">
+      <!-- <el-form-item label="交换学生id" prop="oneStudentId">
         <el-input
           v-model="queryParams.oneStudentId"
           placeholder="请输入交换学生id"
           clearable
           @keyup.enter.native="handleQuery"
         />
-      </el-form-item>
+      </el-form-item> -->
       <el-form-item label="交换学生学号" prop="oneUserName">
         <el-input
           v-model="queryParams.oneUserName"
@@ -25,15 +25,15 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="原宿舍号" prop="oneDormId">
+      <!-- <el-form-item label="原宿舍号" prop="oneDormId">
         <el-input
           v-model="queryParams.oneDormId"
           placeholder="请输入原宿舍号"
           clearable
           @keyup.enter.native="handleQuery"
         />
-      </el-form-item>
-      <el-form-item label="原宿舍楼栋" prop="oneBuildingNo">
+      </el-form-item> -->
+      <!-- <el-form-item label="原宿舍楼栋" prop="oneBuildingNo">
         <el-input
           v-model="queryParams.oneBuildingNo"
           placeholder="请输入原宿舍楼栋"
@@ -58,15 +58,15 @@
             :value="dict.value"
           />
         </el-select>
-      </el-form-item>
-      <el-form-item label="被交换学生id" prop="twoStudentId">
+      </el-form-item> -->
+      <!-- <el-form-item label="被交换学生id" prop="twoStudentId">
         <el-input
           v-model="queryParams.twoStudentId"
           placeholder="请输入被交换学生id"
           clearable
           @keyup.enter.native="handleQuery"
         />
-      </el-form-item>
+      </el-form-item> -->
       <el-form-item label="被交换学生学号" prop="twoUserName">
         <el-input
           v-model="queryParams.twoUserName"
@@ -83,7 +83,7 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="新宿舍号" prop="twoDormId">
+      <!-- <el-form-item label="新宿舍号" prop="twoDormId">
         <el-input
           v-model="queryParams.twoDormId"
           placeholder="请输入新宿舍号"
@@ -116,8 +116,8 @@
             :value="dict.value"
           />
         </el-select>
-      </el-form-item>
-      <el-form-item>
+      </el-form-item> -->
+      <el-form-item style="padding-left:50px">
         <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
         <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
       </el-form-item>
@@ -132,9 +132,9 @@
           size="mini"
           @click="handleAdd"
           v-hasPermi="['apartment:changeDorm:add']"
-        >新增</el-button>
+        >院内宿舍调整</el-button>
       </el-col>
-      <el-col :span="1.5">
+      <!-- <el-col :span="1.5">
         <el-button
           type="success"
           plain
@@ -144,8 +144,8 @@
           @click="handleUpdate"
           v-hasPermi="['apartment:changeDorm:edit']"
         >修改</el-button>
-      </el-col>
-      <el-col :span="1.5">
+      </el-col> -->
+      <!-- <el-col :span="1.5">
         <el-button
           type="danger"
           plain
@@ -155,8 +155,8 @@
           @click="handleDelete"
           v-hasPermi="['apartment:changeDorm:remove']"
         >删除</el-button>
-      </el-col>
-      <el-col :span="1.5">
+      </el-col> -->
+      <!-- <el-col :span="1.5">
         <el-button
           type="warning"
           plain
@@ -165,17 +165,17 @@
           @click="handleExport"
           v-hasPermi="['apartment:changeDorm:export']"
         >导出</el-button>
-      </el-col>
+      </el-col> -->
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
     <el-table v-loading="loading" :data="changeDormList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="编号" align="center" prop="changeId" />
-      <el-table-column label="交换学生id" align="center" prop="oneStudentId" />
+      <!-- <el-table-column label="交换学生ID" align="center" prop="oneStudentId" /> -->
       <el-table-column label="交换学生学号" align="center" prop="oneUserName" />
       <el-table-column label="交换学生姓名" align="center" prop="oneNickName" />
-      <el-table-column label="原宿舍号" align="center" prop="oneDormId" />
+      <!-- <el-table-column label="原宿舍ID" align="center" prop="oneDormId" /> -->
       <el-table-column label="原宿舍楼栋" align="center" prop="oneBuildingNo" />
       <el-table-column label="原房间号" align="center" prop="oneRoomNo" />
       <el-table-column label="原床位号" align="center" prop="oneBedNo">
@@ -183,10 +183,10 @@
           <dict-tag :options="dict.type.fzu_bed_no" :value="scope.row.oneBedNo"/>
         </template>
       </el-table-column>
-      <el-table-column label="被交换学生id" align="center" prop="twoStudentId" />
+      <!-- <el-table-column label="被交换学生ID" align="center" prop="twoStudentId" /> -->
       <el-table-column label="被交换学生学号" align="center" prop="twoUserName" />
       <el-table-column label="被交换学生姓名" align="center" prop="twoNickName" />
-      <el-table-column label="新宿舍号" align="center" prop="twoDormId" />
+      <!-- <el-table-column label="新宿舍ID" align="center" prop="twoDormId" /> -->
       <el-table-column label="新宿舍楼栋" align="center" prop="twoBuildingNo" />
       <el-table-column label="新房间号" align="center" prop="twoRoomNo" />
       <el-table-column label="新床位号" align="center" prop="twoBedNo">
@@ -194,15 +194,16 @@
           <dict-tag :options="dict.type.fzu_bed_no" :value="scope.row.twoBedNo"/>
         </template>
       </el-table-column>
+      <el-table-column label="调整时间" align="center" prop="createTime"/>
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
-          <el-button
+          <!-- <el-button
             size="mini"
             type="text"
             icon="el-icon-edit"
             @click="handleUpdate(scope.row)"
             v-hasPermi="['apartment:changeDorm:edit']"
-          >修改</el-button>
+          >修改</el-button> -->
           <el-button
             size="mini"
             type="text"
@@ -226,18 +227,18 @@
     <el-dialog :title="title" :visible.sync="open" width="600px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="150px">
         <el-divider content-position="left">原信息</el-divider>
-        <el-form-item label="交换学生id" prop="oneStudentId">
+        <!-- <el-form-item label="交换学生id" prop="oneStudentId">
           <el-input v-model="form.oneStudentId" placeholder="请输入交换学生id" />
-        </el-form-item>
+        </el-form-item> -->
         <el-form-item label="交换学生学号" prop="oneUserName">
           <el-input v-model="form.oneUserName" placeholder="请输入交换学生学号" />
         </el-form-item>
         <el-form-item label="交换学生姓名" prop="oneNickName">
           <el-input v-model="form.oneNickName" placeholder="请输入交换学生姓名" />
         </el-form-item>
-        <el-form-item label="原宿舍号" prop="oneDormId">
+        <!-- <el-form-item label="原宿舍号" prop="oneDormId">
           <el-input v-model="form.oneDormId" placeholder="请输入原宿舍号" />
-        </el-form-item>
+        </el-form-item> -->
         <el-form-item label="原宿舍楼栋" prop="oneBuildingNo">
           <el-input v-model="form.oneBuildingNo" placeholder="请输入原宿舍楼栋" />
         </el-form-item>
@@ -255,18 +256,18 @@
           </el-select>
         </el-form-item>
         <el-divider content-position="left">新信息 (调整到空床位时无需填写学生信息)</el-divider>
-        <el-form-item label="被交换学生id" prop="twoStudentId">
+        <!-- <el-form-item label="被交换学生id" prop="twoStudentId">
           <el-input v-model="form.twoStudentId" placeholder="请输入被交换学生id" />
-        </el-form-item>
+        </el-form-item> -->
         <el-form-item label="被交换学生学号" prop="twoUserName">
           <el-input v-model="form.twoUserName" placeholder="请输入被交换学生学号" />
         </el-form-item>
         <el-form-item label="被交换学生姓名" prop="twoNickName">
           <el-input v-model="form.twoNickName" placeholder="请输入被交换学生姓名" />
         </el-form-item>
-        <el-form-item label="新宿舍号" prop="twoDormId">
+        <!-- <el-form-item label="新宿舍号" prop="twoDormId">
           <el-input v-model="form.twoDormId" placeholder="请输入新宿舍号" />
-        </el-form-item>
+        </el-form-item> -->
         <el-form-item label="新宿舍楼栋" prop="twoBuildingNo">
           <el-input v-model="form.twoBuildingNo" placeholder="请输入新宿舍楼栋" />
         </el-form-item>
@@ -441,7 +442,7 @@ export default {
     /** 删除按钮操作 */
     handleDelete(row) {
       const changeIds = row.changeId || this.ids;
-      this.$modal.confirm('是否确认删除宿舍调整编号为"' + changeIds + '"的数据项？').then(function() {
+      this.$modal.confirm('是否确认删除编号为"' + changeIds + '"的数据项？').then(function() {
         return delChangeDorm(changeIds);
       }).then(() => {
         this.getList();

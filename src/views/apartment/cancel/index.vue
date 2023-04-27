@@ -244,7 +244,7 @@
         </el-form-item>
         <el-form-item label="校区管理办公室负责人" prop="manageId">
 <!--          <el-input v-model="form.manageId" placeholder="请输入校区管理办公室ID" />-->
-          <el-select v-model="form.manageId" placeholder="请选择校区" :disabled=!stuOption>
+          <el-select v-model="form.manageId" placeholder="校区管理办公室负责人" :disabled=!stuOption>
             <el-option
               v-for="item in xqglList"
               :key="item.userId"
