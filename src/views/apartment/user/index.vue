@@ -11,8 +11,8 @@
       <el-form-item label="学号" prop="userName">
         <el-input v-model="queryParams.userName" placeholder="请输入学号" clearable @keyup.enter.native="handleQuery" />
       </el-form-item>
-      <el-form-item label="学生姓名" prop="nickName">
-        <el-input v-model="queryParams.nickName" placeholder="请输入学生姓名" clearable @keyup.enter.native="handleQuery" />
+      <el-form-item label="学生姓名" prop="niceName">
+        <el-input v-model="queryParams.niceName" placeholder="请输入学生姓名" clearable @keyup.enter.native="handleQuery" />
       </el-form-item>
       <el-form-item label="床位" prop="bedNo">
         <el-input v-model="queryParams.bedNo" placeholder="请输入床位" clearable @keyup.enter.native="handleQuery" />
@@ -40,7 +40,7 @@
     <!-- <el-col :span="1.5">
         <el-button type="success" plain icon="el-icon-edit" size="mini" :disabled="single || addoption" @click="handleUpdate" 
           v-hasPermi="['apartment:user:edit']">修改</el-button>
-        </el-col> -->
+          </el-col> -->
       <el-col :span="1.5">
         <el-button type="danger" plain icon="el-icon-delete" size="mini" :disabled="multiple || addoption"
           @click="handleDelete" v-hasPermi="['apartment:user:remove']">删除</el-button>
@@ -61,7 +61,7 @@
       <el-table-column label="楼栋号" align="center" prop="buildingNo" />
       <el-table-column label="房间号" align="center" prop="roomNo" />
       <el-table-column label="学号" align="center" prop="userName" width="100px" />
-      <el-table-column label="学生姓名" align="center" prop="nickName" />
+      <el-table-column label="学生姓名" align="center" prop="niceName" />
       <el-table-column label="性别" align="center" prop="sex">
         <template slot-scope="scope">
           <dict-tag :options="dict.type.sys_user_sex" :value="scope.row.sex" />
@@ -102,7 +102,7 @@
       </el-table-column>
       <el-table-column label="单位联系人" align="center" prop="fdyName" />
       <el-table-column label="单位联系人电话" align="center" prop="fdyPhone" />
-      <el-table-column label="操作" align="center" class-name="small-padding fixed-width" width="200px">
+      <el-table-column label="操作" align="center" class-name="small-padding fixed-width" width="100px">
         <template slot-scope="scope">
           <el-button size="mini" type="text" icon="el-icon-edit" @click="handleUpdate(scope.row)" :disabled="addoption"
             v-hasPermi="['apartment:user:edit']">修改</el-button>
@@ -151,8 +151,8 @@
         <el-form-item label="学号" prop="userName">
           <el-input v-model="changeform.userName" placeholder="请输入学号" />
         </el-form-item>
-        <el-form-item label="学生姓名" prop="nickName">
-          <el-input v-model="changeform.nickName" placeholder="请输入学生姓名" />
+        <el-form-item label="学生姓名" prop="niceName">
+          <el-input v-model="changeform.niceName" placeholder="请输入学生姓名" />
         </el-form-item>
         <el-form-item label="床位" prop="bedNo">
           <el-input v-model="changeform.bedNo" placeholder="请输入床位" :disabled="true" />
@@ -199,7 +199,7 @@
         </el-form-item>
         <el-form-item label="单位联系人电话" prop="contactPhone">
           <el-input v-model="changeform.contactPhone" placeholder="请输入校区" />
-          </el-form-item> -->
+            </el-form-item> -->
         <el-form-item label="学籍状态" prop="schoolRoll">
           <el-radio-group v-model="changeform.schoolRoll">
             <el-radio v-for="dict in dict.type.fzu_school_roll" :key="dict.value" :label="dict.value">{{ dict.label
@@ -231,7 +231,7 @@
         <div class="el-upload__tip text-center" slot="tip">
         <!-- <div class="el-upload__tip" slot="tip">
             <el-checkbox v-model="upload.updateSupport" /> 是否更新已经存在的学生宿舍数据
-            </div> -->
+              </div> -->
           <span>仅允许导入xls、xlsx格式文件。</span>
           <el-link type="primary" :underline="false" style="font-size:12px;vertical-align: baseline;"
             @click="importTemplate">下载模板</el-link>
@@ -312,7 +312,7 @@ export default {
         buildingNo: null,
         roomNo: null,
         userName: null,
-        nickName: null,
+        niceName: null,
         sex: null,
         bedNo: null,
         deptId: null,
@@ -443,7 +443,7 @@ export default {
         buildingNo: null,
         roomNo: null,
         userName: null,
-        nickName: null,
+        niceName: null,
         sex: null,
         bedNo: null,
         deptId: null,

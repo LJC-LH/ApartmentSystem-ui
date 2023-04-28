@@ -42,4 +42,3 @@ export function delChangeDorm(changeId) {
     method: 'delete'
   })
 }
-
