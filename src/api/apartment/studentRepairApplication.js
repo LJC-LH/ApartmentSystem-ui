@@ -26,6 +26,13 @@ export function addStudentRepairApplication(data) {
   })
 }
 
+export function getInfo() {
+  return request({
+    url: '/apartment/studentRepairApplication/getUser',
+    method: 'post',
+  })
+}
+
 // 修改学生报修
 export function updateStudentRepairApplication(data) {
   return request({
