@@ -26,20 +26,10 @@ export function addRepairResult(data) {
   })
 }
 
-
-
 // 修改维修结果提交
 export function updateRepairResult(data) {
   return request({
-    url: '/apartment/repairResult/solvable',
-    method: 'put',
-    data: data
-  })
-}
-
-export function updateUnsolvableRepairResult(data) {
-  return request({
-    url: '/apartment/repairResult/unsolvable',
+    url: '/apartment/repairResult',
     method: 'put',
     data: data
   })
