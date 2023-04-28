@@ -42,3 +42,12 @@ export function delFirstSelectRepairman(repairId) {
     method: 'delete'
   })
 }
+
+// 根据角色ID查询用户信息
+export function selectUserByRoleId(roleId) {
+  return request({
+    url: `/apartment/firstSelectRepairman/selectUserByRoleId/` + roleId,
+    method: 'get'
+  })
+}
+
