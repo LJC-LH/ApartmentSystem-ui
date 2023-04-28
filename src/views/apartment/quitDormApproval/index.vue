@@ -489,6 +489,7 @@
 import { listQuitDormApproval, getQuitDormApproval, delQuitDormApproval, addQuitDormApproval, updateQuitDormApproval, getInfo, deleteAndUpdateDormInfo } from "@/api/apartment/quitDormApproval";
 import { selectUserListByRoleId } from '@/api/apartment/approval';
 
+
 export default {
   name: "QuitDormApproval",
   dicts: ['fzu_approval_opinion', 'fzu_approval_status', 'fzu_bed_no', 'fzu_school_area', 'fzu_dept_id_name'],

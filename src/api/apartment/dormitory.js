@@ -9,6 +9,7 @@ export function listStudentdorm(query) {
   })
 }
 
+
 // 查询宿舍详细
 export function getStudentdorm(dormId) {
   return request({

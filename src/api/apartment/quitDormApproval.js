@@ -58,3 +58,4 @@ export function deleteAndUpdateDormInfo(data) {
     data: data
   })
 }
+
