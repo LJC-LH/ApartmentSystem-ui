@@ -146,13 +146,12 @@
       <el-table-column label="楼栋号" align="center" prop="buildingNo" />
       <el-table-column label="房间号" align="center" prop="roomNo" />
       <el-table-column label="损坏说明" align="center" prop="damageDescription" />
-      <el-table-column label="报修类型" align="center" prop="fixType" />
+      <!-- <el-table-column label="报修类型" align="center" prop="fixType" /> -->
       <el-table-column label="报修创建时间" align="center" prop="createAt" width="180">
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.createAt, '{y}-{m}-{d}') }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="报修状态" align="center" prop="fixStatus" />
       <el-table-column label="一次维修人员" align="center" prop="repairmanName" />
       <el-table-column label="第一次维修内容" align="center" prop="firstWorkContent" />
       <el-table-column label="第一次报修完成时间" align="center" prop="firstCompletionTime" width="180">
@@ -161,9 +160,10 @@
         </template>
       </el-table-column>
       <el-table-column label="校区管理办公室意见" align="center" prop="campusManagementOpinion" />
-      <el-table-column label="是否二次派单" align="center" prop="isSecondDispatch" />
-      <el-table-column label="学生评价内容" align="center" prop="evaluateContent" />
+      <!-- <el-table-column label="是否二次派单" align="center" prop="isSecondDispatch" /> -->
       <el-table-column label="二次维修人员" align="center" prop="secondaryRepairmanName" />
+      <el-table-column label="第二次维修内容" align="center" prop="secondWorkContent" />
+      <el-table-column label="学生评价内容" align="center" prop="evaluateContent" />
       <el-table-column label="学生评分" align="center" prop="evaluateRate" />
       <!-- <el-table-column label="第二次报修预计完成时间" align="center" prop="secondExpectedCompletionTime" width="180">
         <template slot-scope="scope">
@@ -175,13 +175,17 @@
           <span>{{ parseTime(scope.row.secondActualCompletionTime, '{y}-{m}-{d}') }}</span>
         </template>
       </el-table-column> -->
-      <el-table-column label="第二次维修内容" align="center" prop="secondWorkContent" />
+      <el-table-column label="订单状态" align="center" prop="fixStatus">
+        <template slot-scope="scope">
+          <dict-tag :options="dict.type.fzu_fix_status" :value="scope.row.fixStatus" />
+        </template>
+      </el-table-column>
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button size="mini" type="text" icon="el-icon-edit" @click="checkDetail(scope.row)"
             v-hasPermi="['apartment:repairResult:edit']">订单详情</el-button>
           <el-button size="mini" type="text" icon="el-icon-delete" @click="uploadRecord(scope.row)"
-            v-hasPermi="['apartment:repairResult:edit']">上传记录</el-button>
+            v-bind:disabled="scope.row.fixStatus == 4">上传记录</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -299,7 +303,7 @@
           </el-radio-group>
         </el-form-item>
         <el-form-item label="维修图片上传">
-          <el-upload :file-list="fileList" action="/system/user/profile/uploadPicture" list-type="picture-card"
+          <el-upload v-model:file-list="fileList" action="/system/user/profile/uploadPicture" list-type="picture-card"
             :show-file-list="true" :on-preview="handlePictureCardPreview" :on-remove="handleRemove"
             :on-change="handleFileChange" :before-upload="beforePictureUpload" :auto-upload="false"
             accept=".jpg,.jpeg,.png,.bmp" ref="upload" @close="handleCloseDialog">
@@ -331,6 +335,7 @@ import { uploadFirstImages, uploadSecondImages } from "@/api/apartment/uploading
 
 export default {
   name: "RepairResult",
+  dicts: ['fzu_fix_status'],
   data() {
     return {
       // 遮罩层
@@ -462,6 +467,7 @@ export default {
         secondWorkContent: null
       };
       this.resetForm("form");
+      this.tempFileList = []
     },
     /** 搜索按钮操作 */
     handleQuery() {
@@ -569,6 +575,10 @@ export default {
     },
     // 提交按钮
     handleConfirm() {
+      if (this.tempFileList.length == 0) {
+        this.$message.error('请选择要上传的图片')
+        return
+      }
       this.$refs['elForm'].validate(valid => {
         if (!valid) return
         let urlData = new FormData();
@@ -577,29 +587,33 @@ export default {
         }
         this.formData.repairId = this.formRepairID
         this.formData.isSecondDispatch = this.isSecondeary
+        console.log(this.formData.repairStatus);
         // 判断是否是第一次派单, isSecondeary
-        console.log("formData is:", this.formData);
-        updateUnsolvableRepairResult(this.formData).then(res => {
-          return;
-        })
-        console.log("----------------------我运行了这里----------------------");
-        console.log("is?:", this.isSecondeary);
+        if (this.formData.repairStatus == 0) {
+          updateUnsolvableRepairResult(this.formData).then(res => {
+            return;
+          })
+        }
         if (this.isSecondeary == 0) {
           // 发送到第一次维修的接口
           uploadFirstImages(urlData).then(response => {
+            console.log("res is :", response);
             this.formData.onceImagesURL = response.data
             updateRepairResult(this.formData).then(res => {
               this.stuOrderOpen = false;
               this.$modal.msgSuccess("修改成功");
+              this.reset()
             })
           });
         } else if (this.isSecondeary == 1) {
           // 发送到第二次维修的接口
           uploadSecondImages(urlData).then(response => {
+            console.log("这是第二次res is :", response);
             this.formData.secondImagesURL = response.data
             updateRepairResult(this.formData).then(res => {
               this.stuOrderOpen = false;
               this.$modal.msgSuccess("修改成功");
+              this.reset()
             })
           });
         }
