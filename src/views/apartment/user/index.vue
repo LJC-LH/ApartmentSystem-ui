@@ -118,17 +118,17 @@
     <!-- 添加用户信息对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
-        <el-form-item label="楼栋号" prop="buildingNo">
-          <el-input v-model="form.buildingNo" placeholder="请输入楼栋号" />
-        </el-form-item>
-        <el-form-item label="房间号" prop="roomNo">
-          <el-input v-model="form.roomNo" placeholder="请输入房间号" />
-        </el-form-item>
         <el-form-item label="学号" prop="userName">
           <el-input v-model="form.userName" placeholder="请输入学号" />
         </el-form-item>
         <el-form-item label="学生姓名" prop="nickName">
           <el-input v-model="form.nickName" placeholder="请输入学生姓名" />
+        </el-form-item>
+        <el-form-item label="楼栋号" prop="buildingNo">
+          <el-input v-model="form.buildingNo" placeholder="请输入楼栋号" />
+        </el-form-item>
+        <el-form-item label="房间号" prop="roomNo">
+          <el-input v-model="form.roomNo" placeholder="请输入房间号" />
         </el-form-item>
         <el-form-item label="床位" prop="bedNo">
           <el-input v-model="form.bedNo" placeholder="请输入床位" />
@@ -142,39 +142,51 @@
     <!-- 修改用户信息对话框 -->
     <el-dialog :title="title" :visible.sync="changeopen" width="500px" append-to-body>
       <el-form ref="changeform" :model="changeform" :rules="rules" label-width="80px">
+        <el-form-item label="学号" prop="userName">
+          <el-input v-model="changeform.userName" placeholder="请输入学号" :disabled="true"/>
+        </el-form-item>
+        <el-form-item label="学生姓名" prop="nickName">
+          <el-input v-model="changeform.nickName" placeholder="请输入学生姓名" :disabled="true"/>
+        </el-form-item>
         <el-form-item label="楼栋号" prop="buildingNo">
           <el-input v-model="changeform.buildingNo" placeholder="请输入楼栋号" :disabled="true" />
         </el-form-item>
         <el-form-item label="房间号" prop="roomNo">
           <el-input v-model="changeform.roomNo" placeholder="请输入房间号" :disabled="true" />
         </el-form-item>
-        <el-form-item label="学号" prop="userName">
-          <el-input v-model="changeform.userName" placeholder="请输入学号" />
-        </el-form-item>
-        <el-form-item label="学生姓名" prop="nickName">
-          <el-input v-model="changeform.nickName" placeholder="请输入学生姓名" />
-        </el-form-item>
         <el-form-item label="床位" prop="bedNo">
           <el-input v-model="changeform.bedNo" placeholder="请输入床位" :disabled="true" />
         </el-form-item>
         <el-form-item label="学院" prop="deptId">
-          <el-select v-model="changeform.deptId" placeholder="请选择学院">
+          <el-select v-model="changeform.deptId" placeholder="请选择学院" :disabled="true">
             <el-option v-for="dict in dict.type.fzu_dept_id_name" :key="dict.value" :label="dict.label"
               :value="Number(dict.value)" />
           </el-select>
         </el-form-item>
         <!-- 修改辅导员 -->
         <el-form-item label="单位联系人" prop="fdyNumber">
-          <el-select v-model="changeform.fdyNumber" filterable placeholder="请选择单位负责人" clearable>
+          <el-select v-model="changeform.fdyNumber" filterable placeholder="请选择单位负责人" clearable :disabled="true">
             <el-option v-for="item in fdyList" :key="item.userName" :label="item.nickName + '（' + item.userName + '）'"
               :value="item.userName"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="省份" prop="province">
-          <el-input v-model="changeform.province" placeholder="请输入省份" />
+          <el-input v-model="changeform.province" placeholder="请输入省份" :disabled="true"/>
         </el-form-item>
         <el-form-item label="学生电话" prop="stuPhone">
-          <el-input v-model="changeform.stuPhone" placeholder="请输入电话" />
+          <el-input v-model="changeform.stuPhone" placeholder="请输入电话" :disabled="true"/>
+        </el-form-item>
+        <el-form-item label="学籍状态" prop="schoolRoll">
+          <el-radio-group v-model="changeform.schoolRoll" :disabled="true">
+            <el-radio v-for="dict in dict.type.fzu_school_roll" :key="dict.value" :label="dict.value">{{ dict.label
+            }}</el-radio>
+          </el-radio-group>
+        </el-form-item>
+        <el-form-item label="校区" prop="schoolArea">
+          <el-select v-model="changeform.schoolArea" placeholder="请选择校区" :disabled="true">
+            <el-option v-for="dict in dict.type.fzu_school_area" :key="dict.value" :label="dict.label"
+              :value="dict.value"></el-option>
+          </el-select>
         </el-form-item>
         <el-form-item label="缴费类别" prop="feesCategory">
           <el-radio-group v-model="changeform.feesCategory">
@@ -200,18 +212,6 @@
         <el-form-item label="单位联系人电话" prop="contactPhone">
           <el-input v-model="changeform.contactPhone" placeholder="请输入校区" />
             </el-form-item> -->
-        <el-form-item label="学籍状态" prop="schoolRoll">
-          <el-radio-group v-model="changeform.schoolRoll">
-            <el-radio v-for="dict in dict.type.fzu_school_roll" :key="dict.value" :label="dict.value">{{ dict.label
-            }}</el-radio>
-          </el-radio-group>
-        </el-form-item>
-        <el-form-item label="校区" prop="schoolArea">
-          <el-select v-model="changeform.schoolArea" placeholder="请选择校区">
-            <el-option v-for="dict in dict.type.fzu_school_area" :key="dict.value" :label="dict.label"
-              :value="dict.value"></el-option>
-          </el-select>
-        </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="changesubmitForm">确 定</el-button>

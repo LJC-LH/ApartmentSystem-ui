@@ -299,7 +299,7 @@
           </el-radio-group>
         </el-form-item>
         <el-form-item label="维修图片上传">
-          <el-upload v-model:file-list="fileList" action="/system/user/profile/uploadPicture" list-type="picture-card"
+          <el-upload :file-list="fileList" action="/system/user/profile/uploadPicture" list-type="picture-card"
             :show-file-list="true" :on-preview="handlePictureCardPreview" :on-remove="handleRemove"
             :on-change="handleFileChange" :before-upload="beforePictureUpload" :auto-upload="false"
             accept=".jpg,.jpeg,.png,.bmp" ref="upload" @close="handleCloseDialog">

@@ -272,7 +272,7 @@
           </el-input>
         </el-form-item>
         <el-form-item>
-          <el-upload v-model:file-list="fileList" action="/system/user/profile/uploadPicture" list-type="picture-card"
+          <el-upload :file-list="fileList" action="/system/user/profile/uploadPicture" list-type="picture-card"
             :show-file-list="true" :on-preview="handlePictureCardPreview" :on-remove="handleRemove"
             :on-change="handleFileChange" :before-upload="beforePictureUpload" :auto-upload="false"
             @close="handleCloseDialog" ref="upload" accept=".jpg,.jpeg,.png,.bmp">
@@ -285,8 +285,8 @@
             <img w-full :src="dialogImageUrl" alt="Preview Image" />
           </el-dialog>
         </el-form-item>
-        <el-form-item label="损坏说明" prop="damagedDescription">
-          <el-input v-model="formData.damagedDescription" type="textarea" placeholder="请输入损坏说明"
+        <el-form-item label="损坏说明" prop="damageDescription">
+          <el-input v-model="formData.damageDescription" type="textarea" placeholder="请输入损坏说明"
             :autosize="{ minRows: 4, maxRows: 4 }" :style="{ width: '100%' }"></el-input>
         </el-form-item>
       </el-form>
@@ -371,7 +371,11 @@ export default {
           message: '请输入房间名',
           trigger: 'blur'
         }],
-        damagedDescription: [],
+        damageDescription: [{
+          required: true,
+          message: '请输入损坏情况',
+          trigger: 'blur'
+        }],
       },
       stuOrderOpen: false,
       // 学生订单上传图片组件
@@ -449,7 +453,7 @@ export default {
     handleAdd() {
       // TODO: 获取消息
       getInfo().then(res => {
-        this.reset();
+        this.formDataReset();
         this.stuOrderOpen = true;
         this.title = "添加学生报修";
         this.formData.buildingNo = res.data.buildingNo
@@ -520,7 +524,7 @@ export default {
     handleConfirm() {
       this.$refs['elForm'].validate(valid => {
         if (!valid) return
-        this.close()
+        // this.close()
         let urlData = new FormData();
         for (let i = 0; i < this.tempFileList.length; i++) {
           urlData.append('data', this.tempFileList[i].raw)
@@ -534,19 +538,21 @@ export default {
           // this.visible = false; 
           //_____________这个逻辑应该是上传图片之后，返回List集合，再封装成FzuCompleteOrder，重新传入controller，再完成CRUD的sql语句___________________________________
           this.formData.stuImagesURL = response.data
+          console.log("this.formData",this.formData)
+          console.log("this.formData.damageDescription",this.formData.damageDescription)
           addStudentRepairApplication(this.formData).then(res => {
-            this.stuOrderOpen = false;
-            this.$modal.msgSuccess("修改成功");
+            // this.stuOrderOpen = false;
+            this.$modal.msgSuccess("报修成功");
+            this.close()
           });
         });
-        this.formDataReset()
       })
     },
     formDataReset() {
       this.formData = {
         buildingNo: null,
         roomNo: null,
-        damagedDescription: null,
+        damageDescription: null,
         stuImagesURL: [],
       }
     },
