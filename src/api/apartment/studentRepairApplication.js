@@ -33,6 +33,14 @@ export function getInfo() {
   })
 }
 
+export function updateEvaluate(data) {
+  return request({
+    url: '/apartment/studentRepairApplication/updateEvaluate',
+    method: 'post',
+    data: data
+  })
+}
+
 // 修改学生报修
 export function updateStudentRepairApplication(data) {
   return request({
