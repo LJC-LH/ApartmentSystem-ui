@@ -10,83 +10,11 @@
       <el-form-item label="房间号" prop="roomNo">
         <el-input v-model="queryParams.roomNo" placeholder="请输入房间号" clearable @keyup.enter.native="handleQuery" />
       </el-form-item>
-      <!-- <el-form-item label="损坏说明" prop="damageDescription">
-        <el-input
-          v-model="queryParams.damageDescription"
-          placeholder="请输入损坏说明"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item> -->
       <el-form-item label="报修创建时间" prop="createAt">
         <el-date-picker clearable v-model="queryParams.createAt" type="date" value-format="yyyy-MM-dd"
           placeholder="请选择报修创建时间">
         </el-date-picker>
       </el-form-item>
-      <!-- <el-form-item label="一次维修人员id" prop="firstRepairmanId">
-        <el-input
-          v-model="queryParams.firstRepairmanId"
-          placeholder="请输入一次维修人员id"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item> -->
-      <!-- <el-form-item label="第一次报修完成时间" prop="firstCompletionTime">
-        <el-date-picker clearable
-          v-model="queryParams.firstCompletionTime"
-          type="date"
-          value-format="yyyy-MM-dd"
-          placeholder="请选择第一次报修完成时间">
-        </el-date-picker>
-      </el-form-item> -->
-      <!-- <el-form-item label="校区管理办公室意见" prop="campusManagementOpinion">
-        <el-input
-          v-model="queryParams.campusManagementOpinion"
-          placeholder="请输入校区管理办公室意见"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item> -->
-      <!-- <el-form-item label="是否二次派单，0否，1是" prop="isSecondDispatch">
-        <el-input
-          v-model="queryParams.isSecondDispatch"
-          placeholder="请输入是否二次派单，0否，1是"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item> -->
-      <!-- <el-form-item label="学生评分" prop="evaluateRate">
-        <el-input
-          v-model="queryParams.evaluateRate"
-          placeholder="请输入学生评分"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item> -->
-      <!-- <el-form-item label="二次维修人员id" prop="secondaryRepairmanId">
-        <el-input
-          v-model="queryParams.secondaryRepairmanId"
-          placeholder="请输入二次维修人员id"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item> -->
-      <!-- <el-form-item label="第二次报修预计完成时间" prop="secondExpectedCompletionTime">
-        <el-date-picker clearable
-          v-model="queryParams.secondExpectedCompletionTime"
-          type="date"
-          value-format="yyyy-MM-dd"
-          placeholder="请选择第二次报修预计完成时间">
-        </el-date-picker>
-      </el-form-item> -->
-      <!-- <el-form-item label="第二次报修实际完成时间" prop="secondActualCompletionTime">
-        <el-date-picker clearable
-          v-model="queryParams.secondActualCompletionTime"
-          type="date"
-          value-format="yyyy-MM-dd"
-          placeholder="请选择第二次报修实际完成时间">
-        </el-date-picker>
-      </el-form-item> -->
       <el-form-item>
         <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
         <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
@@ -98,31 +26,6 @@
         <el-button type="primary" plain icon="el-icon-plus" size="mini" @click="handleAdd"
           v-hasPermi="['apartment:studentRepairApplication:add']">报修</el-button>
       </el-col>
-      <!-- <el-col :span="1.5">
-        <el-button
-          type="success"
-          plain
-          icon="el-icon-edit"
-          size="mini"
-          :disabled="single"
-          @click="handleUpdate"
-          v-hasPermi="['apartment:studentRepairApplication:edit']"
-        >修改</el-button>
-      </el-col> -->
-      <!-- <el-col :span="1.5">
-        <el-button type="danger" plain icon="el-icon-delete" size="mini" :disabled="multiple" @click="handleDelete"
-          v-hasPermi="['apartment:studentRepairApplication:remove']">删除</el-button>
-      </el-col> -->
-      <!-- <el-col :span="1.5">
-        <el-button
-          type="warning"
-          plain
-          icon="el-icon-download"
-          size="mini"
-          @click="handleExport"
-          v-hasPermi="['apartment:studentRepairApplication:export']"
-        >导出</el-button>
-      </el-col> -->
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
@@ -148,8 +51,10 @@
       </el-table-column>>
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
+          <el-button size="mini" type="text" icon="el-icon-delete" @click="handleDetail(scope.row)">详情</el-button>
           <el-button size="mini" type="text" icon="el-icon-delete" @click="handleDelete(scope.row)"
-            v-hasPermi="['apartment:studentRepairApplication:remove']" v-bind:disabled="scope.row.fixStatus != 0 ">删除</el-button>
+            v-hasPermi="['apartment:studentRepairApplication:remove']"
+            v-bind:disabled="scope.row.fixStatus != 0">删除</el-button>
           <el-button size="mini" type="text" icon="el-icon-delete" @click="handleContent(scope.row)"
             v-bind:disabled="scope.row.fixStatus != 4 || scope.row.evaluateContent != null">评价</el-button>
         </template>
@@ -210,6 +115,60 @@
       <div slot="footer">
         <el-button @click="contentCancle">取消</el-button>
         <el-button type="primary" @click="contentConfirm">确定</el-button>
+      </div>
+    </el-dialog>
+    <!-- 详情页面 -->
+    <el-dialog :visible.sync="orderDetailOpen" width="1000px" title="订单详情页" @close="detailClose">
+      <div class="parent">
+        <div class="row1">
+          <div class="row11" style="font-size: 16px;">
+            保修订单详情
+          </div>
+          <!-- 这里需要获得订单的状态，即active和finish是响应式的 -->
+          <div class="row12" align-center>
+            <el-steps :active="parseInt(stepActive)">
+              <!-- TODO 这里的icon没有找到 -->
+              <el-step title="已报修" />
+              <el-step title="处理中" />
+              <el-step title="已完成" />
+            </el-steps>
+          </div>
+        </div>
+        <div class="row2">
+          <div class="row21" style="font-size: 16px;">
+            宿舍信息
+          </div>
+          <div class="row22">
+            <div class="row2222">
+              <div class="row221">
+                楼栋号：{{ detailOrder.buildingNo }}
+              </div>
+              <div class="row222">
+                房间号：{{ detailOrder.roomNo }}
+              </div>
+            </div>
+            <div class="row223">
+              学生名字：{{ detailOrder.studentName }}
+            </div>
+          </div>
+        </div>
+        <div class="row3">
+          <div class="row31" style="font-size: 16px;">
+            报修详情
+          </div>
+          <div class="row32">
+            <div class="row321">
+              报修描述：{{ detailOrder.damageDescription }}
+            </div>
+            <div class="row322">
+              <div class="row3221">报修图片：</div>
+              <div class="row3222">
+                <el-image style="width: 100px; height: 100px" :src="stuURL" :zoom-rate="1.2"
+                  :preview-src-list="stuURLList" :initial-index="4" fit="cover" />
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </el-dialog>
   </div>
@@ -314,7 +273,18 @@ export default {
       // 评价表单
       contentForm: {},
       contentOpen: false,
-      contentId: ''
+      contentId: '',
+      //学生详情页面
+      orderDetailOpen: false,
+      showDiv: false,
+      stuURL: '',
+      stuURLList: [],
+      formRepairID: '',
+      // 状态条的参数
+      stepActive: '',
+      // 是否可以维修状态选择
+      repairStatus: '',
+      detailOrder: {},
     };
   },
   created() {
@@ -470,11 +440,10 @@ export default {
 
         // })
         // TODO:这里应该采用异步调用，多线程并发
-        console.log("data: " + this.addForm.damageDescription);
-        console.log(this.addForm);
         uploadStuImages(urlData).then(response => {
           // this.visible = false; 
           //_____________这个逻辑应该是上传图片之后，返回List集合，再封装成FzuCompleteOrder，重新传入controller，再完成CRUD的sql语句___________________________________
+          console.log("res is :", response);
           this.addForm.stuImagesURL = response.data
           addStudentRepairApplication(this.addForm).then(res => {
             this.stuOrderOpen = false;
@@ -541,13 +510,194 @@ export default {
       this.contentForm.repairId = this.contentId
       console.log(this.contentForm);
       updateEvaluate(this.contentForm).then({
-        
+
       })
       this.contentOpen = false
       this.$modal.msgSuccess("评价成功")
       this.contentForm = {}
     },
+    //详情页面
+    handleDetail(row) {
+      const repairId = row.repairId || this.ids
+      getStudentRepairApplication(repairId).then(response => {
+        console.log("res is :", response);
+        this.orderDetailOpen = true
+        if (response.data.fixStatus == '0') {
+          this.stepActive = 1
+        } else if (response.data.fixStatus == '4') {
+          this.stepActive = 3
+        } else {
+          this.stepActive = 2
+        }
+        this.detailOrder = response.data
+      });
+    },
+    detailClose() {
+      this.orderDetailOpen = false
+      this.detailOrder = {}
+    }
   }
 
 }
 </script>
+<style>
+.parent {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 0px;
+}
+
+.el-dialog_header {
+  height: 30px;
+}
+
+.row1 {
+  width: 960px;
+  height: 90px;
+  margin-bottom: 10px;
+}
+
+.row11 {
+  height: 30px;
+}
+
+.row12 {
+  margin-top: 10px;
+  margin-left: 180px;
+  width: 600px;
+}
+
+.row2 {
+  width: 960px;
+  height: 130px;
+  margin-top: 0px;
+  margin-bottom: 0px;
+}
+
+.row21 {
+  margin-top: 10px;
+  margin-bottom: 10px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.row22 {
+  margin-top: 10px;
+  margin-bottom: 10px;
+  margin-left: 100px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.row222 {
+  margin-top: 0px;
+  margin-left: 220px;
+}
+
+.row2222 {
+  display: flex;
+  flex-direction: row;
+  /* justify-content: space-between; */
+}
+
+.row223 {
+  margin-top: 25px;
+}
+
+.row3 {
+  width: 960px;
+  height: 170px;
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+.row31 {
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+.row32 {
+  margin-top: 10px;
+  margin-bottom: 10px;
+  margin-left: 100px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.row322 {
+  display: flex;
+  flex-direction: raw;
+  justify-content: space-between;
+  margin-top: 30px;
+  margin-right: 650px;
+}
+
+.row4 {
+  width: 960px;
+  height: 170px;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.row41 {
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+.row42 {
+  margin-top: 10px;
+  margin-bottom: 10px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  margin-left: 100px;
+}
+
+.row4211 {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 300px;
+}
+
+.row4212 {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 300px;
+}
+
+.row421 {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.row4213 {
+  width: 90px;
+}
+
+.row422 {
+  margin-right: 60px;
+}
+
+.row422 .image-slot {
+  font-size: 30px;
+}
+
+.row422 .image-slot .el-icon {
+  font-size: 30px;
+}
+
+.row422 .el-image {
+  width: 100%;
+  height: 200px;
+}
+</style>
