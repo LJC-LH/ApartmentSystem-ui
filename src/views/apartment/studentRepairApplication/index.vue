@@ -109,10 +109,10 @@
           v-hasPermi="['apartment:studentRepairApplication:edit']"
         >修改</el-button>
       </el-col> -->
-      <el-col :span="1.5">
+      <!-- <el-col :span="1.5">
         <el-button type="danger" plain icon="el-icon-delete" size="mini" :disabled="multiple" @click="handleDelete"
           v-hasPermi="['apartment:studentRepairApplication:remove']">删除</el-button>
-      </el-col>
+      </el-col> -->
       <!-- <el-col :span="1.5">
         <el-button
           type="warning"
@@ -149,9 +149,9 @@
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button size="mini" type="text" icon="el-icon-delete" @click="handleDelete(scope.row)"
-            v-hasPermi="['apartment:studentRepairApplication:remove']" v-bind:disabled="scope.row.fixStatus == 0 ">删除</el-button>
+            v-hasPermi="['apartment:studentRepairApplication:remove']" v-bind:disabled="scope.row.fixStatus != 0 ">删除</el-button>
           <el-button size="mini" type="text" icon="el-icon-delete" @click="handleContent(scope.row)"
-            v-hasPermi="['apartment:studentRepairApplication:remove']" v-bind:disabled="scope.row.fixStatus == 4 && scope.row.evaluateContent == null">评价</el-button>
+            v-bind:disabled="scope.row.fixStatus != 4 || scope.row.evaluateContent != null">评价</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -172,7 +172,7 @@
           </el-input>
         </el-form-item>
         <el-form-item label="请上传图片" prop="imags">
-          <el-upload v-model:file-list="fileList" action="/system/user/profile/uploadPicture" list-type="picture-card"
+          <el-upload :file-list="fileList" action="/system/user/profile/uploadPicture" list-type="picture-card"
             :show-file-list="true" :on-preview="handlePictureCardPreview" :on-remove="handleRemove"
             :on-change="handleFileChange" :before-upload="beforePictureUpload" :auto-upload="false"
             @close="handleCloseDialog" ref="upload" accept=".jpg,.jpeg,.png,.bmp">

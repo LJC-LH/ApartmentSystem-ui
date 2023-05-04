@@ -201,7 +201,7 @@
           </div>
           <!-- 这里需要获得订单的状态，即active和finish是响应式的 -->
           <div class="row12" align-center>
-            <el-steps :active="stepActive">
+            <el-steps :active="parseInt(stepActive)">
               <!-- TODO 这里的icon没有找到 -->
               <el-step title="Step 1" />
               <el-step title="Step 2" />
@@ -303,7 +303,7 @@
           </el-radio-group>
         </el-form-item>
         <el-form-item label="维修图片上传">
-          <el-upload v-model:file-list="fileList" action="/system/user/profile/uploadPicture" list-type="picture-card"
+          <el-upload :file-list="fileList" action="/system/user/profile/uploadPicture" list-type="picture-card"
             :show-file-list="true" :on-preview="handlePictureCardPreview" :on-remove="handleRemove"
             :on-change="handleFileChange" :before-upload="beforePictureUpload" :auto-upload="false"
             accept=".jpg,.jpeg,.png,.bmp" ref="upload" @close="handleCloseDialog">
@@ -499,7 +499,7 @@ export default {
         this.detailOrder = response.data
         this.showDiv = this.detailOrder.fixStatus >= 3 ? true : false;
         // TODO 遍历
-        this.stepActive = parseInt(row.fixStatus)
+        this.stepActive = row.fixStatus
         this.stuURL = response.data.stuImagesURL[0]
         this.stuURLList = response.data.stuImagesURL
         this.repairURL = response.data.onceImagesURL[0]
@@ -594,7 +594,7 @@ export default {
             return;
           })
         }
-        if (this.isSecondeary == 0) {
+        else if (this.isSecondeary == 0 && this.formData.repairStatus == 1) {
           // 发送到第一次维修的接口
           uploadFirstImages(urlData).then(response => {
             console.log("res is :", response);
@@ -605,7 +605,7 @@ export default {
               this.reset()
             })
           });
-        } else if (this.isSecondeary == 1) {
+        } else if (this.isSecondeary == 1 && this.formData.repairStatus == 1) {
           // 发送到第二次维修的接口
           uploadSecondImages(urlData).then(response => {
             console.log("这是第二次res is :", response);

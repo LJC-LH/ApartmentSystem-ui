@@ -211,7 +211,7 @@
       </el-table-column>
 <!--      <el-table-column label="学生评价内容" align="center" prop="evaluateContent" />-->
 <!--      <el-table-column label="学生评分" align="center" prop="evaluateRate" />-->
-<!--      <el-table-column label="二次维修人员id" align="center" prop="secondaryRepairmanId" />-->
+     <el-table-column label="二次维修人员" align="center" prop="secondaryRepairmanId" />
 <!--      <el-table-column label="第二次报修预计完成时间" align="center" prop="secondExpectedCompletionTime" width="180">-->
 <!--        <template slot-scope="scope">-->
 <!--          <span>{{ parseTime(scope.row.secondExpectedCompletionTime, '{y}-{m}-{d}') }}</span>-->
