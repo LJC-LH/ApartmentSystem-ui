@@ -15,78 +15,14 @@
       <el-form-item label="房间号" prop="roomNo">
         <el-input v-model="queryParams.roomNo" placeholder="请输入房间号" clearable @keyup.enter.native="handleQuery" />
       </el-form-item>
-      <!-- <el-form-item label="损坏说明" prop="damageDescription">
-        <el-input
-          v-model="queryParams.damageDescription"
-          placeholder="请输入损坏说明"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item> -->
       <el-form-item label="报修创建时间" prop="createAt">
         <el-date-picker clearable v-model="queryParams.createAt" type="date" value-format="yyyy-MM-dd"
           placeholder="请选择报修创建时间">
         </el-date-picker>
       </el-form-item>
-      <!-- <el-form-item label="一次维修人员id" prop="firstRepairmanId">
-        <el-input
-          v-model="queryParams.firstRepairmanId"
-          placeholder="请输入一次维修人员id"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item> -->
-      <!-- <el-form-item label="第一次报修完成时间" prop="firstCompletionTime">
-        <el-date-picker clearable
-          v-model="queryParams.firstCompletionTime"
-          type="date"
-          value-format="yyyy-MM-dd"
-          placeholder="请选择第一次报修完成时间">
-        </el-date-picker>
-      </el-form-item> -->
-      <!-- <el-form-item label="校区管理办公室意见" prop="campusManagementOpinion">
-        <el-input
-          v-model="queryParams.campusManagementOpinion"
-          placeholder="请输入校区管理办公室意见"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item> -->
-      <!-- <el-form-item label="是否二次派单，0否，1是" prop="isSecondDispatch">
-        <el-input
-          v-model="queryParams.isSecondDispatch"
-          placeholder="请输入是否二次派单，0否，1是"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item> -->
       <el-form-item label="学生评分" prop="evaluateRate">
         <el-input v-model="queryParams.evaluateRate" placeholder="请输入学生评分" clearable @keyup.enter.native="handleQuery" />
       </el-form-item>
-      <!-- <el-form-item label="二次维修人员id" prop="secondaryRepairmanId">
-        <el-input
-          v-model="queryParams.secondaryRepairmanId"
-          placeholder="请输入二次维修人员id"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item> -->
-      <!-- <el-form-item label="第二次报修预计完成时间" prop="secondExpectedCompletionTime">
-        <el-date-picker clearable
-          v-model="queryParams.secondExpectedCompletionTime"
-          type="date"
-          value-format="yyyy-MM-dd"
-          placeholder="请选择第二次报修预计完成时间">
-        </el-date-picker>
-      </el-form-item>
-      <el-form-item label="第二次报修实际完成时间" prop="secondActualCompletionTime">
-        <el-date-picker clearable
-          v-model="queryParams.secondActualCompletionTime"
-          type="date"
-          value-format="yyyy-MM-dd"
-          placeholder="请选择第二次报修实际完成时间">
-        </el-date-picker> -->
-      <!-- </el-form-item> -->
       <el-form-item>
         <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
         <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
@@ -203,9 +139,11 @@
           <div class="row12" align-center>
             <el-steps :active="parseInt(stepActive)">
               <!-- TODO 这里的icon没有找到 -->
-              <el-step title="Step 1" />
-              <el-step title="Step 2" />
-              <el-step title="Step 3" />
+              <el-step title="学生报修" />
+              <el-step title="一次维修" />
+              <el-step title="领导审批" />
+              <el-step title="二次维修" />
+              <el-step title="订单完成" />
             </el-steps>
           </div>
         </div>
@@ -286,7 +224,7 @@
 
     <!-- 工作记录页面 -->
     <el-dialog v-bind="$attrs" v-on="$listeners" :visible.sync="stuOrderOpen" @open="onOpen" @close="onClose"
-      width="1000px" title="新建保修订单">
+      width="1000px" title="工作记录上传表">
       <el-form ref="elForm" :model="formData" :rules="uploadrules" size="medium" label-width="100px">
         <el-form-item label="楼栋名" prop="buildingNo">
           <el-input v-model="formData.buildingNo" placeholder="请输入楼栋名" clearable :style="{ width: '100%' }" disabled>
@@ -297,7 +235,7 @@
           </el-input>
         </el-form-item>
         <el-form-item label="维修状态说明" prop="repairStatus">
-          <el-radio-group v-model="formData.repairStatus">
+          <el-radio-group v-model="formData.repairStatus" :disabled="wheather">
             <el-radio :label="0">无法维修</el-radio>
             <el-radio :label="1">维修完成</el-radio>
           </el-radio-group>
@@ -422,7 +360,8 @@ export default {
       // 状态条的参数
       stepActive: '',
       // 是否可以维修状态选择
-      repairStatus: ''
+      repairStatus: '',
+      wheather: false
     };
   },
   created() {
@@ -500,6 +439,16 @@ export default {
         this.showDiv = this.detailOrder.fixStatus >= 3 ? true : false;
         // TODO 遍历
         this.stepActive = row.fixStatus
+        if (row.fixStatus == '4') {
+          this.stepActive = 5
+        } else if (row.fixStatus == '0' && row.isSecondDispatch == '1') {
+          this.stepActive = 3
+        } else if (row.fixStatus == '1' && row.isSecondDispatch == '0') {
+          this.stepActive = 2
+        } else if (row.fixStatus == '1' && row.isSecondDispatch == '1') {
+          this.stepActive = 4
+        }
+
         this.stuURL = response.data.stuImagesURL[0]
         this.stuURLList = response.data.stuImagesURL
         this.repairURL = response.data.onceImagesURL[0]
@@ -507,7 +456,7 @@ export default {
 
         this.form = response.data;
         this.orderDetailOpen = true;
-        this.title = "修改维修结果提交";
+        this.title = "订单详情";
       });
     },
     /** 提交按钮 */
@@ -532,6 +481,7 @@ export default {
     // },
     /** 弹窗按钮操作 */
     uploadRecord(row) {
+      this.wheather = row.isSecondDispatch == "1" ? true : false;
       const repairIds = row.repairId || this.ids;
       // TODO isSecondeary需要重置为初始值
       this.isSecondeary = row.isSecondDispatch
@@ -590,9 +540,17 @@ export default {
         console.log(this.formData.repairStatus);
         // 判断是否是第一次派单, isSecondeary
         if (this.formData.repairStatus == 0) {
-          updateUnsolvableRepairResult(this.formData).then(res => {
-            return;
-          })
+          uploadFirstImages(urlData).then(response => {
+            console.log("res is :", response);
+            this.formData.onceImagesURL = response.data
+            updateUnsolvableRepairResult(this.formData).then(res => {
+              this.stuOrderOpen = false;
+              this.$modal.msgSuccess("修改成功");
+              this.reset()
+              return;
+            })
+          });
+
         }
         else if (this.isSecondeary == 0 && this.formData.repairStatus == 1) {
           // 发送到第一次维修的接口
@@ -658,7 +616,8 @@ export default {
       this.stuURLList = []
       this.repairURL = ''
       this.repairURLList = []
-      this.stepActive = ''
+      this.stepActive = '',
+        this.wheather = true
     }
 
   }
