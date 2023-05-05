@@ -530,6 +530,12 @@ export default {
           this.stepActive = 2
         }
         this.detailOrder = response.data
+        this.stuURL = process.env.VUE_APP_BASE_API + response.data.stuImagesURL[0]
+        for(let i = 0; i < response.data.stuImagesURL.length; i++) {
+          this.stuURLList[i] = process.env.VUE_APP_BASE_API + response.data.stuImagesURL[i]
+        }
+        // this.stuURL = "/dev-api/profile/avatar/2023/05/05/blob_20230505170258A002.png"
+        console.log("现在在测试路径：", this.stuURL);
       });
     },
     detailClose() {
