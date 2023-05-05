@@ -448,12 +448,17 @@ export default {
         } else if (row.fixStatus == '1' && row.isSecondDispatch == '1') {
           this.stepActive = 4
         }
-
-        this.stuURL = response.data.stuImagesURL[0]
-        this.stuURLList = response.data.stuImagesURL
-        this.repairURL = response.data.onceImagesURL[0]
-        this.repairURLList = response.data.onceImagesURL
-
+        this.detailOrder = response.data
+        for (let i = 0; i < response.data.stuImagesURL.length; i++) {
+          this.stuURLList[i] = process.env.VUE_APP_BASE_API + response.data.stuImagesURL[i]
+        }
+        this.stuURL = this.stuURLList[0]
+        if (response.data.repairURLList != null) {
+          for (let i = 0; i < response.data.repairURLList.length; i++) {
+            this.repairURLList[i] = process.env.VUE_APP_BASE_API + response.data.repairURLList[i]
+          }
+          this.repairURL = this.stuURLList[0]
+        }
         this.form = response.data;
         this.orderDetailOpen = true;
         this.title = "订单详情";
