@@ -66,7 +66,7 @@
 
 
     <el-dialog v-bind="$attrs" v-on="$listeners" :visible.sync="stuOrderOpen" @open="onOpen" @close="onClose"
-      width="1000px" title="新建保修订单">
+      width="1000px" title="宿舍报修">
       <el-form ref="elForm" :model="addForm" :rules="uploadrules" size="medium" label-width="100px">
         <el-form-item label="楼栋名" prop="buildingNo">
           <el-input v-model="addForm.buildingNo" placeholder="请输入楼栋名" clearable :style="{ width: '100%' }" disabled>
@@ -122,7 +122,7 @@
       <div class="parent">
         <div class="row1">
           <div class="row11" style="font-size: 16px;">
-            保修订单详情
+            报修订单详情
           </div>
           <!-- 这里需要获得订单的状态，即active和finish是响应式的 -->
           <div class="row12" align-center>
@@ -231,7 +231,7 @@ export default {
       // 表单校验
       rules: {
       },
-      // 保修对话框
+      // 报修对话框
       updateFlag: false,
       fullscreenLoading: false,
       // 学生上传订单

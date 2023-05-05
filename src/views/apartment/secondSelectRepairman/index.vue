@@ -296,6 +296,14 @@
             </el-option>
           </el-select>
         </el-form-item>
+        <el-form-item label="预计完成时间" prop="secondExpectedCompletionTime" label-width="200">
+              <el-date-picker clearable
+                v-model="form.secondExpectedCompletionTime"
+                type="date"
+                value-format="yyyy-MM-dd"
+                placeholder="请选择二次报修预计完成时间">
+              </el-date-picker>
+        </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="submitForm">确 定</el-button>
@@ -390,14 +398,14 @@
 <!--          </el-option>-->
 <!--          </el-select>-->
 <!--        </el-form-item>-->
-<!--&lt;!&ndash;        <el-form-item label="第二次报修预计完成时间" prop="secondExpectedCompletionTime">&ndash;&gt;-->
+<!-- &lt;!&ndash;        <el-form-item label="第二次报修预计完成时间" prop="secondExpectedCompletionTime">&ndash;&gt;-->
 <!--&lt;!&ndash;          <el-date-picker clearable&ndash;&gt;-->
 <!--&lt;!&ndash;            v-model="form.secondExpectedCompletionTime"&ndash;&gt;-->
 <!--&lt;!&ndash;            type="date"&ndash;&gt;-->
 <!--&lt;!&ndash;            value-format="yyyy-MM-dd"&ndash;&gt;-->
 <!--&lt;!&ndash;            placeholder="请选择第二次报修预计完成时间">&ndash;&gt;-->
 <!--&lt;!&ndash;          </el-date-picker>&ndash;&gt;-->
-<!--&lt;!&ndash;        </el-form-item>&ndash;&gt;-->
+<!--&lt;!&ndash;        </el-form-item>&ndash;&gt; -->
 <!--&lt;!&ndash;        <el-form-item label="第二次报修实际完成时间" prop="secondActualCompletionTime">&ndash;&gt;-->
 <!--&lt;!&ndash;          <el-date-picker clearable&ndash;&gt;-->
 <!--&lt;!&ndash;            v-model="form.secondActualCompletionTime"&ndash;&gt;-->

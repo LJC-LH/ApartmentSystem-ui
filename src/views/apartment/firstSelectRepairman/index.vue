@@ -280,12 +280,15 @@ import {
   updateFirstSelectRepairman,
   selectUserByRoleId
 } from "@/api/apartment/firstSelectRepairman";
+import {getStudentRepairApplication} from "@/api/apartment/studentRepairApplication";
 
 
 export default {
   dicts: ['fzu_fix_status', 'is_second_dispatch'],
   data() {
     return {
+      stuURL: '',
+      stuURLList: [],
       //物业一次维修申请表填写权限
       wyglOption:true,
       //维修人员一次维修申请表填写权限
@@ -421,6 +424,12 @@ export default {
         this.open = true;
         this.title = "维修派单";
       });
+      // getStudentRepairApplication(repairId).then(response => {
+      //   this.stuURL = process.env.VUE_APP_BASE_API + response.data.stuImagesURL[0]
+      //   for(let i = 0; i < response.data.stuImagesURL.length; i++) {
+      //     this.stuURLList[i] = process.env.VUE_APP_BASE_API + response.data.stuImagesURL[i]
+      //   }
+      // })
     },
     /** 提交按钮 */
     submitForm() {

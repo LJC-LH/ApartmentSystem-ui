@@ -133,7 +133,7 @@
       <div class="parent">
         <div class="row1">
           <div class="row11" style="font-size: 16px;">
-            保修订单详情
+          报修订单详情
           </div>
           <!-- 这里需要获得订单的状态，即active和finish是响应式的 -->
           <div class="row12" align-center>
