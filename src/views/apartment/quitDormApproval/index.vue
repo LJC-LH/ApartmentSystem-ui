@@ -190,6 +190,7 @@
           size="mini"
           @click="handleAdd"
           v-hasPermi="['apartment:quitDormApproval:add']"
+          v-if = "stuOption"
         >申请退宿</el-button>
       </el-col>
       <!-- <el-col :span="1.5">
@@ -584,7 +585,7 @@ export default {
     this.getStudentInfo();
     if (this.$store.state.user.roles[0] == "admin") {
         //学生特殊宿舍申请表填写权限
-        this.stuOption = true
+        this.stuOption = false
         //辅导员特殊宿舍申请表填写权限
         this.fdyOption = true
         //学工处特殊宿舍申请表填写权限

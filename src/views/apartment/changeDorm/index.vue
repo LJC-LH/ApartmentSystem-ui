@@ -342,6 +342,30 @@ export default {
       form: {},
       // 表单校验
       rules: {
+        oneUserName: [
+          { required: true, message: "用户账号不能为空", trigger: "blur" }
+        ],
+        oneNickName: [
+          { required: true, message: "学生姓名不能为空", trigger: "blur" }
+        ],
+        oneBuildingNo: [
+          { required: true, message: "楼栋号不能为空", trigger: "blur" }
+        ],
+        oneRoomNo: [
+          { required: true, message: "房间号不能为空", trigger: "blur" }
+        ],
+        oneBedNo: [
+          { required: true, message: "床位不能为空", trigger: "blur" }
+        ],
+        twoBuildingNo: [
+          { required: true, message: "楼栋号不能为空", trigger: "blur" }
+        ],
+        twoRoomNo: [
+          { required: true, message: "房间号不能为空", trigger: "blur" }
+        ],
+        twoBedNo: [
+          { required: true, message: "床位不能为空", trigger: "blur" }
+        ],
       }
     };
   },
