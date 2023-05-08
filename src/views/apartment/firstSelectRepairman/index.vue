@@ -10,53 +10,36 @@
       <!--        />-->
       <!--      </el-form-item>-->
       <el-form-item label="楼栋号" prop="buildingNo">
-        <el-input
-          v-model="queryParams.buildingNo"
-          placeholder="请输入楼栋号"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
+        <el-input v-model="queryParams.buildingNo" placeholder="请输入楼栋号" clearable @keyup.enter.native="handleQuery" />
       </el-form-item>
       <el-form-item label="房间号" prop="roomNo">
-        <el-input
-          v-model="queryParams.roomNo"
-          placeholder="请输入房间号"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
+        <el-input v-model="queryParams.roomNo" placeholder="请输入房间号" clearable @keyup.enter.native="handleQuery" />
       </el-form-item>
       <el-form-item label="损坏说明" prop="damageDescription">
-        <el-input
-          v-model="queryParams.damageDescription"
-          placeholder="请输入损坏说明"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
+        <el-input v-model="queryParams.damageDescription" placeholder="请输入损坏说明" clearable
+          @keyup.enter.native="handleQuery" />
       </el-form-item>
       <el-form-item label="报修时间" prop="createAt">
-        <el-date-picker clearable
-                        v-model="queryParams.createAt"
-                        type="date"
-                        value-format="yyyy-MM-dd"
-                        placeholder="请选择报修创建时间">
+        <el-date-picker clearable v-model="queryParams.createAt" type="date" value-format="yyyy-MM-dd"
+          placeholder="请选择报修创建时间">
         </el-date-picker>
       </el-form-item>
-<!--      <el-form-item label="维修人员" prop="firstRepairmanId">-->
-<!--        <el-input-->
-<!--          v-model="queryParams.firstRepairmanId"-->
-<!--          placeholder="请输入维修人员id"-->
-<!--          clearable-->
-<!--          @keyup.enter.native="handleQuery"-->
-<!--        />-->
-<!--      </el-form-item>-->
-<!--      <el-form-item label="完成时间" prop="firstCompletionTime">-->
-<!--        <el-date-picker clearable-->
-<!--                        v-model="queryParams.firstCompletionTime"-->
-<!--                        type="date"-->
-<!--                        value-format="yyyy-MM-dd"-->
-<!--                        placeholder="请选择报修完成时间">-->
-<!--        </el-date-picker>-->
-<!--      </el-form-item>-->
+      <!--      <el-form-item label="维修人员" prop="firstRepairmanId">-->
+      <!--        <el-input-->
+      <!--          v-model="queryParams.firstRepairmanId"-->
+      <!--          placeholder="请输入维修人员id"-->
+      <!--          clearable-->
+      <!--          @keyup.enter.native="handleQuery"-->
+      <!--        />-->
+      <!--      </el-form-item>-->
+      <!--      <el-form-item label="完成时间" prop="firstCompletionTime">-->
+      <!--        <el-date-picker clearable-->
+      <!--                        v-model="queryParams.firstCompletionTime"-->
+      <!--                        type="date"-->
+      <!--                        value-format="yyyy-MM-dd"-->
+      <!--                        placeholder="请选择报修完成时间">-->
+      <!--        </el-date-picker>-->
+      <!--      </el-form-item>-->
       <!--      <el-form-item label="校区管理办公室意见" prop="campusManagementOpinion">-->
       <!--        <el-input-->
       <!--          v-model="queryParams.campusManagementOpinion"-->
@@ -73,14 +56,14 @@
       <!--          @keyup.enter.native="handleQuery"-->
       <!--        />-->
       <!--      </el-form-item>-->
-<!--      <el-form-item label="学生评分" prop="evaluateRate">-->
-<!--        <el-input-->
-<!--          v-model="queryParams.evaluateRate"-->
-<!--          placeholder="请输入学生评分"-->
-<!--          clearable-->
-<!--          @keyup.enter.native="handleQuery"-->
-<!--        />-->
-<!--      </el-form-item>-->
+      <!--      <el-form-item label="学生评分" prop="evaluateRate">-->
+      <!--        <el-input-->
+      <!--          v-model="queryParams.evaluateRate"-->
+      <!--          placeholder="请输入学生评分"-->
+      <!--          clearable-->
+      <!--          @keyup.enter.native="handleQuery"-->
+      <!--        />-->
+      <!--      </el-form-item>-->
       <!--      <el-form-item label="二次维修人员id" prop="secondaryRepairmanId">-->
       <!--        <el-input-->
       <!--          v-model="queryParams.secondaryRepairmanId"-->
@@ -113,46 +96,33 @@
 
     <el-row :gutter="10" class="mb8">
       <el-col :span="1.5">
-<!--        <el-button-->
-<!--          type="primary"-->
-<!--          plain-->
-<!--          icon="el-icon-plus"-->
-<!--          size="mini"-->
-<!--          @click="handleAdd"-->
-<!--          v-hasPermi="['apartment:firstSelectRepairman:add']"-->
-<!--        >新增</el-button>-->
+        <!--        <el-button-->
+        <!--          type="primary"-->
+        <!--          plain-->
+        <!--          icon="el-icon-plus"-->
+        <!--          size="mini"-->
+        <!--          @click="handleAdd"-->
+        <!--          v-hasPermi="['apartment:firstSelectRepairman:add']"-->
+        <!--        >新增</el-button>-->
       </el-col>
       <el-col :span="1.5">
-        <el-button
-          type="success"
-          plain
-          icon="el-icon-edit"
-          size="mini"
-          :disabled="single"
-          @click="handleUpdate"
-          v-hasPermi="['apartment:firstSelectRepairman:edit']"
-        >派单</el-button>
+        <el-button type="success" plain icon="el-icon-edit" size="mini" :disabled="single" @click="handleUpdate"
+          v-hasPermi="['apartment:firstSelectRepairman:edit']">派单</el-button>
       </el-col>
-<!--      <el-col :span="1.5">-->
-<!--        <el-button-->
-<!--          type="danger"-->
-<!--          plain-->
-<!--          icon="el-icon-delete"-->
-<!--          size="mini"-->
-<!--          :disabled="multiple"-->
-<!--          @click="handleDelete"-->
-<!--          v-hasPermi="['apartment:firstSelectRepairman:remove']"-->
-<!--        >删除</el-button>-->
-<!--      </el-col>-->
+      <!--      <el-col :span="1.5">-->
+      <!--        <el-button-->
+      <!--          type="danger"-->
+      <!--          plain-->
+      <!--          icon="el-icon-delete"-->
+      <!--          size="mini"-->
+      <!--          :disabled="multiple"-->
+      <!--          @click="handleDelete"-->
+      <!--          v-hasPermi="['apartment:firstSelectRepairman:remove']"-->
+      <!--        >删除</el-button>-->
+      <!--      </el-col>-->
       <el-col :span="1.5">
-        <el-button
-          type="warning"
-          plain
-          icon="el-icon-download"
-          size="mini"
-          @click="handleExport"
-          v-hasPermi="['apartment:firstSelectRepairman:export']"
-        >导出</el-button>
+        <el-button type="warning" plain icon="el-icon-download" size="mini" @click="handleExport"
+          v-hasPermi="['apartment:firstSelectRepairman:export']">导出</el-button>
       </el-col>
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
@@ -160,13 +130,13 @@
     <el-table v-loading="loading" :data="firstSelectRepairmanList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="报修单号" align="center" prop="repairId" />
-<!--      <el-table-column label="学生id" align="center" prop="studentId" />-->
+      <!--      <el-table-column label="学生id" align="center" prop="studentId" />-->
       <el-table-column label="学生" align="center">
         <template #default="{ row }">
           {{ row.nickName }}({{ row.userName }})
         </template>
       </el-table-column>
-<!--      <el-table-column label="学生姓名" align="center" prop="nickName" />-->
+      <!--      <el-table-column label="学生姓名" align="center" prop="nickName" />-->
       <el-table-column label="楼栋号" align="center" prop="buildingNo" />
       <el-table-column label="房间号" align="center" prop="roomNo" />
       <el-table-column label="损坏说明" align="center" prop="damageDescription" />
@@ -178,17 +148,17 @@
       </el-table-column>
       <el-table-column label="报修状态" align="center" prop="fixStatus">
         <template slot-scope="scope">
-          <dict-tag :options="dict.type.fzu_fix_status" :value="scope.row.fixStatus"/>
+          <dict-tag :options="dict.type.fzu_fix_status" :value="scope.row.fixStatus" />
         </template>
       </el-table-column>
-<!--      <el-table-column label="报修状态" align="center" prop="fixStatus" />-->
+      <!--      <el-table-column label="报修状态" align="center" prop="fixStatus" />-->
       <el-table-column label="维修人员" align="center" prop="firstRepairmanName" />
-<!--      <el-table-column label="维修内容" align="center" prop="firstWorkContent" />-->
-<!--      <el-table-column label="报修完成时间" align="center" prop="firstCompletionTime" width="180">-->
-<!--        <template slot-scope="scope">-->
-<!--          <span>{{ parseTime(scope.row.firstCompletionTime, '{y}-{m}-{d}') }}</span>-->
-<!--        </template>-->
-<!--      </el-table-column>-->
+      <!--      <el-table-column label="维修内容" align="center" prop="firstWorkContent" />-->
+      <!--      <el-table-column label="报修完成时间" align="center" prop="firstCompletionTime" width="180">-->
+      <!--        <template slot-scope="scope">-->
+      <!--          <span>{{ parseTime(scope.row.firstCompletionTime, '{y}-{m}-{d}') }}</span>-->
+      <!--        </template>-->
+      <!--      </el-table-column>-->
       <!--      <el-table-column label="校区管理办公室意见" align="center" prop="campusManagementOpinion" />-->
       <!--      <el-table-column label="是否二次派单，0否，1是" align="center" prop="isSecondDispatch" />-->
       <!--      <el-table-column label="学生评价内容" align="center" prop="evaluateContent" />-->
@@ -207,31 +177,21 @@
       <!--      <el-table-column label="第二次维修内容" align="center" prop="secondWorkContent" />-->
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
-          <el-button
-            size="mini"
-            type="text"
-            icon="el-icon-edit"
-            @click="handleUpdate(scope.row)"
-            v-hasPermi="['apartment:firstSelectRepairman:edit']"
-          >派单</el-button>
-<!--          <el-button-->
-<!--            size="mini"-->
-<!--            type="text"-->
-<!--            icon="el-icon-delete"-->
-<!--            @click="handleDelete(scope.row)"-->
-<!--            v-hasPermi="['apartment:firstSelectRepairman:remove']"-->
-<!--          >删除</el-button>-->
+          <el-button size="mini" type="text" icon="el-icon-edit" @click="handleUpdate(scope.row)"
+            v-hasPermi="['apartment:firstSelectRepairman:edit']">派单</el-button>
+          <!--          <el-button-->
+          <!--            size="mini"-->
+          <!--            type="text"-->
+          <!--            icon="el-icon-delete"-->
+          <!--            @click="handleDelete(scope.row)"-->
+          <!--            v-hasPermi="['apartment:firstSelectRepairman:remove']"-->
+          <!--          >删除</el-button>-->
         </template>
       </el-table-column>
     </el-table>
 
-    <pagination
-      v-show="total>0"
-      :total="total"
-      :page.sync="queryParams.pageNum"
-      :limit.sync="queryParams.pageSize"
-      @pagination="getList"
-    />
+    <pagination v-show="total > 0" :total="total" :page.sync="queryParams.pageNum" :limit.sync="queryParams.pageSize"
+      @pagination="getList" />
     <el-dialog :title="title" :visible.sync="open" width="600px" append-to-body>
       <div class="descriptions-container">
         <el-descriptions :bordered="true" :column="1" class="custom-descriptions">
@@ -249,22 +209,19 @@
       <div class="image-container" style="width:;">
         <div class="damage-images">
           <h4>损坏说明图片</h4>
-          <el-image style="width: 100px; height: 100px" :src="stuURL" :zoom-rate="1.2"
-                    :preview-src-list="stuURLList" :initial-index="4" fit="cover" />
+          <el-image style="width: 100px; height: 100px" :src="stuURL" :zoom-rate="1.2" :preview-src-list="stuURLList"
+            :initial-index="4" fit="cover" />
         </div>
       </div>
-        <el-form ref="form" :model="form" :rules="rules" label-width="80px" class="secondary-repairman-form">
-          <el-form-item label="维修人员" prop="firstRepairmanId">
-            <el-select v-model="form.firstRepairmanId" placeholder="请选择维修人员">
-              <el-option
-                v-for="repairman in repairmanList"
-                :key="repairman.userId"
-                :label="repairman.nickName"
-                :value="repairman.userId" >
-              </el-option>
-            </el-select>
-          </el-form-item>
-        </el-form>
+      <el-form ref="form" :model="form" :rules="rules" label-width="80px" class="secondary-repairman-form">
+        <el-form-item label="维修人员" prop="firstRepairmanId">
+          <el-select v-model="form.firstRepairmanId" placeholder="请选择维修人员">
+            <el-option v-for="repairman in repairmanList" :key="repairman.userId" :label="repairman.nickName"
+              :value="repairman.userId">
+            </el-option>
+          </el-select>
+        </el-form-item>
+      </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="submitForm">确 定</el-button>
         <el-button @click="cancel">取 消</el-button>
@@ -280,9 +237,7 @@ import {
   updateFirstSelectRepairman,
   selectUserByRoleId
 } from "@/api/apartment/firstSelectRepairman";
-import {getStudentRepairApplication} from "@/api/apartment/studentRepairApplication";
-
-
+import { getStudentRepairApplication } from "@/api/apartment/studentRepairApplication";
 export default {
   dicts: ['fzu_fix_status', 'is_second_dispatch'],
   data() {
@@ -290,9 +245,9 @@ export default {
       stuURL: '',
       stuURLList: [],
       //物业一次维修申请表填写权限
-      wyglOption:true,
+      wyglOption: true,
       //维修人员一次维修申请表填写权限
-      wxryOption:true,
+      wxryOption: true,
       // 遮罩层
       loading: true,
       // 选中数组
@@ -368,31 +323,30 @@ export default {
       this.reset();
     },
     // 表单重置
-      reset()
-      {
-        this.form = {
-          repairId: null,
-          studentId: null,
-          buildingNo: null,
-          roomNo: null,
-          damageDescription: null,
-          fixType: null,
-          createAt: null,
-          fixStatus: null,
-          firstRepairmanId: null,
-          firstWorkContent: null,
-          firstCompletionTime: null,
-          campusManagementOpinion: null,
-          isSecondDispatch: null,
-          evaluateContent: null,
-          evaluateRate: null,
-          secondaryRepairmanId: null,
-          secondExpectedCompletionTime: null,
-          secondActualCompletionTime: null,
-          secondWorkContent: null
-        };
-        this.resetForm("form");
-      },
+    reset() {
+      this.form = {
+        repairId: null,
+        studentId: null,
+        buildingNo: null,
+        roomNo: null,
+        damageDescription: null,
+        fixType: null,
+        createAt: null,
+        fixStatus: null,
+        firstRepairmanId: null,
+        firstWorkContent: null,
+        firstCompletionTime: null,
+        campusManagementOpinion: null,
+        isSecondDispatch: null,
+        evaluateContent: null,
+        evaluateRate: null,
+        secondaryRepairmanId: null,
+        secondExpectedCompletionTime: null,
+        secondActualCompletionTime: null,
+        secondWorkContent: null
+      };
+      this.resetForm("form");
+    },
     /** 搜索按钮操作 */
     handleQuery() {
       this.queryParams.pageNum = 1;
@@ -406,7 +360,7 @@ export default {
     // 多选框选中数据
     handleSelectionChange(selection) {
       this.ids = selection.map(item => item.repairId)
-      this.single = selection.length!==1
+      this.single = selection.length !== 1
       this.multiple = !selection.length
     },
     // /** 新增按钮操作 */
@@ -423,6 +377,10 @@ export default {
         this.form = response.data;
         this.open = true;
         this.title = "维修派单";
+        this.stuURL = process.env.VUE_APP_BASE_API + response.data.stuImagesURL[0]
+        for (let i = 0; i < response.data.stuImagesURL.length; i++) {
+          this.stuURLList[i] = process.env.VUE_APP_BASE_API + response.data.stuImagesURL[i]
+        }
       });
       // getStudentRepairApplication(repairId).then(response => {
       //   this.stuURL = process.env.VUE_APP_BASE_API + response.data.stuImagesURL[0]
@@ -494,6 +452,7 @@ export default {
   justify-content: flex-end;
   margin-top: 20px;
 }
+
 .image-container {
   display: flex;
   justify-content: space-between;
@@ -508,6 +467,7 @@ export default {
   border-radius: 4px;
   box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
 }
+
 .text-success {
   color: #67C23A;
 }

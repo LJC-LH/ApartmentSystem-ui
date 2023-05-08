@@ -133,7 +133,7 @@
       <div class="parent">
         <div class="row1">
           <div class="row11" style="font-size: 16px;">
-          报修订单详情
+            保修订单详情
           </div>
           <!-- 这里需要获得订单的状态，即active和finish是响应式的 -->
           <div class="row12" align-center>
@@ -184,28 +184,25 @@
         </div>
         <div class="row4" v-show="showDiv">
           <div class="row41" style="font-size: 16px;">
-            维修记录
+            第一次维修记录
           </div>
           <div class="row42">
             <div class="row421">
               <div class="row4211">
-                <div class="42111">
+                <!-- <div class="42111">
                   订单状态：{{ detailOrder.fixStatus }}
-                </div>
+                </div> -->
                 <div class="42111">
-                  维修人员：{{ detailOrder.repairmanName }}
-                </div>
-                <div class="42111">
-                  预计完成时间：{{ detailOrder.secondExpectedCompletionTime }}
+                  第一次维修人员：{{ detailOrder.repairmanName }}
                 </div>
               </div>
               <div class="row4212">
                 <div>
-                  维修结论：{{ detailOrder.firstWorkContent }}
+                  第二次维修结论：{{ detailOrder.firstWorkContent }}
                 </div>
               </div>
               <div class="row4213">
-                维修图片：
+                第一次维修图片：
               </div>
             </div>
             <div class="row422">
@@ -218,6 +215,40 @@
             </div>
           </div>
         </div>
+        <div class="rowExpectTime" style="font-size: 16px;" v-show="showDiv">
+          第二次维修预计完成时间： {{ detailOrder.secondExpectedCompletionTime }}
+        </div>
+        <div class="row5" v-show="showSecondeDiv">
+            <div class="row51" style="font-size: 16px;">
+              第二次维修记录
+            </div>
+            <div class="row42">
+              <div class="row421">
+                <div class="row4211">
+                  <div class="42111">
+                    第二次维修人员：{{ detailOrder.secondaryRepairmanName }}
+                  </div>
+                </div>
+                <div class="row4212">
+                  <div>
+                    第二次维修结论：{{ detailOrder.secondWorkContent }}
+                  </div>
+                </div>
+                <div class="row4213">
+                  第二次维修图片：
+                </div>
+              </div>
+              <div class="row422">
+                <!-- <img src="../../../../testImags/Snipaste_2023-04-05_09-21-47.png" 
+              style="width: 50px; height: 30px;"
+              alt="暂无"> -->
+                <!-- TODO：src还是test的 -->
+                <el-image style="width: 100px; height: 100px" :src="secondURL" :zoom-rate="1.2"
+                  :preview-src-list="secondURLList" :initial-index="4" fit="cover" />
+              </div>
+            </div>
+          </div>
+
       </div>
     </el-dialog>
 
@@ -361,7 +392,11 @@ export default {
       stepActive: '',
       // 是否可以维修状态选择
       repairStatus: '',
-      wheather: false
+      wheather: false,
+      secondURL:'',
+      secondURLList: [],
+      // 第二次详情div
+      showSecondeDiv: '',
     };
   },
   created() {
@@ -436,7 +471,8 @@ export default {
       const repairId = row.repairId || this.ids
       getRepairResult(repairId).then(response => {
         this.detailOrder = response.data
-        this.showDiv = this.detailOrder.fixStatus >= 3 ? true : false;
+        this.showDiv = this.detailOrder.fixStatus == 1 && this.detailOrder.isSecondDispatch == 1 ? true : false;
+        this.showSecondeDiv = this.detailOrder.fixStatus == 4 ? true : false;
         // TODO 遍历
         this.stepActive = row.fixStatus
         if (row.fixStatus == '4') {
@@ -453,11 +489,17 @@ export default {
           this.stuURLList[i] = process.env.VUE_APP_BASE_API + response.data.stuImagesURL[i]
         }
         this.stuURL = this.stuURLList[0]
-        if (response.data.repairURLList != null) {
-          for (let i = 0; i < response.data.repairURLList.length; i++) {
-            this.repairURLList[i] = process.env.VUE_APP_BASE_API + response.data.repairURLList[i]
+        if (response.data.onceImagesURL != null) {
+          for (let i = 0; i < response.data.onceImagesURL.length; i++) {
+            this.repairURLList[i] = process.env.VUE_APP_BASE_API + response.data.onceImagesURL[i]
           }
-          this.repairURL = this.stuURLList[0]
+          this.repairURL = this.repairURLList[0]
+        }
+        if(response.data.secondImagesURL != null) {
+            for (let i = 0; i < response.data.secondImagesURL.length; i++) {
+              this.secondURLList[i] = process.env.VUE_APP_BASE_API + response.data.secondImagesURL[i]
+            }
+            this.secondURL = this.secondURLList[0]
         }
         this.form = response.data;
         this.orderDetailOpen = true;
@@ -769,7 +811,7 @@ export default {
 }
 
 .row4213 {
-  width: 90px;
+  width: 130px;
 }
 
 .row422 {
@@ -787,5 +829,12 @@ export default {
 .row422 .el-image {
   width: 100%;
   height: 200px;
+}
+
+.row5 {
+  margin-top: 15px;
+}
+.row51 {
+  margin-top: 10px;
 }
 </style>

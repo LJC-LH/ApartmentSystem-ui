@@ -66,7 +66,7 @@
 
 
     <el-dialog v-bind="$attrs" v-on="$listeners" :visible.sync="stuOrderOpen" @open="onOpen" @close="onClose"
-      width="1000px" title="宿舍报修">
+      width="1000px" title="新建保修订单">
       <el-form ref="elForm" :model="addForm" :rules="uploadrules" size="medium" label-width="100px">
         <el-form-item label="楼栋名" prop="buildingNo">
           <el-input v-model="addForm.buildingNo" placeholder="请输入楼栋名" clearable :style="{ width: '100%' }" disabled>
@@ -80,14 +80,12 @@
           <el-upload :file-list="fileList" action="/system/user/profile/uploadPicture" list-type="picture-card"
             :show-file-list="true" :on-preview="handlePictureCardPreview" :on-remove="handleRemove"
             :on-change="handleFileChange" :before-upload="beforePictureUpload" :auto-upload="false"
-            @close="handleCloseDialog" ref="upload" accept=".jpg,.jpeg,.png,.bmp">
-            <el-icon>
-              <Plus />
-            </el-icon>
+            @close="handleCloseDialog" ref="upload" accept=".jpg,.jpeg,.png,.bmp" class="avatar-uploader">
+             <i class="el-icon-plus avatar-uploader-icon"></i>
           </el-upload>
 
           <el-dialog :visible.sync="dialogVisible">
-            <img w-full :src="dialogImageUrl" alt="Preview Image" />
+            <img w-full :src="dialogImageUrl" alt="Preview Image" class="avatar" />
           </el-dialog>
         </el-form-item>
         <el-form-item label="损坏说明" prop="damageDescription">
@@ -122,7 +120,7 @@
       <div class="parent">
         <div class="row1">
           <div class="row11" style="font-size: 16px;">
-            报修订单详情
+            保修订单详情
           </div>
           <!-- 这里需要获得订单的状态，即active和finish是响应式的 -->
           <div class="row12" align-center>
@@ -231,7 +229,7 @@ export default {
       // 表单校验
       rules: {
       },
-      // 报修对话框
+      // 保修对话框
       updateFlag: false,
       fullscreenLoading: false,
       // 学生上传订单
@@ -436,14 +434,8 @@ export default {
         for (let i = 0; i < this.tempFileList.length; i++) {
           urlData.append('data', this.tempFileList[i].raw)
         }
-        // addStuOrders(this.formData).then(res => {
-
-        // })
-        // TODO:这里应该采用异步调用，多线程并发
         uploadStuImages(urlData).then(response => {
-          // this.visible = false; 
-          //_____________这个逻辑应该是上传图片之后，返回List集合，再封装成FzuCompleteOrder，重新传入controller，再完成CRUD的sql语句___________________________________
-          console.log("res is :", response);
+
           this.addForm.stuImagesURL = response.data
           addStudentRepairApplication(this.addForm).then(res => {
             this.stuOrderOpen = false;
@@ -508,7 +500,6 @@ export default {
     },
     contentConfirm() {
       this.contentForm.repairId = this.contentId
-      console.log(this.contentForm);
       updateEvaluate(this.contentForm).then({
 
       })
@@ -520,7 +511,6 @@ export default {
     handleDetail(row) {
       const repairId = row.repairId || this.ids
       getStudentRepairApplication(repairId).then(response => {
-        console.log("res is :", response);
         this.orderDetailOpen = true
         if (response.data.fixStatus == '0') {
           this.stepActive = 1
@@ -534,8 +524,6 @@ export default {
         for(let i = 0; i < response.data.stuImagesURL.length; i++) {
           this.stuURLList[i] = process.env.VUE_APP_BASE_API + response.data.stuImagesURL[i]
         }
-        // this.stuURL = "/dev-api/profile/avatar/2023/05/05/blob_20230505170258A002.png"
-        console.log("现在在测试路径：", this.stuURL);
       });
     },
     detailClose() {
@@ -706,4 +694,28 @@ export default {
   width: 100%;
   height: 200px;
 }
+
+ .avatar-uploader .el-upload {
+    border: 1px dashed #d9d9d9;
+    border-radius: 6px;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+  }
+  .avatar-uploader .el-upload:hover {
+    border-color: #409EFF;
+  }
+  .avatar-uploader-icon {
+    font-size: 28px;
+    color: #8c939d;
+    width: 148px;
+    height: 148px;
+    line-height: 148px;
+    text-align: center;
+  }
+  .avatar {
+    width: 178px;
+    height: 178px;
+    display: block;
+  }
 </style>
