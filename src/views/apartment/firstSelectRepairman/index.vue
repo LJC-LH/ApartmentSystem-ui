@@ -237,7 +237,6 @@ import {
   updateFirstSelectRepairman,
   selectUserByRoleId
 } from "@/api/apartment/firstSelectRepairman";
-import { getStudentRepairApplication } from "@/api/apartment/studentRepairApplication";
 export default {
   dicts: ['fzu_fix_status', 'is_second_dispatch'],
   data() {
@@ -314,7 +313,7 @@ export default {
       this.queryParams.fixStatus = 0;
       const response = await listFirstSelectRepairman(this.queryParams);
       this.firstSelectRepairmanList = response.rows;
-      console.log(this.firstSelectRepairmanList)
+      this.total = response.total;
       this.loading = false;
     },
     // 取消按钮

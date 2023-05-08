@@ -51,11 +51,11 @@
       </el-table-column>>
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
-          <el-button size="mini" type="text" icon="el-icon-delete" @click="handleDetail(scope.row)">详情</el-button>
+          <el-button size="mini" type="text" icon="el-icon-zoom-in" @click="handleDetail(scope.row)">详情</el-button>
           <el-button size="mini" type="text" icon="el-icon-delete" @click="handleDelete(scope.row)"
             v-hasPermi="['apartment:studentRepairApplication:remove']"
             v-bind:disabled="scope.row.fixStatus != 0">删除</el-button>
-          <el-button size="mini" type="text" icon="el-icon-delete" @click="handleContent(scope.row)"
+          <el-button size="mini" type="text" icon="el-icon-edit" @click="handleContent(scope.row)"
             v-bind:disabled="scope.row.fixStatus != 4 || scope.row.evaluateContent != null">评价</el-button>
         </template>
       </el-table-column>
@@ -66,7 +66,7 @@
 
 
     <el-dialog v-bind="$attrs" v-on="$listeners" :visible.sync="stuOrderOpen" @open="onOpen" @close="onClose"
-      width="1000px" title="新建保修订单">
+      width="1000px" title="学生报修">
       <el-form ref="elForm" :model="addForm" :rules="uploadrules" size="medium" label-width="100px">
         <el-form-item label="楼栋名" prop="buildingNo">
           <el-input v-model="addForm.buildingNo" placeholder="请输入楼栋名" clearable :style="{ width: '100%' }" disabled>
@@ -100,7 +100,7 @@
     </el-dialog>
 
     <el-dialog v-bind="$attrs" v-on="$listeners" :visible.sync="contentOpen" @open="contentVisable" @close="contentClose"
-      width="1000px" title="订单评价">
+      width="1000px" title="维修评价">
       <el-form ref="elForm" :model="contentForm" :rules="contentRules" size="medium" label-width="180px">
         <el-form-item label="请为本次服务打星" prop="evaluateRate">
           <el-rate v-model="contentForm.evaluateRate" :texts="['太差了', '不太行', '正常', '挺好', '很棒']" show-text />
@@ -116,11 +116,11 @@
       </div>
     </el-dialog>
     <!-- 详情页面 -->
-    <el-dialog :visible.sync="orderDetailOpen" width="1000px" title="订单详情页" @close="detailClose">
+    <el-dialog :visible.sync="orderDetailOpen" width="1000px" title="报修详情页" @close="detailClose">
       <div class="parent">
         <div class="row1">
           <div class="row11" style="font-size: 16px;">
-            保修订单详情
+            报修信息详情
           </div>
           <!-- 这里需要获得订单的状态，即active和finish是响应式的 -->
           <div class="row12" align-center>
@@ -229,7 +229,7 @@ export default {
       // 表单校验
       rules: {
       },
-      // 保修对话框
+      // 报修对话框
       updateFlag: false,
       fullscreenLoading: false,
       // 学生上传订单
@@ -505,8 +505,8 @@ export default {
     contentConfirm() {
       this.contentForm.repairId = this.contentId
       updateEvaluate(this.contentForm).then({
-
       })
+      this.getList()
       this.contentOpen = false
       this.$modal.msgSuccess("评价成功")
       this.contentForm = {}

@@ -544,8 +544,6 @@ export default {
           this.repairURL = this.repairURLList[0]
         }
         this.form = response.data;
-        this.form.isSecondDispatch = 1
-        console.log(this.form.isSecondDispatch)
         this.open = true;
         this.title = "二次派单";
       });
