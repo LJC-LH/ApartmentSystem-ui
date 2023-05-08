@@ -345,6 +345,8 @@ export default {
         secondActualCompletionTime: null,
         secondWorkContent: null
       };
+      this.stuURL = '';
+      this.stuURLList = [];
       this.resetForm("form");
     },
     /** 搜索按钮操作 */
@@ -374,13 +376,14 @@ export default {
       this.reset();
       const repairId = row.repairId || this.ids
       getFirstSelectRepairman(repairId).then(response => {
+        this.reset();
         this.form = response.data;
-        this.open = true;
-        this.title = "维修派单";
         this.stuURL = process.env.VUE_APP_BASE_API + response.data.stuImagesURL[0]
         for (let i = 0; i < response.data.stuImagesURL.length; i++) {
           this.stuURLList[i] = process.env.VUE_APP_BASE_API + response.data.stuImagesURL[i]
         }
+        this.open = true;
+        this.title = "维修派单";
       });
       // getStudentRepairApplication(repairId).then(response => {
       //   this.stuURL = process.env.VUE_APP_BASE_API + response.data.stuImagesURL[0]

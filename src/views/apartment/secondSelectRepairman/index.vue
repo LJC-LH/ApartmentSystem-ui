@@ -242,13 +242,22 @@
             :preview-src-list="repairURLList" :initial-index="4" fit="cover" />
         </div>
       </div>
-      <el-form ref="form" :model="form" :rules="rules" label-width="80px" class="secondary-repairman-form">
-        <el-form-item label="二次维修人员" prop="secondaryRepairmanId" label-width="200">
+      <el-form ref="form" :model="form" :rules="rules" label-width="140px" class="secondary-repairman-form">
+        <el-form-item label="分配第二次维修人员" prop="secondaryRepairmanId">
           <el-select v-model="form.secondaryRepairmanId" placeholder="请选择维修人员">
             <el-option v-for="repairman in repairmanList" :key="repairman.userId" :label="repairman.nickName"
               :value="repairman.userId">
             </el-option>
           </el-select>
+        </el-form-item>
+        <el-form-item label="维修预计完成实时间" prop="secondExpectedCompletionTime">
+          <el-date-picker clearable
+            v-model="form.secondExpectedCompletionTime"
+            type="date"
+            value-format="yyyy-MM-dd"
+            placeholder="请选择时间"
+            >
+          </el-date-picker>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -491,6 +500,10 @@ export default {
         secondActualCompletionTime: null,
         secondWorkContent: null
       };
+      this.stuURL = '';
+      this.stuURLList = [];
+      this.repairURL = '';
+      this.repairURLList = [];
       this.resetForm("form");
     },
     /** 搜索按钮操作 */
@@ -517,9 +530,9 @@ export default {
     },
     /** 修改按钮操作 */
     handleUpdate(row) {
-      this.reset();
       const repairId = row.repairId || this.ids
       getSecondSelectRepairman(repairId).then(response => {
+        this.reset();
         for (let i = 0; i < response.data.stuImagesURL.length; i++) {
           this.stuURLList[i] = process.env.VUE_APP_BASE_API + response.data.stuImagesURL[i]
         }
@@ -531,6 +544,8 @@ export default {
           this.repairURL = this.repairURLList[0]
         }
         this.form = response.data;
+        this.form.isSecondDispatch = 1
+        console.log(this.form.isSecondDispatch)
         this.open = true;
         this.title = "二次派单";
       });

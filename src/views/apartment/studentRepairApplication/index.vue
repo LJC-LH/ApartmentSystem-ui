@@ -329,6 +329,8 @@ export default {
         onceImagesURL: [],
         secondImagesURL: [],
       };
+      this.stuURL = '';
+      this.stuURLList = [];
       this.resetForm();
     },
     /** 搜索按钮操作 */
@@ -414,6 +416,7 @@ export default {
       this.tempFileList = []
       this.addForm = {}
       this.getList()
+      this.reset()
     },
     close() {
       this.$emit('update:visible', false)
@@ -494,6 +497,7 @@ export default {
     },
     contentClose() {
       this.getList()
+      this.reset() 
     },
     contentCancle() {
       this.contentOpen = false
@@ -520,6 +524,7 @@ export default {
           this.stepActive = 2
         }
         this.detailOrder = response.data
+        this.reset()
         this.stuURL = process.env.VUE_APP_BASE_API + response.data.stuImagesURL[0]
         for(let i = 0; i < response.data.stuImagesURL.length; i++) {
           this.stuURLList[i] = process.env.VUE_APP_BASE_API + response.data.stuImagesURL[i]

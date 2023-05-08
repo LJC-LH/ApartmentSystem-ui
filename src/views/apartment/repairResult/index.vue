@@ -215,7 +215,7 @@
             </div>
           </div>
         </div>
-        <div class="rowExpectTime" style="font-size: 16px;" v-show="showSecondeDiv">
+        <div class="rowExpectTime" style="font-size: 16px;" v-show="showSecondTimeDiv">
           第二次维修预计完成时间： {{ detailOrder.secondExpectedCompletionTime }}
         </div>
         <div class="row5" v-show="showSecondeDiv">
@@ -404,6 +404,7 @@ export default {
       secondURLList: [],
       // 第二次详情div
       showSecondeDiv: '',
+      showSecondTimeDiv:'',
     };
   },
   created() {
@@ -449,6 +450,12 @@ export default {
       };
       this.resetForm("form");
       this.tempFileList = []
+      this.stuURL = '';
+      this.stuURLList = [];
+      this.repairURL = '';
+      this.repairURLList = [];
+      this.secondURL = '';
+      this.secondURLList = [];
     },
     /** 搜索按钮操作 */
     handleQuery() {
@@ -474,12 +481,12 @@ export default {
     },
     /** 详情按钮操作 */
     checkDetail(row) {
-      this.reset();
       const repairId = row.repairId || this.ids
       getRepairResult(repairId).then(response => {
         this.detailOrder = response.data
-        this.showDiv = (this.detailOrder.fixStatus == 1 || this.detailOrder.fixStatus == 4) ? true : false;
-        this.showSecondeDiv = (this.detailOrder.fixStatus == 1 || this.detailOrder.fixStatus == 4) && this.detailOrder.isSecondDispatch == 1 ? true : false;
+        this.showDiv = (this.detailOrder.fixStatus == 1 && this.detailOrder.isSecondDispatch == 1) || this.detailOrder.fixStatus == 4 ? true : false;
+        this.showSecondTimeDiv = this.detailOrder.fixStatus == 1 && this.detailOrder.isSecondDispatch == 1 ? true : false;
+        this.showSecondeDiv = this.detailOrder.fixStatus == 4 && this.detailOrder.isSecondDispatch == 1 ? true : false;
         // TODO 遍历
         this.stepActive = row.fixStatus
         if (row.fixStatus == '4') {
@@ -492,6 +499,7 @@ export default {
           this.stepActive = 4
         }
         this.detailOrder = response.data
+        this.reset();
         for (let i = 0; i < response.data.stuImagesURL.length; i++) {
           this.stuURLList[i] = process.env.VUE_APP_BASE_API + response.data.stuImagesURL[i]
         }
@@ -542,7 +550,9 @@ export default {
       this.formRepairID = row.repairId
       this.formData.buildingNo = row.buildingNo
       this.formData.roomNo = row.roomNo
-      this.formData.repairStatus = 1
+      if(this.isSecondeary == "1") {
+        this.formData.repairStatus = 1
+      }
       this.stuOrderOpen = true;
       this.repairForm = row
       // this.$modal.confirm('是否确认删除维修结果提交编号为"' + repairIds + '"的数据项？').then(function () {

@@ -486,9 +486,9 @@ export default {
     // },
     /** 修改按钮操作 */
     handleUpdate(row) {
-      this.reset();
       const repairId = row.repairId || this.ids
       getManagerOpinion(repairId).then(response => {
+        this.reset();
         for (let i = 0; i < response.data.stuImagesURL.length; i++) {
           this.stuURLList[i] = process.env.VUE_APP_BASE_API + response.data.stuImagesURL[i]
         }
@@ -500,6 +500,7 @@ export default {
           this.repairURL = this.repairURLList[0]
         }
         this.form = response.data;
+        this.form.isSecondDispatch = "1"
         this.open = true;
         this.title = "修改领导审批";
       });
