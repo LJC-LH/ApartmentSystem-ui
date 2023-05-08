@@ -318,7 +318,7 @@
           </el-select>
         </el-form-item>
         <el-form-item label="校区管理办公室" prop="manageId">
-          <el-select v-model="form.manageId" placeholder="请选择校区" :disabled=!stuOption>
+          <el-select v-model="form.manageId" placeholder="请选择校区负责人" :disabled=!stuOption>
             <el-option
               v-for="item in xqglList"
               :key="item.userId"
@@ -365,13 +365,11 @@ import {
   listApproval,
   selectUserListByRoleId,
   updateApproval,
-  addStudentDorm
+  updateStudentdorm, getStudentdorm, listStudentdorm, getUser
 } from '@/api/apartment/approval'
 import { getInfo } from '@/api/login'
-import { getDept } from '@/api/system/dept'
-import { getAuthRole, getUser } from '@/api/system/user'
-import { getRole } from '@/api/system/role'
-import { getStudentdorm, listStudentdorm, updateStudentdorm } from '@/api/apartment/dormitory'
+
+
 
 export default {
   name: "Approval",
@@ -672,7 +670,9 @@ export default {
         this.roleParams.xgcRoleId = 101;
         this.roleParams.xqglRoleId = 102;
         getUser(this.form.studentId).then(response =>{
-          this.roleParams.deptId = response.data.deptId
+          // this.roleParams.deptId = response.data.deptId
+          // console.log(this.roleParams.deptId);
+          console.log(response);
         })
         this.roomParams.dormStatus = 3
         listStudentdorm(this.roomParams).then(response => {

@@ -1,4 +1,5 @@
 import request from '@/utils/request'
+import { parseStrEmpty } from '@/utils/ruoyi'
 
 // 查询特殊退宿申请列表
 export function listCancel(query) {
@@ -60,6 +61,7 @@ export function selectDormIdByStudentId(query) {
     params: query
   })
 }
+
 // 获取指定studentId的dormId
 export function removeStuDorm(dormId) {
   return request({
@@ -68,5 +70,29 @@ export function removeStuDorm(dormId) {
     params: dormId
   })
 }
+// 查询宿舍详细
+export function getStudentdorm(dormId) {
+  return request({
+    url: '/apartment/cancel/getStudentdorm' + dormId,
+    method: 'get'
+  })
+}
 
+
+// 修改宿舍
+export function updateStudentdorm(data) {
+  return request({
+    url: '/apartment/cancel/updateStudentdorm',
+    method: 'put',
+    data: data
+  })
+}
+
+// 查询用户详细
+export function getUser(userId) {
+  return request({
+    url: '/apartment/cancel/getUser' + parseStrEmpty(userId),
+    method: 'get'
+  })
+}
 

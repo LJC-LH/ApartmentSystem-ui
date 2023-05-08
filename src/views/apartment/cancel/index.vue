@@ -293,12 +293,11 @@ import {
   delCancel,
   addCancel,
   updateCancel,
-  selectDormIdByStudentId, removeStuDorm
+  selectDormIdByStudentId, removeStuDorm, updateStudentdorm, getStudentdorm, getUser
 } from '@/api/apartment/cancel'
 import { getInfo } from '@/api/login'
-import { addStudentDorm, selectUserListByRoleId } from '@/api/apartment/approval'
-import { getUser } from '@/api/system/user'
-import { getStudentdorm, updateStudentdorm } from '@/api/apartment/dormitory'
+import { selectUserListByRoleId } from '@/api/apartment/approval'
+
 
 export default {
   name: "Cancel",

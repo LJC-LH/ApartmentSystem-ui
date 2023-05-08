@@ -1,4 +1,5 @@
 import request from '@/utils/request'
+import { parseStrEmpty } from '@/utils/ruoyi'
 
 // 查询特殊宿舍申请列表
 export function listApproval(query) {
@@ -52,14 +53,37 @@ export function selectUserListByRoleId(query) {
     })
 }
 
-//添加学生宿舍信息
-export function addStudentDorm(query){
+// 查询宿舍详细
+export function getStudentdorm(dormId) {
   return request({
-    url: '/apartment/approval/addStudentDorm',
-    method: 'post',
-    data: query
+    url: '/apartment/approval/getStudentdorm' + dormId,
+    method: 'get'
   })
 }
 
 
+// 修改宿舍
+export function updateStudentdorm(data) {
+  return request({
+    url: '/apartment/approval/updateStudentdorm',
+    method: 'put',
+    data: data
+  })
+}
 
+// 查询宿舍列表
+export function listStudentdorm(query) {
+  return request({
+    url: '/apartment/approval/listStudentdorm',
+    method: 'get',
+    params: query
+  })
+}
+
+// 查询用户详细
+export function getUser(userId) {
+  return request({
+    url: '/apartment/approval/' + parseStrEmpty(userId),
+    method: 'get'
+  })
+}
