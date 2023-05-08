@@ -195,7 +195,7 @@
     <el-dialog :title="title" :visible.sync="open" width="600px" append-to-body>
       <div class="descriptions-container">
         <el-descriptions :bordered="true" :column="1" class="custom-descriptions">
-          <el-descriptions-item label="学生姓名">{{ form.nickName }}</el-descriptions-item>
+          <el-descriptions-item label="学生姓名">{{ form.studentName }}</el-descriptions-item>
           <!--              <el-descriptions-item label="第一次维修人员">{{ form.firstRepairmanName }}</el-descriptions-item>-->
           <el-descriptions-item label="楼栋号">{{ form.buildingNo }}</el-descriptions-item>
           <!--              <el-descriptions-item label="第一次维修内容">{{ form.firstWorkContent }}</el-descriptions-item>-->

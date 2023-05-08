@@ -215,7 +215,7 @@
             </div>
           </div>
         </div>
-        <div class="rowExpectTime" style="font-size: 16px;" v-show="showDiv">
+        <div class="rowExpectTime" style="font-size: 16px;" v-show="showSecondeDiv">
           第二次维修预计完成时间： {{ detailOrder.secondExpectedCompletionTime }}
         </div>
         <div class="row5" v-show="showSecondeDiv">
@@ -256,7 +256,7 @@
     <!-- 工作记录页面 -->
     <el-dialog v-bind="$attrs" v-on="$listeners" :visible.sync="stuOrderOpen" @open="onOpen" @close="onClose"
       width="1000px" title="工作记录上传表">
-      <el-form ref="elForm" :model="formData" :rules="uploadrules" size="medium" label-width="100px">
+      <el-form ref="elForm" :model="formData" :rules="uploadrules" size="medium" label-width="120px">
         <el-form-item label="楼栋名" prop="buildingNo">
           <el-input v-model="formData.buildingNo" placeholder="请输入楼栋名" clearable :style="{ width: '100%' }" disabled>
           </el-input>
@@ -275,10 +275,8 @@
           <el-upload :file-list="fileList" action="/system/user/profile/uploadPicture" list-type="picture-card"
             :show-file-list="true" :on-preview="handlePictureCardPreview" :on-remove="handleRemove"
             :on-change="handleFileChange" :before-upload="beforePictureUpload" :auto-upload="false"
-            accept=".jpg,.jpeg,.png,.bmp" ref="upload" @close="handleCloseDialog">
-            <el-icon>
-              <Plus />
-            </el-icon>
+            @close="handleCloseDialog" ref="upload" accept=".jpg,.jpeg,.png,.bmp" class="avatar-uploader">
+             <i class="el-icon-plus avatar-uploader-icon"></i>           
           </el-upload>
 
           <el-dialog :visible.sync="dialogVisible">
@@ -378,7 +376,16 @@ export default {
           message: '请输入房间名',
           trigger: 'blur'
         }],
-        damageDescription: [],
+        repairStatus: [{
+          required: true,
+          message: '请输入维修情况',
+          trigger: 'blur'
+        }],
+        damageDescription: [{
+          required: true,
+          message: '请对损坏情况进行说明',
+          trigger: 'blur'
+        }],
       },
       stuOrderOpen: false,
       dialogImageUrl: '',
@@ -471,8 +478,8 @@ export default {
       const repairId = row.repairId || this.ids
       getRepairResult(repairId).then(response => {
         this.detailOrder = response.data
-        this.showDiv = this.detailOrder.fixStatus == 1 && this.detailOrder.isSecondDispatch == 1 ? true : false;
-        this.showSecondeDiv = this.detailOrder.fixStatus == 4 ? true : false;
+        this.showDiv = (this.detailOrder.fixStatus == 1 || this.detailOrder.fixStatus == 4) ? true : false;
+        this.showSecondeDiv = (this.detailOrder.fixStatus == 1 || this.detailOrder.fixStatus == 4) && this.detailOrder.isSecondDispatch == 1 ? true : false;
         // TODO 遍历
         this.stepActive = row.fixStatus
         if (row.fixStatus == '4') {
@@ -535,6 +542,7 @@ export default {
       this.formRepairID = row.repairId
       this.formData.buildingNo = row.buildingNo
       this.formData.roomNo = row.roomNo
+      this.formData.repairStatus = 1
       this.stuOrderOpen = true;
       this.repairForm = row
       // this.$modal.confirm('是否确认删除维修结果提交编号为"' + repairIds + '"的数据项？').then(function () {
@@ -636,7 +644,14 @@ export default {
       this.dialogVisible = true;
     },
     beforePictureUpload(file) {
-
+      return new Promise((resolve, reject) => {
+        if (file.size === 0) {
+          this.$message.error('请选择要上传的图片')
+          reject(new Error('请选择要上传的图片'))
+        } else {
+          resolve()
+        }
+      })
     },
     handleFileChange(file) {
       this.tempFileList.push(file)
@@ -837,4 +852,28 @@ export default {
 .row51 {
   margin-top: 10px;
 }
+
+.avatar-uploader .el-upload {
+    border: 1px dashed #d9d9d9;
+    border-radius: 6px;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+  }
+  .avatar-uploader .el-upload:hover {
+    border-color: #409EFF;
+  }
+  .avatar-uploader-icon {
+    font-size: 28px;
+    color: #8c939d;
+    width: 148px;
+    height: 148px;
+    line-height: 148px;
+    text-align: center;
+  }
+  .avatar {
+    width: 178px;
+    height: 178px;
+    display: block;
+  }
 </style>
