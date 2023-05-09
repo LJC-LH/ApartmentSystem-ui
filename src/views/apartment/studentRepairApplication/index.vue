@@ -81,7 +81,7 @@
             :show-file-list="true" :on-preview="handlePictureCardPreview" :on-remove="handleRemove"
             :on-change="handleFileChange" :before-upload="beforePictureUpload" :auto-upload="false"
             @close="handleCloseDialog" ref="upload" accept=".jpg,.jpeg,.png,.bmp" class="avatar-uploader">
-             <i class="el-icon-plus avatar-uploader-icon"></i>
+            <i class="el-icon-plus avatar-uploader-icon"></i>
           </el-upload>
 
           <el-dialog :visible.sync="dialogVisible">
@@ -167,6 +167,70 @@
             </div>
           </div>
         </div>
+        <div class="row4" v-show="showDiv">
+          <div class="row41" style="font-size: 16px;">
+            第一次维修记录
+          </div>
+          <div class="row42">
+            <div class="row421">
+              <div class="row4211">
+                <!-- <div class="42111">
+                  订单状态：{{ detailOrder.fixStatus }}
+                </div> -->
+                <div class="42111">
+                  第一次维修人员：{{ detailOrder.repairmanName }}
+                </div>
+              </div>
+              <div class="row4212">
+                <div>
+                  第二次维修结论：{{ detailOrder.firstWorkContent }}
+                </div>
+              </div>
+              <div class="row4213">
+                第一次维修图片：
+              </div>
+            </div>
+            <div class="row422">
+              <!-- <img src="../../../../testImags/Snipaste_2023-04-05_09-21-47.png" 
+              style="width: 50px; height: 30px;"
+              alt="暂无"> -->
+              <!-- TODO：src还是test的 -->
+              <el-image style="width: 100px; height: 100px" :src="repairURL" :zoom-rate="1.2"
+                :preview-src-list="repairURLList" :initial-index="4" fit="cover" />
+            </div>
+          </div>
+        </div>
+        <div class="row5" v-show="showSecondeDiv">
+          <div class="row51" style="font-size: 16px;">
+            第二次维修记录
+          </div>
+          <div class="row42">
+            <div class="row421">
+              <div class="row4211">
+                <div class="42111">
+                  第二次维修人员：{{ detailOrder.secondaryRepairmanName }}
+                </div>
+              </div>
+              <div class="row4212">
+                <div>
+                  第二次维修结论：{{ detailOrder.secondWorkContent }}
+                </div>
+              </div>
+              <div class="row4213">
+                第二次维修图片：
+              </div>
+            </div>
+            <div class="row422">
+              <!-- <img src="../../../../testImags/Snipaste_2023-04-05_09-21-47.png" 
+              style="width: 50px; height: 30px;"
+              alt="暂无"> -->
+              <!-- TODO：src还是test的 -->
+              <el-image style="width: 100px; height: 100px" :src="secondURL" :zoom-rate="1.2"
+                :preview-src-list="secondURLList" :initial-index="4" fit="cover" />
+            </div>
+          </div>
+        </div>
+
       </div>
     </el-dialog>
   </div>
@@ -183,6 +247,12 @@ export default {
   },
   data() {
     return {
+      repairURL: '',
+      repairURLList: [],
+      secondURL: '',
+      secondURLList: [],
+      showDiv: '',
+      showSecondeDiv: '',
       // 遮罩层
       loading: true,
       // 选中数组
@@ -331,6 +401,10 @@ export default {
       };
       this.stuURL = '';
       this.stuURLList = [];
+      this.repairURL = '';
+      this.repairURLList = [];
+      this.secondURL = '';
+      this.secondURLList = [];
       this.resetForm();
     },
     /** 搜索按钮操作 */
@@ -497,7 +571,7 @@ export default {
     },
     contentClose() {
       this.getList()
-      this.reset() 
+      this.reset()
     },
     contentCancle() {
       this.contentOpen = false
@@ -526,14 +600,30 @@ export default {
         this.detailOrder = response.data
         this.reset()
         this.stuURL = process.env.VUE_APP_BASE_API + response.data.stuImagesURL[0]
-        for(let i = 0; i < response.data.stuImagesURL.length; i++) {
+        for (let i = 0; i < response.data.stuImagesURL.length; i++) {
           this.stuURLList[i] = process.env.VUE_APP_BASE_API + response.data.stuImagesURL[i]
+        }
+        if (response.data.onceImagesURL != null) {
+          this.showDiv = true
+          for (let i = 0; i < response.data.onceImagesURL.length; i++) {
+            this.repairURLList[i] = process.env.VUE_APP_BASE_API + response.data.onceImagesURL[i]
+          }
+          this.repairURL = this.repairURLList[0]
+        }
+        if (response.data.secondImagesURL.length != 0) {
+          this.showSecondeDiv = true
+          for (let i = 0; i < response.data.secondImagesURL.length; i++) {
+            this.secondURLList[i] = process.env.VUE_APP_BASE_API + response.data.secondImagesURL[i]
+          }
+          this.secondURL = this.secondURLList[0]
         }
       });
     },
     detailClose() {
       this.orderDetailOpen = false
       this.detailOrder = {}
+      this.showDiv = false
+      this.showSecondeDiv = false
     }
   }
 
@@ -700,27 +790,30 @@ export default {
   height: 200px;
 }
 
- .avatar-uploader .el-upload {
-    border: 1px dashed #d9d9d9;
-    border-radius: 6px;
-    cursor: pointer;
-    position: relative;
-    overflow: hidden;
-  }
-  .avatar-uploader .el-upload:hover {
-    border-color: #409EFF;
-  }
-  .avatar-uploader-icon {
-    font-size: 28px;
-    color: #8c939d;
-    width: 148px;
-    height: 148px;
-    line-height: 148px;
-    text-align: center;
-  }
-  .avatar {
-    width: 178px;
-    height: 178px;
-    display: block;
-  }
+.avatar-uploader .el-upload {
+  border: 1px dashed #d9d9d9;
+  border-radius: 6px;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+
+.avatar-uploader .el-upload:hover {
+  border-color: #409EFF;
+}
+
+.avatar-uploader-icon {
+  font-size: 28px;
+  color: #8c939d;
+  width: 148px;
+  height: 148px;
+  line-height: 148px;
+  text-align: center;
+}
+
+.avatar {
+  width: 178px;
+  height: 178px;
+  display: block;
+}
 </style>
