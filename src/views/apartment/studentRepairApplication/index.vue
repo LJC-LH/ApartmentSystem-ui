@@ -344,7 +344,6 @@ export default {
       contentId: '',
       //学生详情页面
       orderDetailOpen: false,
-      showDiv: false,
       stuURL: '',
       stuURLList: [],
       formRepairID: '',
@@ -603,7 +602,7 @@ export default {
         for (let i = 0; i < response.data.stuImagesURL.length; i++) {
           this.stuURLList[i] = process.env.VUE_APP_BASE_API + response.data.stuImagesURL[i]
         }
-        if (response.data.onceImagesURL != null) {
+        if (response.data.onceImagesURL.length != 0) {
           this.showDiv = true
           for (let i = 0; i < response.data.onceImagesURL.length; i++) {
             this.repairURLList[i] = process.env.VUE_APP_BASE_API + response.data.onceImagesURL[i]
