@@ -162,7 +162,7 @@
         <dict-tag :options="dict.type.fzu_approval_status" :value="scope.row.cancelStatus"/>
       </template>
       </el-table-column>
-<!--      <el-table-column label="宿舍ID" align="center" prop="dormId" />-->
+      <el-table-column label="宿舍" align="center" prop="dormName" />
       <el-table-column label="备注" align="center" prop="remark" />
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
@@ -269,7 +269,7 @@
             <el-option
               v-for="item in dormList"
               :key="item.dormId"
-              :label="item.buildingNo + '栋' + item.roomNo"
+              :label="item.buildingNo + '栋' + item.roomNo + '床号' +item.bedNo"
               :value="item.dormId">
             </el-option>
           </el-select>
@@ -547,25 +547,65 @@ export default {
           this.xgcList = response.rows[1]
           this.xqglList = response.rows[2]
         })
-        this.dormParams.userId = this.user.userId;
-        this.dormParams.dormStatus = '4';
-        selectDormIdByStudentId(this.dormParams).then(response =>{
-          this.dormList = response.rows
-        })
-
-      }else if(roleKey =='fdy'){
-
-      }else if(roleKey =='xgc'){
-
-      }else if(roleKey =='manage'){
-
-      }else if(roleKey =='wygl'){
+        const dormParams = {
+          userId: this.user.userId,
+          dormStatus: ['4', '6'],
+        };
+        selectDormIdByStudentId(dormParams).then(response => {
+          this.dormList = response.rows;
+          console.log("dormlist",response.rows);
+        }).catch((error) => {
+          console.error('请求失败:', error);
+        });
+      }else if(roleKey == 'fdy'){
+        // fdy角色的处理逻辑
+      }else if(roleKey == 'xgc'){
+        // xgc角色的处理逻辑
+      }else if(roleKey == 'manage'){
+        // manage角色的处理逻辑
+      }else if(roleKey == 'wygl'){
+        // wygl角色的处理逻辑
       }
       this.form.studentId = this.user.userId;
       this.form.studentName = this.user.nickName;
       this.open = true;
       this.title = "添加特殊退宿申请";
     },
+    // /** 新增按钮操作 */
+    // handleAdd() {
+    //   this.reset();
+    //   const roleKey = this.$store.getters.roles[0]
+    //   if(roleKey == 'student'){
+    //     this.roleParams.fdyRoleId = 100;
+    //     this.roleParams.xgcRoleId = 101;
+    //     this.roleParams.xqglRoleId = 102;
+    //     this.roleParams.deptId = this.user.deptId;
+    //     selectUserListByRoleId(this.roleParams).then(response => {
+    //       console.log(response.rows)
+    //       this.fdyList = response.rows[0]
+    //       this.xgcList = response.rows[1]
+    //       this.xqglList = response.rows[2]
+    //     })
+    //     this.dormParams.userId = this.user.userId;
+    //     this.dormParams.dormStatus = '4';
+    //     selectDormIdByStudentId(this.dormParams).then(response =>{
+    //       this.dormList = response.rows
+    //       console.log(response.rows);
+    //     })
+    //
+    //   }else if(roleKey =='fdy'){
+    //
+    //   }else if(roleKey =='xgc'){
+    //
+    //   }else if(roleKey =='manage'){
+    //
+    //   }else if(roleKey =='wygl'){
+    //   }
+    //   this.form.studentId = this.user.userId;
+    //   this.form.studentName = this.user.nickName;
+    //   this.open = true;
+    //   this.title = "添加特殊退宿申请";
+    // },
     /** 修改按钮操作 */
     handleUpdate(row) {
       this.reset();
@@ -601,7 +641,10 @@ export default {
         if(this.form.dormId){
           getStudentdorm(this.form.dormId).then(response => {
             this.dormform = response.data;
-            if(this.dormform.dormStatus == 4){this.dormform.dormStatus = 3;}
+            // 更新宿舍使用状态
+            if(this.dormform.dormStatus == '4'){this.dormform.dormStatus = '3';}
+            else if(this.dormform.dormStatus == '6'){this.dormform.dormStatus = '5';}
+            if(this.dormform.bedStatus == '2'){this.dormform.bedStatus = '1'}
             removeStuDorm(this.form.dormId).then(response =>{
               this.$modal.msgSuccess("宿舍解除绑定成功");
             })
@@ -635,6 +678,52 @@ export default {
         }
       });
     },
+    // /** 提交按钮 */
+    // submitForm() {
+    //   if (new Date(this.form.endTime).getTime() < new Date(this.form.startTime).getTime()) {
+    //     this.$message.error("起始日期要早于终止日期");
+    //     return false;
+    //   }
+    //   if(this.form.fdyOpinion == 1 && this.form.xgcOpinion == 1 && this.form.manageOpinion == 1){
+    //     //审批通过
+    //     this.form.cancelStatus = 1;
+    //     if(this.form.dormId){
+    //       getStudentdorm(this.form.dormId).then(response => {
+    //         this.dormform = response.data;
+    //         if(this.dormform.dormStatus == 4){this.dormform.dormStatus = 3;}
+    //         removeStuDorm(this.form.dormId).then(response =>{
+    //           this.$modal.msgSuccess("宿舍解除绑定成功");
+    //         })
+    //         updateStudentdorm(this.dormform).then(response => {
+    //           this.$modal.msgSuccess("取消分配成功");
+    //         });
+    //       });
+    //     }
+    //   }else if(this.form.fdyOpinion == 2 || this.form.xgcOpinion == 2 || this.form.manageOpinion == 2){
+    //     //审批不通过
+    //     this.form.cancelStatus = 2;
+    //   }else {
+    //     //审批中
+    //     this.form.cancelStatus = 3;
+    //   }
+    //   this.$refs["form"].validate(valid => {
+    //     if (valid) {
+    //       if (this.form.cancelId != null) {
+    //         updateCancel(this.form).then(response => {
+    //           this.$modal.msgSuccess("修改成功");
+    //           this.open = false;
+    //           this.getList();
+    //         });
+    //       } else {
+    //         addCancel(this.form).then(response => {
+    //           this.$modal.msgSuccess("新增成功");
+    //           this.open = false;
+    //           this.getList();
+    //         });
+    //       }
+    //     }
+    //   });
+    // },
     /** 删除按钮操作 */
     handleDelete(row) {
       const cancelIds = row.cancelId || this.ids;

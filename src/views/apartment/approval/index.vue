@@ -210,7 +210,7 @@
           <dict-tag :options="dict.type.fzu_approval_status" :value="scope.row.approvalStatus"/>
         </template>
       </el-table-column>
-<!--      <el-table-column label="宿舍ID" align="center" prop="dormId" >-->
+      <el-table-column label="宿舍" align="center" prop="dormName" ></el-table-column>
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
@@ -219,13 +219,15 @@
             icon="el-icon-edit"
             @click="handleUpdate(scope.row)"
             v-hasPermi="['apartment:approval:edit']"
-          >修改</el-button>
+            :disabled="scope.row.dormId != null"
+          >审批</el-button>
           <el-button
             size="mini"
             type="text"
             icon="el-icon-delete"
             @click="handleDelete(scope.row)"
             v-hasPermi="['apartment:approval:remove']"
+            :disabled="scope.row.fdyOpinion != null || scope.row.xgcOption != null || scope.row.manageOpinion != null"
           >删除</el-button>
         </template>
       </el-table-column>
@@ -343,7 +345,7 @@
           <el-option
             v-for="item in dormList"
             :key="item.dormId"
-            :label="item.buildingNo + '栋' + item.roomNo"
+            :label="item.buildingNo + '栋' + item.roomNo + '床号' +item.bedNo"
             :value="item.dormId">
           </el-option>
           </el-select>
@@ -365,7 +367,11 @@ import {
   listApproval,
   selectUserListByRoleId,
   updateApproval,
-  updateStudentdorm, getStudentdorm, listStudentdorm, getUser
+  updateStudentdorm,
+  getStudentdorm,
+  listStudentdorm,
+  addStudentDorm,
+  getUser
 } from '@/api/apartment/approval'
 import { getInfo } from '@/api/login'
 
@@ -386,7 +392,6 @@ export default {
       manageOption:true,
       //物业特殊宿舍申请表填写权限
       wyglOption:true,
-      dormNameList:[],
       // 遮罩层
       loading: true,
       // 选中数组
@@ -468,7 +473,8 @@ export default {
       addStudentdormParams:{
         dormId:null,
         userId:null,
-        bedNo:null
+        bedNo:null,
+
       },
       fdyList:null,
       xgcList:null,
@@ -482,9 +488,6 @@ export default {
       this.user = response.user;
       var roleId =this.user.roles[0].roleId;
       this.getList();
-      listStudentdorm(this.roomParams).then(response => {
-        this.dormNameList = response.data;
-      })
       if(roleId == '1'){
         //学生特殊宿舍申请表填写权限
         this.stuOption=true
@@ -670,13 +673,14 @@ export default {
         this.roleParams.xgcRoleId = 101;
         this.roleParams.xqglRoleId = 102;
         getUser(this.form.studentId).then(response =>{
-          // this.roleParams.deptId = response.data.deptId
-          // console.log(this.roleParams.deptId);
-          console.log(response);
+          this.roleParams.deptId = response.data.deptId
+          console.log(this.roleParams.deptId);
+          // console.log(response);
         })
         this.roomParams.dormStatus = 3
         listStudentdorm(this.roomParams).then(response => {
           this.dormList = response.rows;
+          console.log(this.dormList)
         });
         selectUserListByRoleId(this.roleParams).then(response => {
           this.fdyList = response.rows[0]
@@ -693,15 +697,18 @@ export default {
         this.$message.error("起始日期要早于终止日期");
         return false;
       }
-      if(this.form.dormId){
+      if(this.form.dormId){ /*只有物业选完dormId才会进行下面*/
         getStudentdorm(this.form.dormId).then(response => {
           this.dormform = response.data;
           console.log(response);
-          if(this.dormform.dormStatus == 3){this.dormform.dormStatus = 4;}
+          // 更新宿舍使用状态
+          if(this.dormform.dormStatus == '3'){this.dormform.dormStatus = '4';}
+          else if(this.dormform.dormStatus == '5'){this.dormform.dormStatus = '6';}
+          if(this.dormform.bedStatus == '1'){this.dormform.bedStatus = '2'}
           console.log(this.dormform)
           this.addStudentdormParams.userId = this.form.studentId;
           this.addStudentdormParams.dormId = this.form.dormId;
-          this.addStudentdormParams.bedNo = 'A'
+          this.addStudentdormParams.bedNo = this.dormform.bedNo;
           addStudentDorm(this.addStudentdormParams).then(response =>{
             this.$modal.msgSuccess("宿舍绑定成功");
           })
@@ -738,6 +745,58 @@ export default {
         }
       });
     },
+
+    // /** 提交按钮 */
+    // submitForm() {
+    //   if (new Date(this.form.endTime).getTime() < new Date(this.form.startTime).getTime()) {
+    //     this.$message.error("起始日期要早于终止日期");
+    //     return false;
+    //   }
+    //   if(this.form.dormId){
+    //     getStudentdorm(this.form.dormId).then(response => {
+    //       this.dormform = response.data;
+    //       console.log(response);
+    //       if(this.dormform.dormStatus == 3){this.dormform.dormStatus = 4;}
+    //       console.log(this.dormform)
+    //       this.addStudentdormParams.userId = this.form.studentId;
+    //       this.addStudentdormParams.dormId = this.form.dormId;
+    //       this.addStudentdormParams.bedNo = 'A'
+    //       addStudentDorm(this.addStudentdormParams).then(response =>{
+    //         this.$modal.msgSuccess("宿舍绑定成功");
+    //       })
+    //       updateStudentdorm(this.dormform).then(response => {
+    //         this.$modal.msgSuccess("分配成功");
+    //       });
+    //     });
+    //   }
+    //   if(this.form.fdyOpinion == 1 && this.form.xgcOpinion == 1 && this.form.manageOpinion == 1){
+    //     //审批通过
+    //     this.form.approvalStatus = 1;
+    //   }else if(this.form.fdyOpinion == 2 || this.form.xgcOpinion == 2 || this.form.manageOpinion == 2){
+    //     //审批不通过
+    //     this.form.approvalStatus = 2;
+    //   }else {
+    //     //审批中
+    //     this.form.approvalStatus = 3;
+    //   }
+    //   this.$refs["form"].validate(valid => {
+    //     if (valid) {
+    //       if (this.form.approvalId != null) {
+    //         updateApproval(this.form).then(response => {
+    //           this.$modal.msgSuccess("修改成功");
+    //           this.open = false;
+    //           this.getList();
+    //         });
+    //       } else {
+    //         addApproval(this.form).then(response => {
+    //           this.$modal.msgSuccess("新增成功");
+    //           this.open = false;
+    //           this.getList();
+    //         });
+    //       }
+    //     }
+    //   });
+    // },
     /** 删除按钮操作 */
     handleDelete(row) {
       const approvalIds = row.approvalId || this.ids;
