@@ -63,7 +63,7 @@ export function selectUserListByRoleId(query) {
 // }
 
 // 获取指定studentId的dormId
-export function selectDormIdByStudentId(query) {
+export function getDormId(query) {
   return request({
     url: '/apartment/cancel/getDormId',
     method: 'post',
@@ -103,7 +103,7 @@ export function updateStudentdorm(data) {
 // 查询用户详细
 export function getUser(userId) {
   return request({
-    url: '/apartment/cancel/getUser' + parseStrEmpty(userId),
+    url: '/apartment/cancel/getUser/' + parseStrEmpty(userId),
     method: 'get'
   })
 }

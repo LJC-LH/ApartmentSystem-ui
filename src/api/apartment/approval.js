@@ -61,16 +61,6 @@ export function getStudentdorm(dormId) {
   })
 }
 
-
-// 修改宿舍
-export function updateStudentdorm(data) {
-  return request({
-    url: '/apartment/approval/updateStudentdorm',
-    method: 'put',
-    data: data
-  })
-}
-
 // 查询宿舍列表
 export function listStudentdorm(query) {
   return request({
@@ -89,9 +79,9 @@ export function getUser(userId) {
 }
 
 // 新增宿舍
-export function addStudentDorm(data) {
+export function addAndUpdateStudentDorm(data) {
   return request({
-    url: '/apartment/approval/addStudentDorm',
+    url: '/apartment/approval/addAndUpdateStudentDorm',
     method: 'post',
     data: data
   })

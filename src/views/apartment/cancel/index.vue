@@ -162,7 +162,7 @@
         <dict-tag :options="dict.type.fzu_approval_status" :value="scope.row.cancelStatus"/>
       </template>
       </el-table-column>
-      <el-table-column label="宿舍" align="center" prop="dormName" />
+      <el-table-column label="宿舍" align="center" prop="dormName" width="200" />
       <el-table-column label="备注" align="center" prop="remark" />
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
@@ -265,7 +265,7 @@
         </el-form-item>
         <el-form-item label="宿舍" prop="dormId">
 <!--          <el-input v-model="form.dormId" placeholder="请选择宿舍" :disabled="true"/>-->
-          <el-select v-model="form.dormId" placeholder="请选择宿舍">
+          <el-select v-model="form.dormId" placeholder="请选择宿舍" :disabled=isDormId>
             <el-option
               v-for="item in dormList"
               :key="item.dormId"
@@ -293,7 +293,7 @@ import {
   delCancel,
   addCancel,
   updateCancel,
-  selectDormIdByStudentId, removeStuDorm, updateStudentdorm, getStudentdorm, getUser
+  getDormId, removeStuDorm, updateStudentdorm, getStudentdorm, getUser
 } from '@/api/apartment/cancel'
 import { getInfo } from '@/api/login'
 import { selectUserListByRoleId } from '@/api/apartment/approval'
@@ -304,6 +304,8 @@ export default {
   dicts: ['opinion', 'fzu_approval_opinion','fzu_approval_status'],
   data() {
     return {
+      //检查表中是否有dormId
+      isDormId:false,
       //学生特殊宿舍申请表填写权限
       stuOption:true,
       //辅导员特殊宿舍申请表填写权限
@@ -551,9 +553,9 @@ export default {
           userId: this.user.userId,
           dormStatus: ['4', '6'],
         };
-        selectDormIdByStudentId(dormParams).then(response => {
+        getDormId(dormParams).then(response => {
           this.dormList = response.rows;
-          console.log("dormlist",response.rows);
+          console.log("dormList",this.dormList)
         }).catch((error) => {
           console.error('请求失败:', error);
         });
@@ -609,6 +611,7 @@ export default {
     /** 修改按钮操作 */
     handleUpdate(row) {
       this.reset();
+      this.isDormId = true;
       const cancelId = row.cancelId || this.ids
       getCancel(cancelId).then(response => {
         this.form = response.data;
@@ -624,7 +627,17 @@ export default {
           this.fdyList = response.rows[0]
           this.xgcList = response.rows[1]
           this.xqglList = response.rows[2]
-        })
+        });
+        const dormParams = {
+          userId: this.user.userId,
+          dormStatus: ['4', '6'],
+        };
+        getDormId(dormParams).then(response => {
+          this.dormList = response.rows;
+          console.log("dormList",this.dormList)
+        }).catch((error) => {
+          console.error('请求失败:', error);
+        });
         this.open = true;
         this.title = "修改特殊退宿申请";
       });
@@ -670,7 +683,7 @@ export default {
             });
           } else {
             addCancel(this.form).then(response => {
-              this.$modal.msgSuccess("新增成功");
+              this.$modal.msgSuccess("申请成功");
               this.open = false;
               this.getList();
             });

@@ -174,12 +174,12 @@
         </template>
       </el-table-column>
       <el-table-column label="申请原因" align="center" prop="approvalReason" />
-      <el-table-column label="开始住宿时间" align="center" prop="startTime" width="180">
+      <el-table-column label="开始住宿时间" align="center" prop="startTime" width="150">
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.startTime, '{y}-{m}-{d}') }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="结束住宿时间" align="center" prop="endTime" width="180">
+      <el-table-column label="结束住宿时间" align="center" prop="endTime" width="150">
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.endTime, '{y}-{m}-{d}') }}</span>
         </template>
@@ -210,8 +210,9 @@
           <dict-tag :options="dict.type.fzu_approval_status" :value="scope.row.approvalStatus"/>
         </template>
       </el-table-column>
-      <el-table-column label="宿舍" align="center" prop="dormName" ></el-table-column>
+      <el-table-column label="宿舍" align="center" prop="dormName" width="150" />
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
+<!--        "scope.row.dormId != null"-->
         <template slot-scope="scope">
           <el-button
             size="mini"
@@ -219,7 +220,7 @@
             icon="el-icon-edit"
             @click="handleUpdate(scope.row)"
             v-hasPermi="['apartment:approval:edit']"
-            :disabled="scope.row.dormId != null"
+            :disabled=false
           >审批</el-button>
           <el-button
             size="mini"
@@ -367,11 +368,9 @@ import {
   listApproval,
   selectUserListByRoleId,
   updateApproval,
-  updateStudentdorm,
   getStudentdorm,
   listStudentdorm,
-  addStudentDorm,
-  getUser
+  getUser, addAndUpdateStudentDorm
 } from '@/api/apartment/approval'
 import { getInfo } from '@/api/login'
 
@@ -464,11 +463,13 @@ export default {
         deptId:null
       },
       roomParams:{
+        deptId: null,
         buildingNo: null,
         roomNo: null,
         feesStatus: null,
         feesCategory: null,
         dormStatus: null,
+        bedStatus: null,
       },
       addStudentdormParams:{
         dormId:null,
@@ -613,6 +614,20 @@ export default {
       };
       this.resetForm("form");
     },
+    // 表单重置
+    resetRoomParams() {
+      this.roomParams = {
+        roomParams:{
+          deptId: null,
+          buildingNo: null,
+          roomNo: null,
+          feesStatus: null,
+          feesCategory: null,
+          dormStatus: null,
+          bedStatus: null,
+        },
+      };
+    },
     /** 搜索按钮操作 */
     handleQuery() {
       this.queryParams.pageNum = 1;
@@ -665,6 +680,7 @@ export default {
     /** 修改按钮操作 */
     handleUpdate(row) {
       this.reset();
+      this.resetRoomParams();
       const approvalId = row.approvalId || this.ids
       getApproval(approvalId).then(response => {
         this.form = response.data;
@@ -672,16 +688,28 @@ export default {
         this.roleParams.fdyRoleId = 100;
         this.roleParams.xgcRoleId = 101;
         this.roleParams.xqglRoleId = 102;
-        getUser(this.form.studentId).then(response =>{
+        getUser(this.form.studentId).then(response => {
           this.roleParams.deptId = response.data.deptId
           console.log(this.roleParams.deptId);
-          // console.log(response);
+          // 根据申请类型修改roomParams的值
+          switch (this.form.approvalCategory) {
+            case "1": // 疫情原因
+              this.roomParams.dormStatus = 5; // 健康驿站闲置
+              break;
+            case "2": // 其他原因
+              this.roomParams.dormStatus = 3; // 特殊宿舍闲置
+              break;
+            case "3": // 转专业调宿
+              this.roomParams.bedStatus = 1; // 闲置
+              this.roomParams.deptId = this.roleParams.deptId; // 学生的deptId
+              break;
+          }
+          console.log(this.roomParams);
+          // 根据roomParams获取宿舍列表
+          listStudentdorm(this.roomParams).then(response => {
+            this.dormList = response.rows;
+          });
         })
-        this.roomParams.dormStatus = 3
-        listStudentdorm(this.roomParams).then(response => {
-          this.dormList = response.rows;
-          console.log(this.dormList)
-        });
         selectUserListByRoleId(this.roleParams).then(response => {
           this.fdyList = response.rows[0]
           this.xgcList = response.rows[1]
@@ -691,6 +719,35 @@ export default {
         this.title = "修改特殊宿舍申请";
       });
     },
+    // /** 修改按钮操作 */
+    // handleUpdate(row) {
+    //   this.reset();
+    //   const approvalId = row.approvalId || this.ids
+    //   getApproval(approvalId).then(response => {
+    //     this.form = response.data;
+    //     const roleKey = this.$store.getters.roles[0]
+    //     this.roleParams.fdyRoleId = 100;
+    //     this.roleParams.xgcRoleId = 101;
+    //     this.roleParams.xqglRoleId = 102;
+    //     getUser(this.form.studentId).then(response =>{
+    //       this.roleParams.deptId = response.data.deptId
+    //       console.log(this.roleParams.deptId);
+    //       // console.log(response);
+    //     })
+    //     this.roomParams.dormStatus = 3
+    //     listStudentdorm(this.roomParams).then(response => {
+    //       this.dormList = response.rows;
+    //       console.log(this.dormList)
+    //     });
+    //     selectUserListByRoleId(this.roleParams).then(response => {
+    //       this.fdyList = response.rows[0]
+    //       this.xgcList = response.rows[1]
+    //       this.xqglList = response.rows[2]
+    //     })
+    //     this.open = true;
+    //     this.title = "修改特殊宿舍申请";
+    //   });
+    // },
     /** 提交按钮 */
     submitForm() {
       if (new Date(this.form.endTime).getTime() < new Date(this.form.startTime).getTime()) {
@@ -702,18 +759,17 @@ export default {
           this.dormform = response.data;
           console.log(response);
           // 更新宿舍使用状态
-          if(this.dormform.dormStatus == '3'){this.dormform.dormStatus = '4';}
+          if(this.dormform.dormStatus == '1'){this.dormform.dormStatus = '2';}
+          else if(this.dormform.dormStatus == '3'){this.dormform.dormStatus = '4';}
           else if(this.dormform.dormStatus == '5'){this.dormform.dormStatus = '6';}
-          if(this.dormform.bedStatus == '1'){this.dormform.bedStatus = '2'}
-          console.log(this.dormform)
           this.addStudentdormParams.userId = this.form.studentId;
           this.addStudentdormParams.dormId = this.form.dormId;
           this.addStudentdormParams.bedNo = this.dormform.bedNo;
-          addStudentDorm(this.addStudentdormParams).then(response =>{
-            this.$modal.msgSuccess("宿舍绑定成功");
-          })
-          updateStudentdorm(this.dormform).then(response => {
-            this.$modal.msgSuccess("分配成功");
+          // 将 addStudentdormParams 和 dormform 合并成一个对象
+          let combinedData = { ...this.addStudentdormParams, ...this.dormform };
+          // 使用新的接口
+          addAndUpdateStudentDorm(combinedData).then(response => {
+            this.$modal.msgSuccess("宿舍绑定成功，分配成功");
           });
         });
       }
