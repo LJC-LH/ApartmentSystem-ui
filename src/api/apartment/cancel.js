@@ -53,15 +53,6 @@ export function selectUserListByRoleId(query) {
   })
 }
 
-// // 获取指定studentId的dormId
-// export function selectDormIdByStudentId(query) {
-//   return request({
-//     url: '/apartment/cancel/getDormId',
-//     method: 'post',
-//     params: query
-//   })
-// }
-
 // 获取指定studentId的dormId
 export function getDormId(query) {
   return request({
@@ -74,29 +65,11 @@ export function getDormId(query) {
   })
 }
 
-// 获取指定studentId的dormId
-export function removeStuDorm(dormId) {
-  return request({
-    url: '/apartment/cancel/removeStuDorm',
-    method: 'post',
-    params: dormId
-  })
-}
 // 查询宿舍详细
-export function getStudentdorm(dormId) {
+export function getStudentDorm(dormId) {
   return request({
-    url: '/apartment/cancel/getStudentdorm' + dormId,
+    url: '/apartment/cancel/getStudentDorm/' + dormId,
     method: 'get'
-  })
-}
-
-
-// 修改宿舍
-export function updateStudentdorm(data) {
-  return request({
-    url: '/apartment/cancel/updateStudentdorm',
-    method: 'put',
-    data: data
   })
 }
 
@@ -105,6 +78,15 @@ export function getUser(userId) {
   return request({
     url: '/apartment/cancel/getUser/' + parseStrEmpty(userId),
     method: 'get'
+  })
+}
+
+// 查询用户详细
+export function removeAndUpdateStuDorm(query) {
+  return request({
+    url: '/apartment/cancel/removeAndUpdateStuDorm',
+    method: 'post',
+    data: query
   })
 }
 

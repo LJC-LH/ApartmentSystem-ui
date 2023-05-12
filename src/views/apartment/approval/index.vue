@@ -212,7 +212,6 @@
       </el-table-column>
       <el-table-column label="宿舍" align="center" prop="dormName" width="150" />
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
-<!--        "scope.row.dormId != null"-->
         <template slot-scope="scope">
           <el-button
             size="mini"
@@ -222,6 +221,7 @@
             v-hasPermi="['apartment:approval:edit']"
             :disabled=false
           >审批</el-button>
+<!--          :disabled="scope.row.dormId != null"-->
           <el-button
             size="mini"
             type="text"
@@ -770,9 +770,15 @@ export default {
           // 使用新的接口
           addAndUpdateStudentDorm(combinedData).then(response => {
             this.$modal.msgSuccess("宿舍绑定成功，分配成功");
+            this.proceedWithApproval();
           });
         });
+      } else {
+        this.proceedWithApproval();
       }
+    },
+
+    proceedWithApproval() {
       if(this.form.fdyOpinion == 1 && this.form.xgcOpinion == 1 && this.form.manageOpinion == 1){
         //审批通过
         this.form.approvalStatus = 1;
@@ -801,7 +807,6 @@ export default {
         }
       });
     },
-
     // /** 提交按钮 */
     // submitForm() {
     //   if (new Date(this.form.endTime).getTime() < new Date(this.form.startTime).getTime()) {

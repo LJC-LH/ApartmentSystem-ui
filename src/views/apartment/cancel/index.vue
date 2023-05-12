@@ -71,13 +71,31 @@
 <!--          />-->
 <!--        </el-select>-->
 <!--      </el-form-item>-->
-      <el-form-item label="宿舍ID" prop="dormId">
-        <el-input
-          v-model="queryParams.dormId"
-          placeholder="请输入宿舍ID"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
+<!--      <el-form-item label="宿舍ID" prop="dormId">-->
+<!--        <el-input-->
+<!--          v-model="queryParams.dormId"-->
+<!--          placeholder="请输入宿舍ID"-->
+<!--          clearable-->
+<!--          @keyup.enter.native="handleQuery"-->
+<!--        />-->
+<!--      </el-form-item>-->
+      <el-form-item label="退宿时间" prop="endTime">
+        <el-date-picker clearable
+                        v-model="queryParams.endTime"
+                        type="date"
+                        value-format="yyyy-MM-dd"
+                        placeholder="请选择退宿时间">
+        </el-date-picker>
+      </el-form-item>
+      <el-form-item label="审批状态" prop="cancelStatus">
+        <el-select v-model="queryParams.cancelStatus" placeholder="请选择审批状态" clearable>
+          <el-option
+            v-for="dict in dict.type.fzu_approval_status"
+            :key="dict.value"
+            :label="dict.label"
+            :value="dict.value"
+          />
+        </el-select>
       </el-form-item>
       <el-form-item>
         <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
@@ -163,6 +181,11 @@
       </template>
       </el-table-column>
       <el-table-column label="宿舍" align="center" prop="dormName" width="200" />
+      <el-table-column label="退宿时间" align="center" prop="endTime" width="180">
+        <template slot-scope="scope">
+          <span>{{ parseTime(scope.row.endTime, '{y}-{m}-{d}') }}</span>
+        </template>
+      </el-table-column>
       <el-table-column label="备注" align="center" prop="remark" />
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
@@ -172,7 +195,9 @@
             icon="el-icon-edit"
             @click="handleUpdate(scope.row)"
             v-hasPermi="['apartment:cancel:edit']"
-          >修改</el-button>
+            :disabled=false
+          >审批</el-button>
+<!--          :disabled="scope.row.cancelStatus != '3'"-->
           <el-button
             size="mini"
             type="text"
@@ -274,6 +299,15 @@
             </el-option>
           </el-select>
         </el-form-item>
+        <el-form-item label="退宿时间" prop="endTime" >
+          <el-date-picker clearable
+                          v-model="form.endTime"
+                          type="date"
+                          value-format="yyyy-MM-dd"
+                          placeholder="请选择退宿时间"
+                          :disabled=!stuOption>
+          </el-date-picker>
+        </el-form-item>
         <el-form-item label="备注" prop="remark">
           <el-input v-model="form.remark" placeholder="请输入备注" />
         </el-form-item>
@@ -293,7 +327,7 @@ import {
   delCancel,
   addCancel,
   updateCancel,
-  getDormId, removeStuDorm, updateStudentdorm, getStudentdorm, getUser
+  getDormId, getUser, removeAndUpdateStuDorm, getStudentDorm
 } from '@/api/apartment/cancel'
 import { getInfo } from '@/api/login'
 import { selectUserListByRoleId } from '@/api/apartment/approval'
@@ -348,6 +382,7 @@ export default {
         manageOpinion: null,
         cancelStatus: null,
         dormId: null,
+        endTime: null
       },
       roomParams:{
         dormId:null,
@@ -374,6 +409,9 @@ export default {
         dormId: [
           { required: true, message: "宿舍Id不能为空", trigger: "blur" }
         ],
+        endTime: [
+          { required: true, message: "退宿时间不能为空", trigger: "blur" }
+        ]
       },
       user:undefined,
       roleParams:{
@@ -514,7 +552,8 @@ export default {
         manageOpinion: null,
         cancelStatus: null,
         dormId: null,
-        remark: null
+        remark: null,
+        endTime: null
       };
       this.resetForm("form");
     },
@@ -621,7 +660,6 @@ export default {
         this.roleParams.xqglRoleId = 102;
         getUser(this.form.studentId).then(response =>{
           this.roleParams.deptId = response.data.deptId
-          console.log(response.data)
         })
         selectUserListByRoleId(this.roleParams).then(response => {
           this.fdyList = response.rows[0]
@@ -630,11 +668,10 @@ export default {
         });
         const dormParams = {
           userId: this.user.userId,
-          dormStatus: ['4', '6'],
+          dormStatus: ['2','4', '6'],
         };
         getDormId(dormParams).then(response => {
           this.dormList = response.rows;
-          console.log("dormList",this.dormList)
         }).catch((error) => {
           console.error('请求失败:', error);
         });
@@ -652,19 +689,25 @@ export default {
         //审批通过
         this.form.cancelStatus = 1;
         if(this.form.dormId){
-          getStudentdorm(this.form.dormId).then(response => {
+          getStudentDorm(this.form.dormId).then(response => {
             this.dormform = response.data;
             // 更新宿舍使用状态
             if(this.dormform.dormStatus == '4'){this.dormform.dormStatus = '3';}
             else if(this.dormform.dormStatus == '6'){this.dormform.dormStatus = '5';}
+            else if(this.dormform.dormStatus == '2'){this.dormform.dormStatus = '1';}
+            // 额外添加宿舍状态在这里加！！！！！！
             if(this.dormform.bedStatus == '2'){this.dormform.bedStatus = '1'}
-            removeStuDorm(this.form.dormId).then(response =>{
-              this.$modal.msgSuccess("宿舍解除绑定成功");
-            })
-            updateStudentdorm(this.dormform).then(response => {
-              this.$modal.msgSuccess("取消分配成功");
+            console.log(this.dormform)
+            removeAndUpdateStuDorm(this.dormform).then(response => {
+              if(response.code == 200){
+                this.$modal.msgSuccess("宿舍解绑成功，宿舍状态已变化");
+                this.updateCancel();
+              }else{
+                this.$modal.msgError("解绑失败！");
+              }
             });
           });
+          return;
         }
       }else if(this.form.fdyOpinion == 2 || this.form.xgcOpinion == 2 || this.form.manageOpinion == 2){
         //审批不通过
@@ -673,6 +716,10 @@ export default {
         //审批中
         this.form.cancelStatus = 3;
       }
+      this.updateCancel();
+    },
+
+    updateCancel() {
       this.$refs["form"].validate(valid => {
         if (valid) {
           if (this.form.cancelId != null) {
@@ -691,7 +738,6 @@ export default {
         }
       });
     },
-    // /** 提交按钮 */
     // submitForm() {
     //   if (new Date(this.form.endTime).getTime() < new Date(this.form.startTime).getTime()) {
     //     this.$message.error("起始日期要早于终止日期");
@@ -701,14 +747,21 @@ export default {
     //     //审批通过
     //     this.form.cancelStatus = 1;
     //     if(this.form.dormId){
-    //       getStudentdorm(this.form.dormId).then(response => {
+    //       getStudentDorm(this.form.dormId).then(response => {
     //         this.dormform = response.data;
-    //         if(this.dormform.dormStatus == 4){this.dormform.dormStatus = 3;}
-    //         removeStuDorm(this.form.dormId).then(response =>{
-    //           this.$modal.msgSuccess("宿舍解除绑定成功");
-    //         })
-    //         updateStudentdorm(this.dormform).then(response => {
-    //           this.$modal.msgSuccess("取消分配成功");
+    //         // 更新宿舍使用状态
+    //         if(this.dormform.dormStatus == '4'){this.dormform.dormStatus = '3';}
+    //         else if(this.dormform.dormStatus == '6'){this.dormform.dormStatus = '5';}
+    //         else if(this.dormform.dormStatus == '2'){this.dormform.dormStatus = '1';}
+    //         // 额外添加宿舍状态在这里加！！！！！！
+    //         if(this.dormform.bedStatus == '2'){this.dormform.bedStatus = '1'}
+    //         console.log(this.dormform)
+    //         removeAndUpdateStuDorm(this.dormform).then(response => {
+    //           if(response.code == 200){
+    //             this.$modal.msgSuccess("宿舍解绑成功，宿舍状态已变化");
+    //           }else{
+    //             this.$modal.msgError("解绑失败！");
+    //           }
     //         });
     //       });
     //     }
@@ -729,7 +782,7 @@ export default {
     //         });
     //       } else {
     //         addCancel(this.form).then(response => {
-    //           this.$modal.msgSuccess("新增成功");
+    //           this.$modal.msgSuccess("申请成功");
     //           this.open = false;
     //           this.getList();
     //         });
@@ -737,6 +790,8 @@ export default {
     //     }
     //   });
     // },
+    //
+
     /** 删除按钮操作 */
     handleDelete(row) {
       const cancelIds = row.cancelId || this.ids;
