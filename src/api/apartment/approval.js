@@ -56,18 +56,8 @@ export function selectUserListByRoleId(query) {
 // 查询宿舍详细
 export function getStudentdorm(dormId) {
   return request({
-    url: '/apartment/approval/getStudentdorm' + dormId,
+    url: '/apartment/approval/getStudentDorm/' + dormId,
     method: 'get'
-  })
-}
-
-
-// 修改宿舍
-export function updateStudentdorm(data) {
-  return request({
-    url: '/apartment/approval/updateStudentdorm',
-    method: 'put',
-    data: data
   })
 }
 
@@ -83,7 +73,16 @@ export function listStudentdorm(query) {
 // 查询用户详细
 export function getUser(userId) {
   return request({
-    url: '/apartment/approval/' + parseStrEmpty(userId),
+    url: '/apartment/approval/getUser/' + parseStrEmpty(userId),
     method: 'get'
+  })
+}
+
+// 新增宿舍
+export function addAndUpdateStudentDorm(data) {
+  return request({
+    url: '/apartment/approval/addAndUpdateStudentDorm',
+    method: 'post',
+    data: data
   })
 }
