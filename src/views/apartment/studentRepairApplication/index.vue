@@ -1,9 +1,9 @@
 <template>
   <div class="app-container">
     <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch" label-width="120px">
-      <el-form-item label="学生id" prop="studentId">
+      <!-- <el-form-item label="学生id" prop="studentId">
         <el-input v-model="queryParams.studentId" placeholder="请输入学生id" clearable @keyup.enter.native="handleQuery" />
-      </el-form-item>
+      </el-form-item> -->
       <el-form-item label="楼栋号" prop="buildingNo">
         <el-input v-model="queryParams.buildingNo" placeholder="请输入楼栋号" clearable @keyup.enter.native="handleQuery" />
       </el-form-item>
@@ -183,7 +183,7 @@
               </div>
               <div class="row4212">
                 <div>
-                  第二次维修结论：{{ detailOrder.firstWorkContent }}
+                  第一次维修结论：{{ detailOrder.firstWorkContent }}
                 </div>
               </div>
               <div class="row4213">
