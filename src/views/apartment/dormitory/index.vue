@@ -141,7 +141,7 @@
 
     <el-table v-loading="loading" :data="studentdormList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="宿舍ID" align="center" prop="dormId" />
+      <!-- <el-table-column label="宿舍ID" align="center" prop="dormId" /> -->
       <el-table-column label="楼栋号" align="center" prop="buildingNo" />
       <el-table-column label="房间号" align="center" prop="roomNo" />
       <el-table-column label="床位号" align="center" prop="bedNo" />
@@ -455,9 +455,7 @@ export default {
     /** 修改按钮操作 */
     handleUpdate(row) {
       this.reset();
-      if(this.$store.state.user.roles[0] == 'student'){
-        this.updateFlag = true;
-      }
+      this.updateFlag = true;
       const dormId = row.dormId || this.ids
       getStudentdorm(dormId).then(response => {
         this.form = response.data;
