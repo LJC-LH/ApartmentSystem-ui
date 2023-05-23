@@ -1,14 +1,14 @@
 <template>
   <div class="app-container">
     <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch" label-width="68px">
-      <!--      <el-form-item label="学生id" prop="studentId">-->
-      <!--        <el-input-->
-      <!--          v-model="queryParams.studentId"-->
-      <!--          placeholder="请输入学生id"-->
-      <!--          clearable-->
-      <!--          @keyup.enter.native="handleQuery"-->
-      <!--        />-->
-      <!--      </el-form-item>-->
+<!--            <el-form-item label="学生id" prop="studentId">-->
+<!--              <el-input-->
+<!--                v-model="queryParams.studentId"-->
+<!--                placeholder="请输入学生id"-->
+<!--                clearable-->
+<!--                @keyup.enter.native="handleQuery"-->
+<!--              />-->
+<!--            </el-form-item>-->
       <el-form-item label="楼栋号" prop="buildingNo">
         <el-input v-model="queryParams.buildingNo" placeholder="请输入楼栋号" clearable @keyup.enter.native="handleQuery" />
       </el-form-item>
@@ -18,6 +18,16 @@
       <el-form-item label="损坏说明" prop="damageDescription">
         <el-input v-model="queryParams.damageDescription" placeholder="请输入损坏说明" clearable
           @keyup.enter.native="handleQuery" />
+      </el-form-item>
+      <el-form-item label="报修类型" prop="fixType">
+        <el-select v-model="queryParams.fixType" placeholder="请选择报修类型" clearable>
+          <el-option
+            v-for="dict in dict.type.fzu_fix_type"
+            :key="dict.value"
+            :label="dict.label"
+            :value="dict.value"
+          />
+        </el-select>
       </el-form-item>
       <el-form-item label="报修时间" prop="createAt">
         <el-date-picker clearable v-model="queryParams.createAt" type="date" value-format="yyyy-MM-dd"
@@ -40,14 +50,14 @@
       <!--                        placeholder="请选择报修完成时间">-->
       <!--        </el-date-picker>-->
       <!--      </el-form-item>-->
-      <!--      <el-form-item label="校区管理办公室意见" prop="campusManagementOpinion">-->
-      <!--        <el-input-->
-      <!--          v-model="queryParams.campusManagementOpinion"-->
-      <!--          placeholder="请输入校区管理办公室意见"-->
-      <!--          clearable-->
-      <!--          @keyup.enter.native="handleQuery"-->
-      <!--        />-->
-      <!--      </el-form-item>-->
+<!--            <el-form-item label="校区管理办公室意见" prop="campusManagementOpinion">-->
+<!--              <el-input-->
+<!--                v-model="queryParams.campusManagementOpinion"-->
+<!--                placeholder="请输入校区管理办公室意见"-->
+<!--                clearable-->
+<!--                @keyup.enter.native="handleQuery"-->
+<!--              />-->
+<!--            </el-form-item>-->
       <!--      <el-form-item label="是否二次派单，0否，1是" prop="isSecondDispatch">-->
       <!--        <el-input-->
       <!--          v-model="queryParams.isSecondDispatch"-->
@@ -140,7 +150,7 @@
       <el-table-column label="楼栋号" align="center" prop="buildingNo" />
       <el-table-column label="房间号" align="center" prop="roomNo" />
       <el-table-column label="损坏说明" align="center" prop="damageDescription" />
-      <!--      <el-table-column label="报修类型" align="center" prop="fixType" />-->
+      <el-table-column label="报修类型" align="center" prop="fixType" />
       <el-table-column label="报修创建时间" align="center" prop="createAt" width="180">
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.createAt, '{y}-{m}-{d}') }}</span>
@@ -152,7 +162,7 @@
         </template>
       </el-table-column>
       <!--      <el-table-column label="报修状态" align="center" prop="fixStatus" />-->
-      <el-table-column label="维修人员" align="center" prop="firstRepairmanName" />
+<!--      <el-table-column label="维修人员" align="center" prop="firstRepairmanName" />-->
       <!--      <el-table-column label="维修内容" align="center" prop="firstWorkContent" />-->
       <!--      <el-table-column label="报修完成时间" align="center" prop="firstCompletionTime" width="180">-->
       <!--        <template slot-scope="scope">-->
@@ -195,18 +205,20 @@
     <el-dialog :title="title" :visible.sync="open" width="600px" append-to-body>
       <div class="descriptions-container">
         <el-descriptions :bordered="true" :column="1" class="custom-descriptions">
-          <el-descriptions-item label="学生姓名">{{ form.studentName }}</el-descriptions-item>
+          <el-descriptions-item label="学生姓名">{{ form.nickName }}</el-descriptions-item>
           <!--              <el-descriptions-item label="第一次维修人员">{{ form.firstRepairmanName }}</el-descriptions-item>-->
+          <el-descriptions-item label="学生电话号码">{{ form.studentPhone}}</el-descriptions-item>
           <el-descriptions-item label="楼栋号">{{ form.buildingNo }}</el-descriptions-item>
           <!--              <el-descriptions-item label="第一次维修内容">{{ form.firstWorkContent }}</el-descriptions-item>-->
           <el-descriptions-item label="房间号">{{ form.roomNo }}</el-descriptions-item>
           <!--              <el-descriptions-item label="第一次报修完成时间">{{ form.firstCompletionTime }}</el-descriptions-item>-->
           <el-descriptions-item label="损坏说明">{{ form.damageDescription }}</el-descriptions-item>
+<!--          <el-descriptions-item label="维修人员电话号码">{{ form.firstRepairmanPhone}}</el-descriptions-item>-->
           <!--              <el-descriptions-item label="校区管理办公室意见">{{ form.campusManagementOpinion }}</el-descriptions-item>-->
           <el-descriptions-item label="报修创建时间">{{ form.createAt }}</el-descriptions-item>
         </el-descriptions>
       </div>
-      <div class="image-container" style="width:;">
+      <div class="image-container">
         <div class="damage-images">
           <h4>损坏说明图片</h4>
           <el-image style="width: 100px; height: 100px" :src="stuURL" :zoom-rate="1.2" :preview-src-list="stuURLList"
@@ -238,7 +250,7 @@ import {
   selectUserByRoleId
 } from "@/api/apartment/firstSelectRepairman";
 export default {
-  dicts: ['fzu_fix_status', 'is_second_dispatch'],
+  dicts: ['fzu_fix_status', 'is_second_dispatch','fzu_fix_type'],
   data() {
     return {
       stuURL: '',
@@ -313,6 +325,7 @@ export default {
       this.queryParams.fixStatus = 0;
       const response = await listFirstSelectRepairman(this.queryParams);
       this.firstSelectRepairmanList = response.rows;
+      console.log(this.firstSelectRepairmanList)
       this.total = response.total;
       this.loading = false;
     },
@@ -377,6 +390,8 @@ export default {
       getFirstSelectRepairman(repairId).then(response => {
         this.reset();
         this.form = response.data;
+        console.log(response.data)
+        console.log(this.form)
         this.stuURL = process.env.VUE_APP_BASE_API + response.data.stuImagesURL[0]
         for (let i = 0; i < response.data.stuImagesURL.length; i++) {
           this.stuURLList[i] = process.env.VUE_APP_BASE_API + response.data.stuImagesURL[i]

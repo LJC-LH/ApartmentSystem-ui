@@ -32,11 +32,21 @@
       <!--          @keyup.enter.native="handleQuery"-->
       <!--        />-->
       <!--      </el-form-item>-->
-      <el-form-item label="第一次报修完成时间" prop="firstCompletionTime" label-width="140px">
-        <el-date-picker clearable v-model="queryParams.firstCompletionTime" type="date" value-format="yyyy-MM-dd"
-          placeholder="请选择第一次报修完成时间">
-        </el-date-picker>
+      <el-form-item label="报修类型" prop="fixType">
+        <el-select v-model="queryParams.fixType" placeholder="请选择报修类型" clearable>
+          <el-option
+            v-for="dict in dict.type.fzu_fix_type"
+            :key="dict.value"
+            :label="dict.label"
+            :value="dict.value"
+          />
+        </el-select>
       </el-form-item>
+<!--      <el-form-item label="第一次报修完成时间" prop="firstCompletionTime" label-width="140px">-->
+<!--        <el-date-picker clearable v-model="queryParams.firstCompletionTime" type="date" value-format="yyyy-MM-dd"-->
+<!--          placeholder="请选择第一次报修完成时间">-->
+<!--        </el-date-picker>-->
+<!--      </el-form-item>-->
       <!--      <el-form-item label="校区管理办公室意见" prop="campusManagementOpinion">-->
       <!--        <el-input-->
       <!--          v-model="queryParams.campusManagementOpinion"-->
@@ -59,12 +69,6 @@
       <!--          />-->
       <!--        </el-select>-->
       <!--      </el-form-item>-->
-
-
-
-
-
-
       <!--      <el-form-item label="学生评分" prop="evaluateRate">-->
       <!--        <el-input-->
       <!--          v-model="queryParams.evaluateRate"-->
@@ -149,7 +153,12 @@
       <el-table-column label="楼栋号" align="center" prop="buildingNo" />
       <el-table-column label="房间号" align="center" prop="roomNo" />
       <el-table-column label="损坏说明" align="center" prop="damageDescription" />
-      <!--      <el-table-column label="报修类型" align="center" prop="fixType" />-->
+      <el-table-column label="报修类型" align="center" prop="fixType">
+        <template slot-scope="scope">
+          <dict-tag :options="dict.type.fzu_fix_type" :value="scope.row.fixType"/>
+        </template>
+      </el-table-column>
+
       <el-table-column label="报修创建时间" align="center" prop="createAt" width="180">
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.createAt, '{y}-{m}-{d}') }}</span>
@@ -163,8 +172,8 @@
       </el-table-column>
       <!--      <el-table-column label="一次维修人员id" align="center" prop="firstRepairmanId" />-->
       <el-table-column label="维修人员" align="center" prop="firstRepairmanName" />
-      <el-table-column label="第一次维修内容" align="center" prop="firstWorkContent" />
-      <el-table-column label="第一次报修完成时间" align="center" prop="firstCompletionTime" width="180">
+      <el-table-column label="第一次维修内容" align="center" prop="firstWorkContent" width="140"/>
+      <el-table-column label="第一次报修完成时间" align="center" prop="firstCompletionTime" width="140">
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.firstCompletionTime, '{y}-{m}-{d}') }}</span>
         </template>
@@ -178,7 +187,7 @@
       </el-table-column>
       <!--      <el-table-column label="学生评价内容" align="center" prop="evaluateContent" />-->
       <!--      <el-table-column label="学生评分" align="center" prop="evaluateRate" />-->
-      <el-table-column label="二次维修人员" align="center" prop="secondaryRepairmanId" />
+<!--      <el-table-column label="二次维修人员" align="center" prop="secondaryRepairmanId" />-->
       <!--      <el-table-column label="第二次报修预计完成时间" align="center" prop="secondExpectedCompletionTime" width="180">-->
       <!--        <template slot-scope="scope">-->
       <!--          <span>{{ parseTime(scope.row.secondExpectedCompletionTime, '{y}-{m}-{d}') }}</span>-->
@@ -210,8 +219,10 @@
     <el-dialog :title="title" :visible.sync="open" width="800px" append-to-body>
       <div class="descriptions-container">
         <el-descriptions :bordered="true" :column="2" class="custom-descriptions">
-          <el-descriptions-item label="学生姓名">{{ form.studentName }}</el-descriptions-item>
-          <el-descriptions-item label="第一次维修人员">{{ form.repairmanName }}</el-descriptions-item>
+          <el-descriptions-item label="学生姓名">{{ form.nickName }}</el-descriptions-item>
+          <el-descriptions-item label="第一次维修人员">{{ form.firstRepairmanName }}</el-descriptions-item>
+          <el-descriptions-item label="学生电话号码">{{ form.studentPhone}}</el-descriptions-item>
+          <el-descriptions-item label="维修人员电话号码">{{ form.firstRepairmanPhone}}</el-descriptions-item>
           <el-descriptions-item label="楼栋号">{{ form.buildingNo }}</el-descriptions-item>
           <el-descriptions-item label="第一次维修内容">{{ form.firstWorkContent }}</el-descriptions-item>
           <el-descriptions-item label="房间号">{{ form.roomNo }}</el-descriptions-item>
@@ -386,14 +397,13 @@ import {
   listSecondSelectRepairman,
   getSecondSelectRepairman,
   delSecondSelectRepairman,
-  addSecondSelectRepairman,
   updateSecondSelectRepairman,
   selectUserByRoleId
 } from "@/api/apartment/secondSelectRepairman";
 
 
 export default {
-  dicts: ['fzu_fix_status', 'is_second_dispatch'],
+  dicts: ['fzu_fix_status', 'is_second_dispatch', 'fzu_fix_type'],
   name: "SecondSelectRepairman",
   data() {
     return {
@@ -544,6 +554,7 @@ export default {
           this.repairURL = this.repairURLList[0]
         }
         this.form = response.data;
+        console.log(this.form)
         this.open = true;
         this.title = "二次派单";
       });
