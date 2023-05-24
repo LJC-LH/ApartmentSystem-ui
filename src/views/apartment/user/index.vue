@@ -106,7 +106,7 @@
         <template slot-scope="scope">
           <el-button size="mini" type="text" icon="el-icon-edit" @click="handleUpdate(scope.row)" :disabled="addoption"
             v-hasPermi="['apartment:user:edit']">修改</el-button>
-          <el-button size="mini" type="text" icon="el-icon-delete" @click="handleDelete(scope.row)" :disabled="addoption"
+          <el-button size="mini" type="text" icon="el-icon-delete" @click="handleDelete(scope.row)" :disabled="scope.row.dormStatus != 2"
             v-hasPermi="['apartment:user:remove']">删除</el-button>
         </template>
       </el-table-column>

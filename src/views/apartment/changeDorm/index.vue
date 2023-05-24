@@ -255,7 +255,7 @@
             ></el-option>
           </el-select>
         </el-form-item>
-        <el-divider content-position="left">新信息 (调整到空床位时无需填写学生信息)</el-divider>
+        <el-divider content-position="left">新信息 (调整到空床位时无需填写被交换学生信息)</el-divider>
         <!-- <el-form-item label="被交换学生id" prop="twoStudentId">
           <el-input v-model="form.twoStudentId" placeholder="请输入被交换学生id" />
         </el-form-item> -->

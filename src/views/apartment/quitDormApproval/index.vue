@@ -746,6 +746,15 @@ export default {
     /** 修改按钮操作 */
     handleUpdate(row) {
       this.reset();
+      this.roleParams.fdyRoleId = 100;
+      this.roleParams.xgcRoleId = 101;
+      this.roleParams.xqglRoleId = 102;
+      selectUserListByRoleId(this.roleParams).then(response => {
+        console.log(response.rows)
+        this.fdyList = response.rows[0]
+        this.xgcList = response.rows[1]
+        this.xqglList = response.rows[2]
+      })
       const quitId = row.quitId || this.ids
       getQuitDormApproval(quitId).then(response => {
         this.form = response.data;

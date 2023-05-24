@@ -4,16 +4,26 @@
       <!-- <el-form-item label="学生id" prop="studentId">
         <el-input v-model="queryParams.studentId" placeholder="请输入学生id" clearable @keyup.enter.native="handleQuery" />
       </el-form-item> -->
-      <el-form-item label="楼栋号" prop="buildingNo">
+      <!-- <el-form-item label="楼栋号" prop="buildingNo">
         <el-input v-model="queryParams.buildingNo" placeholder="请输入楼栋号" clearable @keyup.enter.native="handleQuery" />
       </el-form-item>
       <el-form-item label="房间号" prop="roomNo">
         <el-input v-model="queryParams.roomNo" placeholder="请输入房间号" clearable @keyup.enter.native="handleQuery" />
-      </el-form-item>
+      </el-form-item> -->
       <el-form-item label="报修创建时间" prop="createAt">
         <el-date-picker clearable v-model="queryParams.createAt" type="date" value-format="yyyy-MM-dd"
           placeholder="请选择报修创建时间">
         </el-date-picker>
+      </el-form-item>
+      <el-form-item label="报修类型" prop="fixType">
+        <el-select v-model="queryParams.fixType" placeholder="请选择报修类型" clearable>
+          <el-option
+            v-for="dict in dict.type.fzu_fix_type"
+            :key="dict.value"
+            :label="dict.label"
+            :value="dict.value"
+          />
+        </el-select>
       </el-form-item>
       <el-form-item>
         <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
@@ -36,7 +46,11 @@
       <el-table-column label="楼栋号" align="center" prop="buildingNo" />
       <el-table-column label="房间号" align="center" prop="roomNo" />
       <el-table-column label="损坏说明" align="center" prop="damageDescription" />
-      <!-- <el-table-column label="报修类型" align="center" prop="fixType" /> -->
+      <el-table-column label="报修类型" align="center" prop="fixType">
+        <template slot-scope="scope">
+          <dict-tag :options="dict.type.fzu_fix_type" :value="scope.row.fixType"/>
+        </template>
+      </el-table-column>
       <el-table-column label="报修创建时间" align="center" prop="createAt" width="180">
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.createAt, '{y}-{m}-{d}') }}</span>
@@ -48,7 +62,7 @@
         <template slot-scope="scope">
           <dict-tag :options="dict.type.fzu_fix_status" :value="scope.row.fixStatus" />
         </template>
-      </el-table-column>>
+      </el-table-column>
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button size="mini" type="text" icon="el-icon-zoom-in" @click="handleDetail(scope.row)">详情</el-button>
@@ -75,6 +89,16 @@
         <el-form-item label="房间名" prop="roomNo">
           <el-input v-model="addForm.roomNo" placeholder="请输入房间名" clearable :style="{ width: '100%' }" disabled>
           </el-input>
+        </el-form-item>
+        <el-form-item label="报修类型" prop="fixType">
+          <el-select v-model="addForm.fixType" placeholder="请选择报修类型">
+            <el-option
+              v-for="dict in dict.type.fzu_fix_type"
+              :key="dict.value"
+              :label="dict.label"
+              :value="dict.value"
+            ></el-option>
+          </el-select>
         </el-form-item>
         <el-form-item label="请上传图片" prop="imags">
           <el-upload :file-list="fileList" action="/system/user/profile/uploadPicture" list-type="picture-card"
@@ -155,6 +179,9 @@
             报修详情
           </div>
           <div class="row32">
+            <div class="row320" style="display: flex; align-items: center;">
+              <span>报修类型：</span><dict-tag :options="dict.type.fzu_fix_type" :value="detailOrder.fixType"/>
+            </div>
             <div class="row321">
               报修描述：{{ detailOrder.damageDescription }}
             </div>
@@ -241,7 +268,7 @@ import { listStudentRepairApplication, getStudentRepairApplication, delStudentRe
 import { uploadStuImages } from "@/api/apartment/uploading.js"
 export default {
   name: "StudentRepairApplication",
-  dicts: ['fzu_fix_status'],
+  dicts: ['fzu_fix_status','fzu_fix_type'],
   inheritAttrs: false,
   components: {
   },
@@ -692,7 +719,7 @@ export default {
 }
 
 .row223 {
-  margin-top: 25px;
+  margin-top: 10px;
 }
 
 .row3 {
@@ -716,11 +743,19 @@ export default {
   justify-content: space-between;
 }
 
+.row321 {
+  display: flex;
+  flex-direction: raw;
+  justify-content: space-between;
+  margin-top: 10px;
+  margin-right: 650px;
+}
+
 .row322 {
   display: flex;
   flex-direction: raw;
   justify-content: space-between;
-  margin-top: 30px;
+  margin-top: 10px;
   margin-right: 650px;
 }
 

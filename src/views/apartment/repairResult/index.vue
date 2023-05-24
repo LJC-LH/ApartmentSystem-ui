@@ -20,6 +20,16 @@
           placeholder="请选择报修创建时间">
         </el-date-picker>
       </el-form-item>
+      <el-form-item label="报修状态" prop="fixStatus">
+        <el-select v-model="queryParams.fixStatus" placeholder="请选择报修状态" clearable>
+          <el-option
+            v-for="dict in dict.type.fzu_fix_status"
+            :key="dict.value"
+            :label="dict.label"
+            :value="dict.value"
+          />
+        </el-select>
+      </el-form-item>
       <el-form-item label="学生评分" prop="evaluateRate">
         <el-input v-model="queryParams.evaluateRate" placeholder="请输入学生评分" clearable @keyup.enter.native="handleQuery" />
       </el-form-item>
@@ -160,9 +170,15 @@
                 房间号：{{ detailOrder.roomNo }}
               </div>
             </div>
-            <div class="row223">
-              学生名字：{{ detailOrder.studentName }}
+            <div class="row2222">
+              <div class="row223">
+                学生名字：{{ detailOrder.studentName }}
+              </div>
+              <div class="row224">
+                学生电话：{{detailOrder.studentPhonenumber}}
+              </div>
             </div>
+            
           </div>
         </div>
         <div class="row3">
@@ -747,9 +763,24 @@ export default {
   justify-content: space-between;
 }
 
+.row221 {
+  margin-top: 0px;
+  width: 200px;
+}
+
 .row222 {
   margin-top: 0px;
-  margin-left: 220px;
+  margin-left: 100px;
+}
+
+.row223 {
+  margin-top: 25px;
+  width: 200px;
+}
+
+.row224 {
+  margin-top: 25px;
+  margin-left: 100px;
 }
 
 .row2222 {
@@ -758,9 +789,6 @@ export default {
   /* justify-content: space-between; */
 }
 
-.row223 {
-  margin-top: 25px;
-}
 
 .row3 {
   width: 960px;

@@ -15,10 +15,10 @@
       <el-form-item label="房间号" prop="roomNo">
         <el-input v-model="queryParams.roomNo" placeholder="请输入房间号" clearable @keyup.enter.native="handleQuery" />
       </el-form-item>
-      <el-form-item label="损坏说明" prop="damageDescription">
+      <!-- <el-form-item label="损坏说明" prop="damageDescription">
         <el-input v-model="queryParams.damageDescription" placeholder="请输入损坏说明" clearable
           @keyup.enter.native="handleQuery" />
-      </el-form-item>
+      </el-form-item> -->
       <el-form-item label="报修类型" prop="fixType">
         <el-select v-model="queryParams.fixType" placeholder="请选择报修类型" clearable>
           <el-option
@@ -29,11 +29,11 @@
           />
         </el-select>
       </el-form-item>
-      <el-form-item label="报修时间" prop="createAt">
+      <!-- <el-form-item label="报修时间" prop="createAt">
         <el-date-picker clearable v-model="queryParams.createAt" type="date" value-format="yyyy-MM-dd"
           placeholder="请选择报修创建时间">
         </el-date-picker>
-      </el-form-item>
+      </el-form-item> -->
       <!--      <el-form-item label="维修人员" prop="firstRepairmanId">-->
       <!--        <el-input-->
       <!--          v-model="queryParams.firstRepairmanId"-->
@@ -115,10 +115,10 @@
         <!--          v-hasPermi="['apartment:firstSelectRepairman:add']"-->
         <!--        >新增</el-button>-->
       </el-col>
-      <el-col :span="1.5">
+      <!-- <el-col :span="1.5">
         <el-button type="success" plain icon="el-icon-edit" size="mini" :disabled="single" @click="handleUpdate"
           v-hasPermi="['apartment:firstSelectRepairman:edit']">派单</el-button>
-      </el-col>
+      </el-col> -->
       <!--      <el-col :span="1.5">-->
       <!--        <el-button-->
       <!--          type="danger"-->
@@ -130,10 +130,10 @@
       <!--          v-hasPermi="['apartment:firstSelectRepairman:remove']"-->
       <!--        >删除</el-button>-->
       <!--      </el-col>-->
-      <el-col :span="1.5">
+      <!-- <el-col :span="1.5">
         <el-button type="warning" plain icon="el-icon-download" size="mini" @click="handleExport"
           v-hasPermi="['apartment:firstSelectRepairman:export']">导出</el-button>
-      </el-col>
+      </el-col> -->
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
@@ -150,7 +150,11 @@
       <el-table-column label="楼栋号" align="center" prop="buildingNo" />
       <el-table-column label="房间号" align="center" prop="roomNo" />
       <el-table-column label="损坏说明" align="center" prop="damageDescription" />
-      <el-table-column label="报修类型" align="center" prop="fixType" />
+      <el-table-column label="报修类型" align="center" prop="fixType">
+        <template slot-scope="scope">
+          <dict-tag :options="dict.type.fzu_fix_type" :value="scope.row.fixType"/>
+        </template>
+      </el-table-column>
       <el-table-column label="报修创建时间" align="center" prop="createAt" width="180">
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.createAt, '{y}-{m}-{d}') }}</span>

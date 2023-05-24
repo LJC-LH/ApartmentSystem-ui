@@ -179,11 +179,11 @@
           <span>{{ parseTime(scope.row.startTime, '{y}-{m}-{d}') }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="结束住宿时间" align="center" prop="endTime" width="150">
+      <!-- <el-table-column label="结束住宿时间" align="center" prop="endTime" width="150">
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.endTime, '{y}-{m}-{d}') }}</span>
         </template>
-      </el-table-column>
+      </el-table-column> -->
 <!--      <el-table-column label="辅导员ID" align="center" prop="fdyId" />-->
       <el-table-column label="辅导员" align="center" prop="fdyName" />
       <el-table-column label="辅导员意见" align="center" prop="fdyOpinion">
@@ -219,16 +219,15 @@
             icon="el-icon-edit"
             @click="handleUpdate(scope.row)"
             v-hasPermi="['apartment:approval:edit']"
-            :disabled=false
+            :disabled="scope.row.dormId != null"
           >审批</el-button>
-<!--          :disabled="scope.row.dormId != null"-->
           <el-button
             size="mini"
             type="text"
             icon="el-icon-delete"
             @click="handleDelete(scope.row)"
             v-hasPermi="['apartment:approval:remove']"
-            :disabled="scope.row.fdyOpinion != null || scope.row.xgcOption != null || scope.row.manageOpinion != null"
+            :disabled="scope.row.fdyOpinion != null || scope.row.xgcOption != null || scope.row.manageOpinion != null || user.roles[0].roleId != '2'"
           >删除</el-button>
         </template>
       </el-table-column>
@@ -271,14 +270,14 @@
             placeholder="请选择开始住宿时间" :disabled=!stuOption >
           </el-date-picker>
         </el-form-item>
-        <el-form-item label="结束住宿时间" prop="endTime">
+        <!-- <el-form-item label="结束住宿时间" prop="endTime">
           <el-date-picker clearable
             v-model="form.endTime"
             type="date"
             value-format="yyyy-MM-dd"
             placeholder="请选择结束住宿时间" :disabled=!stuOption>
           </el-date-picker>
-        </el-form-item>
+        </el-form-item> -->
         <el-form-item label="辅导员" prop="fdyId">
 <!--          改成下拉栏-->
           <el-select v-model="form.fdyId" placeholder="请选择辅导员" :disabled=!stuOption>
@@ -447,10 +446,10 @@ export default {
         startTime: [
           { required: true, message: "起始时间不能为空", trigger: "blur" }
         ],
-        endTime: [
-          { required: true, message: "终止时间不能为空", trigger: "blur" },
-          // {min:this.form.startTime, message: "终止时间不能小于起始时间", trigger: "blur"}
-        ],
+        // endTime: [
+        //   { required: true, message: "终止时间不能为空", trigger: "blur" },
+        //   // {min:this.form.startTime, message: "终止时间不能小于起始时间", trigger: "blur"}
+        // ],
         approvalReason: [
           { required: true, message: "申请理由不能为空", trigger: "blur" }
         ],
@@ -668,14 +667,10 @@ export default {
       }else if(roleKey =='wygl'){
 
       }
-      this.roomParams.dormStatus = 3
-      listStudentdorm(this.roomParams).then(response => {
-        this.dormList = response.rows;
-      });
       this.form.studentId = this.user.userId;
       this.form.studentName = this.user.nickName;
       this.open = true;
-      this.title = "添加特殊宿舍申请";
+      this.title = "特殊宿舍申请";
     },
     /** 修改按钮操作 */
     handleUpdate(row) {
@@ -716,7 +711,7 @@ export default {
           this.xqglList = response.rows[2]
         })
         this.open = true;
-        this.title = "修改特殊宿舍申请";
+        this.title = "特殊宿舍申请审批";
       });
     },
     // /** 修改按钮操作 */
@@ -750,10 +745,10 @@ export default {
     // },
     /** 提交按钮 */
     submitForm() {
-      if (new Date(this.form.endTime).getTime() < new Date(this.form.startTime).getTime()) {
-        this.$message.error("起始日期要早于终止日期");
-        return false;
-      }
+      // if (new Date(this.form.endTime).getTime() < new Date(this.form.startTime).getTime()) {
+      //   this.$message.error("起始日期要早于终止日期");
+      //   return false;
+      // }
       if(this.form.dormId){ /*只有物业选完dormId才会进行下面*/
         getStudentdorm(this.form.dormId).then(response => {
           this.dormform = response.data;

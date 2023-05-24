@@ -125,7 +125,7 @@
           v-hasPermi="['apartment:cancel:edit']"
         >修改</el-button>
       </el-col> -->
-      <el-col :span="1.5">
+      <!-- <el-col :span="1.5">
         <el-button
           type="danger"
           plain
@@ -135,7 +135,7 @@
           @click="handleDelete"
           v-hasPermi="['apartment:cancel:remove']"
         >删除</el-button>
-      </el-col>
+      </el-col> -->
       <!-- <el-col :span="1.5">
         <el-button
           type="warning"
@@ -150,7 +150,7 @@
     </el-row>
 
     <el-table v-loading="loading" :data="cancelList" @selection-change="handleSelectionChange">
-      <el-table-column type="selection" width="55" align="center" />
+      <!-- <el-table-column type="selection" width="55" align="center" /> -->
       <el-table-column label="退宿申请编号" align="center" prop="cancelId" />
 <!--      <el-table-column label="学生ID" align="center" prop="studentId" />-->
       <el-table-column label="学生姓名" align="center" prop="studentName" />
@@ -195,15 +195,15 @@
             icon="el-icon-edit"
             @click="handleUpdate(scope.row)"
             v-hasPermi="['apartment:cancel:edit']"
-            :disabled=false
+            :disabled="scope.row.cancelStatus != '3'"
           >审批</el-button>
-<!--          :disabled="scope.row.cancelStatus != '3'"-->
           <el-button
             size="mini"
             type="text"
             icon="el-icon-delete"
             @click="handleDelete(scope.row)"
             v-hasPermi="['apartment:cancel:remove']"
+            :disabled="scope.row.fdyOpinion != null || scope.row.xgcOption != null || scope.row.manageOpinion != null || user.roles[0].roleId != '2'"
           >删除</el-button>
         </template>
       </el-table-column>
@@ -610,7 +610,7 @@ export default {
       this.form.studentId = this.user.userId;
       this.form.studentName = this.user.nickName;
       this.open = true;
-      this.title = "添加特殊退宿申请";
+      this.title = "特殊宿舍退宿申请";
     },
     // /** 新增按钮操作 */
     // handleAdd() {
@@ -667,7 +667,7 @@ export default {
           this.xqglList = response.rows[2]
         });
         const dormParams = {
-          userId: this.user.userId,
+          userId: row.studentId,
           dormStatus: ['2','4', '6'],
         };
         getDormId(dormParams).then(response => {
@@ -676,15 +676,15 @@ export default {
           console.error('请求失败:', error);
         });
         this.open = true;
-        this.title = "修改特殊退宿申请";
+        this.title = "特殊宿舍退宿审批";
       });
     },
     /** 提交按钮 */
     submitForm() {
-      if (new Date(this.form.endTime).getTime() < new Date(this.form.startTime).getTime()) {
-        this.$message.error("起始日期要早于终止日期");
-        return false;
-      }
+      // if (new Date(this.form.endTime).getTime() < new Date(this.form.startTime).getTime()) {
+      //   this.$message.error("起始日期要早于终止日期");
+      //   return false;
+      // }
       if(this.form.fdyOpinion == 1 && this.form.xgcOpinion == 1 && this.form.manageOpinion == 1){
         //审批通过
         this.form.cancelStatus = 1;
