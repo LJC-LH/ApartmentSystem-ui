@@ -102,7 +102,6 @@
         <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
       </el-form-item>
     </el-form>
-
     <el-row :gutter="10" class="mb8">
       <el-col :span="1.5">
         <el-button
@@ -219,8 +218,8 @@
     <!-- 添加或修改特殊退宿申请对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="150px">
-        <el-form-item label="学生ID" prop="studentId">
-          <el-input v-model="form.studentId" placeholder="请输入学生ID" :disabled="true" />
+        <el-form-item label="学生学号" prop="studentUserName">
+          <el-input v-model="studentUserName" placeholder="请输入学生学号" :disabled="true" />
         </el-form-item>
         <el-form-item label="学生姓名" prop="studentName">
           <el-input v-model="form.studentName" placeholder="请输入学生姓名" :disabled="true" />
@@ -338,6 +337,7 @@ export default {
   dicts: ['opinion', 'fzu_approval_opinion','fzu_approval_status'],
   data() {
     return {
+      studentUserName:null,
       //检查表中是否有dormId
       isDormId:false,
       //学生特殊宿舍申请表填写权限
@@ -577,6 +577,7 @@ export default {
     handleAdd() {
       this.reset();
       const roleKey = this.$store.getters.roles[0]
+      this.studentUserName = this.$store.getters.name
       if(roleKey == 'student'){
         this.roleParams.fdyRoleId = 100;
         this.roleParams.xgcRoleId = 101;
@@ -660,6 +661,7 @@ export default {
         this.roleParams.xqglRoleId = 102;
         getUser(this.form.studentId).then(response =>{
           this.roleParams.deptId = response.data.deptId
+          this.studentUserName = response.data.userName
         })
         selectUserListByRoleId(this.roleParams).then(response => {
           this.fdyList = response.rows[0]

@@ -243,8 +243,10 @@
     <!-- 添加或修改特殊宿舍申请对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="150px">
-        <el-form-item label="用户ID" prop="studentId">
-          <el-input v-model="form.studentId" placeholder="请输入用户ID" :disabled="true" />
+        <el-form-item label="学生学号" prop="studentUserName">
+          <el-input v-model="studentUserName" placeholder="请输入学生学号" :disabled="true" />
+<!--        <el-form-item label="用户ID" prop="studentId">-->
+<!--          <el-input v-model="form.studentId" placeholder="请输入用户ID" :disabled="true" />-->
         </el-form-item>
         <el-form-item label="学生姓名" prop="studentName">
           <el-input v-model="form.studentName" placeholder="请输入学生姓名" :disabled="true" />
@@ -380,6 +382,7 @@ export default {
   dicts: ['fzu_approval_category', 'fzu_approval_opinion','fzu_approval_status'],
   data() {
     return {
+      studentUserName:null,
       //学生特殊宿舍申请表填写权限
       stuOption:true,
       //辅导员特殊宿舍申请表填写权限
@@ -647,6 +650,7 @@ export default {
     handleAdd() {
       this.reset();
       const roleKey = this.$store.getters.roles[0]
+      this.studentUserName = this.$store.getters.name
       if(roleKey == 'student'){
         this.roleParams.fdyRoleId = 100;
         this.roleParams.xgcRoleId = 101;

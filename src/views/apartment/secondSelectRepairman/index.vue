@@ -222,7 +222,7 @@
           <el-descriptions-item label="学生姓名">{{ form.nickName }}</el-descriptions-item>
           <el-descriptions-item label="第一次维修人员">{{ form.firstRepairmanName }}</el-descriptions-item>
           <el-descriptions-item label="学生电话号码">{{ form.studentPhone}}</el-descriptions-item>
-          <el-descriptions-item label="维修人员电话号码">{{ form.firstRepairmanPhone}}</el-descriptions-item>
+          <el-descriptions-item label="第一次维修人员电话号码">{{ form.firstRepairmanPhone}}</el-descriptions-item>
           <el-descriptions-item label="楼栋号">{{ form.buildingNo }}</el-descriptions-item>
           <el-descriptions-item label="第一次维修内容">{{ form.firstWorkContent }}</el-descriptions-item>
           <el-descriptions-item label="房间号">{{ form.roomNo }}</el-descriptions-item>
